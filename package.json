@@ -40,6 +40,14 @@
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^4.5.0"
   },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@tosspayments/payment-widget-types>typescript": "5",
+        "@tosspayments/brandpay-types>typescript": "5"
+      }
+    }
+  },
   "devDependencies": {
     "@types/node": "^22",
     "@types/react": "^19",
