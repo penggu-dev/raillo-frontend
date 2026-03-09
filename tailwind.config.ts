@@ -10,6 +10,27 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			pretendard: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+  		},
+  		fontSize: {
+  			'11': '11px',
+  			'12': '12px',
+  			'14': '14px',
+  			'16': '16px',
+  			'18': '18px',
+  			'20': '20px',
+  			'24': '24px',
+  			'30': '30px',
+  			'36': '36px',
+  		},
+  		lineHeight: {
+  			'tight-heading': '1.2',
+  			'normal-heading': '1.3',
+  			'relaxed-body': '1.6',
+  			'snug-label': '1.4',
+  			'normal-caption': '1.5',
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
