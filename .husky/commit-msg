@@ -1,0 +1,21 @@
+#!/bin/sh
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# 브랜치명에서 이슈 번호 추출 (feature/123-xxx 형태)
+BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+ISSUE_NUMBER=$(echo "$BRANCH" | sed -nE 's|^[a-z]+/([0-9]+)-.*|\1|p')
+
+# 이슈 번호가 없으면 스킵
+if [ -z "$ISSUE_NUMBER" ]; then
+  exit 0
+fi
+
+# 이미 (#n) 형태가 붙어있으면 스킵
+case "$COMMIT_MSG" in
+  *"(#$ISSUE_NUMBER)") exit 0 ;;
+esac
+
+# 커밋 메시지 끝에 (#n) 추가
+echo "$COMMIT_MSG (#$ISSUE_NUMBER)" > "$COMMIT_MSG_FILE"
