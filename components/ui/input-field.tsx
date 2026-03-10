@@ -38,7 +38,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
             // default
             "border-border",
             // focus
-            "focus:border-primary",
+            "focus:border-primary-light",
             // error
             error && "border-destructive focus:border-destructive",
             // disabled
