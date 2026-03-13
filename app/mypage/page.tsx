@@ -9,7 +9,8 @@ import {
   Mail,
   Smartphone,
 } from "lucide-react"
-import {getMemberInfo, MemberInfo} from "@/lib/api/user"
+import { getMemberInfo } from "@/lib/api/user"
+import type { MemberInfo } from "@/types/userType"
 import { useAuth } from "@/hooks/use-auth"
 import MyPageSidebar from "@/components/layout/MyPageSidebar"
 

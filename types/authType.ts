@@ -85,6 +85,50 @@ export interface VerifyEmailCodeResponse {
   result: VerifyEmailCodeResult;
 }
 
+// ========== 회원번호 찾기 ==========
+
+export interface FindMemberNoRequest {
+  name: string;
+  phoneNumber: string;
+}
+
+export interface FindMemberNoResponse {
+  email: string;
+}
+
+export interface VerifyMemberNoRequest {
+  email: string;
+  authCode: string;
+}
+
+export interface VerifyMemberNoResponse {
+  memberNo: string;
+}
+
+// ========== 비밀번호 찾기 ==========
+
+export interface FindPasswordRequest {
+  name: string;
+  memberNo: string;
+}
+
+export interface FindPasswordResponse {
+  email: string;
+}
+
+export interface VerifyPasswordRequest {
+  email: string;
+  authCode: string;
+}
+
+export interface VerifyPasswordResponse {
+  temporaryToken: string;
+}
+
+export interface ChangePasswordRequest {
+  newPassword: string;
+}
+
 // ========== 토큰 재발급 ==========
 
 export interface TokenReissueResult {

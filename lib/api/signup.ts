@@ -1,12 +1,10 @@
 import { api } from '../api';
-import { SignupRequest as SignupPayload, SignupResponse as SignupApiResponse } from '@/types/authType';
-export type SignupRequest = SignupPayload;
-export type SignupResponse = SignupApiResponse["result"];
+import type { SignupRequest, SignupResult } from '@/types/authType';
 
 // 회원가입 API 함수
-export const signup = async (signupData: SignupRequest): Promise<SignupResponse> => {
+export const signup = async (signupData: SignupRequest): Promise<SignupResult> => {
   try {
-    const response = await api.post<SignupResponse>('/auth/signup', signupData);
+    const response = await api.post<SignupResult>('/auth/signup', signupData);
     
     if (response.result) {
       return response.result;

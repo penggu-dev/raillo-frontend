@@ -7,7 +7,7 @@ import { ArrowRight, Calendar, Clock, MapPin, Receipt } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { TicketResponse } from "@/lib/api/booking";
+import type { TicketResponse } from "@/types/bookingType";
 
 type BookingHistoryItem = TicketResponse["result"][number];
 
