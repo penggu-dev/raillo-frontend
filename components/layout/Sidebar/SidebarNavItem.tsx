@@ -2,19 +2,19 @@ import Link from "next/link";
 import { CreditCard, Ticket, Search, LucideIcon } from "lucide-react";
 import { DrawerClose } from "@/components/ui/drawer";
 
-type SidebarBtnType =
+type SidebarNavItemType =
   | "ticket-purchased"
   | "ticket-booking"
   | "ticket-reservations";
 
-interface SidebarBtnConfig {
+interface SidebarNavItemConfig {
   href: string;
   icon: LucideIcon;
   iconColor: string;
   label: string;
 }
 
-const SIDEBAR_BTN_CONFIG: Record<SidebarBtnType, SidebarBtnConfig> = {
+const SIDEBAR_NAV_ITEM_CONFIG: Record<SidebarNavItemType, SidebarNavItemConfig> = {
   "ticket-purchased": {
     href: "/ticket/purchased",
     icon: CreditCard,
@@ -35,12 +35,12 @@ const SIDEBAR_BTN_CONFIG: Record<SidebarBtnType, SidebarBtnConfig> = {
   },
 };
 
-interface SidebarBtnProps {
-  type: SidebarBtnType;
+interface SidebarNavItemProps {
+  type: SidebarNavItemType;
 }
 
-const SidebarBtn = ({ type }: SidebarBtnProps) => {
-  const config = SIDEBAR_BTN_CONFIG[type];
+const SidebarNavItem = ({ type }: SidebarNavItemProps) => {
+  const config = SIDEBAR_NAV_ITEM_CONFIG[type];
   const Icon = config.icon;
 
   return (
@@ -56,4 +56,4 @@ const SidebarBtn = ({ type }: SidebarBtnProps) => {
   );
 };
 
-export default SidebarBtn;
+export default SidebarNavItem;

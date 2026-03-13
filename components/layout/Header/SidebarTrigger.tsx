@@ -11,7 +11,7 @@ import {
 import SidebarHeader from "@/components/layout/Sidebar/SidebarHeader";
 import SidebarContent from "@/components/layout/Sidebar/SidebarContent";
 
-const SidebarBtn = () => {
+const SidebarTrigger = () => {
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>
@@ -29,4 +29,4 @@ const SidebarBtn = () => {
   );
 };
 
-export default SidebarBtn;
+export default SidebarTrigger;
