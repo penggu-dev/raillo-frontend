@@ -17,16 +17,7 @@ import {
 import { StationSelector } from "@/components/ui/station-selector"
 import { DateTimeSelector } from "@/components/ui/date-time-selector"
 import { PassengerSelector } from "@/components/ui/passenger-selector"
-
-interface PassengerCounts {
-  adult: number
-  child: number
-  infant: number
-  senior: number
-  severelydisabled: number
-  mildlydisabled: number
-  veteran: number
-}
+import type { PassengerCounts } from "@/types/passengerType"
 
 export default function TicketBookingPage() {
   const router = useRouter()

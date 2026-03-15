@@ -22,17 +22,7 @@ import { UsageInfo } from "@/components/ui/usage-info";
 import { useAuthStore } from "@/stores/auth-store";
 import { ko } from "date-fns/locale";
 import type { CarInfo, SeatDetail } from "@/types/trainType";
-
-// 2. Add PassengerCounts interface
-interface PassengerCounts {
-  adult: number;
-  child: number;
-  infant: number;
-  senior: number;
-  severelydisabled: number;
-  mildlydisabled: number;
-  veteran: number;
-}
+import type { PassengerCounts } from "@/types/passengerType";
 
 interface TrainInfo {
   trainScheduleId?: number;

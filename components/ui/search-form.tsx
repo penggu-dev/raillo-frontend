@@ -8,16 +8,7 @@ import { DateTimeSelector } from "@/components/ui/date-time-selector"
 import { PassengerSelector } from "@/components/ui/passenger-selector"
 import { StationSelector } from "@/components/ui/station-selector"
 import { format } from "date-fns"
-
-interface PassengerCounts {
-  adult: number
-  child: number
-  infant: number
-  senior: number
-  severelydisabled: number
-  mildlydisabled: number
-  veteran: number
-}
+import type { PassengerCounts } from "@/types/passengerType"
 
 interface SearchData {
   departureStation: string
