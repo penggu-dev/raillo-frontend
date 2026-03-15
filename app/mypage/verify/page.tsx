@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { ArrowLeft } from "lucide-react"
 import { sendMemberEmailVerification, verifyMemberEmail } from "@/lib/api/user"
 import { useAuth } from "@/hooks/use-auth"
+import { handleError } from "@/lib/utils/errorHandler"
 
 export default function EmailVerificationPage() {
   const router = useRouter()
@@ -66,20 +67,9 @@ export default function EmailVerificationPage() {
         alert("인증코드가 이메일로 발송되었습니다.")
         setShowVerification(true)
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('인증코드 발송 실패:', error)
-      
-      let errorMessage = "인증코드 발송에 실패했습니다. 다시 시도해주세요."
-      
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message
-      } else if (error?.message) {
-        errorMessage = error.message
-      } else if (typeof error === 'string') {
-        errorMessage = error
-      }
-      
-      alert(errorMessage)
+      handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setIsSubmitting(false)
     }
@@ -136,20 +126,9 @@ export default function EmailVerificationPage() {
       } else {
         alert("인증코드가 올바르지 않습니다. 다시 확인해주세요.")
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('이메일 인증 실패:', error)
-      
-      let errorMessage = "이메일 인증에 실패했습니다. 다시 시도해주세요."
-      
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message
-      } else if (error?.message) {
-        errorMessage = error.message
-      } else if (typeof error === 'string') {
-        errorMessage = error
-      }
-      
-      alert(errorMessage)
+      handleError(error, "이메일 인증에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setIsSubmitting(false)
     }
