@@ -38,7 +38,7 @@ import {
   MapPin,
   Clock,
 } from "lucide-react"
-import { getCart, deletePendingBookings } from '@/lib/api/booking'
+import { getReservationList, deletePendingBookings } from '@/lib/api/booking'
 import { processPaymentViaCard, processPaymentViaBankAccount } from '@/lib/api/payment'
 import { handleError } from '@/lib/utils/errorHandler'
 import { useToast } from "@/hooks/use-toast"
@@ -117,7 +117,7 @@ export default function CartPage() {
     const fetchCart = async () => {
       try {
         setLoading(true)
-        const response = await getCart()
+        const response = await getReservationList()
         if (response.result && Array.isArray(response.result)) {
           const itemsWithSelection = response.result.map((item) => ({
             ...item,

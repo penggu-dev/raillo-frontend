@@ -17,7 +17,7 @@ import {
   Loader2
 } from "lucide-react"
 import { useAuth } from '@/hooks/use-auth'
-import { getReservation } from '@/lib/api/booking'
+import { getReservationDetail } from '@/lib/api/booking'
 import type { ReservationDetailResponse } from '@/types/bookingType'
 import { processPaymentViaCard, processPaymentViaBankAccount } from '@/lib/api/payment'
 import { handleError } from '@/lib/utils/errorHandler'
@@ -92,7 +92,7 @@ export default function PaymentPage() {
     const fetchReservation = async () => {
       try {
         setLoading(true)
-        const response = await getReservation(parseInt(reservationId))
+        const response = await getReservationDetail(parseInt(reservationId))
         if (!response.result) {
           throw new Error("예약 상세 응답 데이터가 없습니다.")
         }

@@ -8,7 +8,6 @@ import type {
   AddToCartRequest,
   AddToCartResponse,
   PendingBookingCartItem,
-  CartResponse,
   DeletePendingBookingsRequest,
   DeletePendingBookingsResponse,
 } from "@/types/bookingType";
@@ -37,11 +36,6 @@ export const addToCart = async (request: AddToCartRequest) => {
   return api.post<AddToCartResponse>("/api/v1/cart/reservations", request);
 };
 
-// 장바구니 조회 함수
-export const getCart = async () => {
-  return api.get<CartResponse["result"]>("/api/v1/pending-bookings");
-};
-
 export const deletePendingBookings = async (pendingBookingIds: string[]) => {
   const request: DeletePendingBookingsRequest = {
     pendingBookingIds,
@@ -55,13 +49,6 @@ export const deletePendingBookings = async (pendingBookingIds: string[]) => {
 // 예약 목록 조회 함수
 export const getReservationList = async () => {
   return api.get<PendingBookingCartItem[]>("/api/v1/pending-bookings");
-};
-
-// 단일 예약 조회 함수
-export const getReservation = async (reservationId: number) => {
-  return api.get<ReservationDetailResponse>(
-    `/api/v1/booking/reservation/${reservationId}`,
-  );
 };
 
 // 승차권 조회 함수
