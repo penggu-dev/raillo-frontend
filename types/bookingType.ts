@@ -138,3 +138,48 @@ export interface DeletePendingBookingsRequest {
 export interface DeletePendingBookingsResponse {
   message: string;
 }
+
+// ========== 대기 예약 (usePendingBooking) ==========
+
+export interface PendingBookingRequest {
+  trainScheduleId: number;
+  departureStationId: number;
+  arrivalStationId: number;
+  passengerTypes: string[];
+  seatIds: number[];
+}
+
+export interface PendingBookingResponse {
+  message?: string;
+  result?: {
+    reservationId?: number;
+    id?: number;
+    pendingBookingId?: string;
+    [key: string]: unknown;
+  };
+}
+
+export interface PendingBookingSeat {
+  seatId: number;
+  passengerType: string;
+  carNumber: number;
+  carType: string;
+  seatNumber: string;
+}
+
+export interface PendingBookingInfo {
+  pendingBookingId: string;
+  trainNumber: string;
+  trainName: string;
+  departureStationName: string;
+  arrivalStationName: string;
+  departureTime: string;
+  arrivalTime: string;
+  operationDate: string;
+  seats: PendingBookingSeat[];
+}
+
+export interface PendingBookingListResponse {
+  message: string;
+  result: PendingBookingInfo[];
+}

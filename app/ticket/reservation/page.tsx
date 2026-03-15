@@ -35,10 +35,8 @@ import {
 } from "lucide-react";
 import { deleteReservation } from "@/lib/api/booking";
 import { handleError } from "@/lib/utils/errorHandler";
-import {
-  useGetPendingBookingList,
-  PendingBookingInfo,
-} from "@/hooks/usePendingBooking";
+import { useGetPendingBookingList } from "@/hooks/usePendingBooking";
+import type { PendingBookingInfo } from "@/types/bookingType";
 import { usePostPaymentPrepare } from "@/hooks/usePayment";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
