@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Clock, ArrowRight, X, AlertTriangle, Info, CreditCard } from "lucide-react"
-import { format } from "date-fns"
-import { ko } from "date-fns/locale"
-import { getReservationList, deleteReservation, PendingBookingCartItem } from '@/lib/api/booking'
+import { formatPrice, formatDate, formatTime } from "@/lib/utils/format"
+import { getTrainTypeColor } from "@/lib/utils/ticketUtils"
+import { getReservationList, deleteReservation } from '@/lib/api/booking'
+import type { PendingBookingCartItem } from '@/types/bookingType'
 import { handleError } from '@/lib/utils/errorHandler'
 import {
   AlertDialog,
@@ -60,25 +61,6 @@ export default function ReservationsPage() {
     fetchReservations()
   }, [isChecking, isAuthenticated])
 
-  const getTrainTypeColor = (trainName: string) => {
-    switch (trainName) {
-      case "KTX":
-        return "bg-blue-600 text-white"
-      case "ITX-새마을":
-        return "bg-green-600 text-white"
-      case "무궁화호":
-        return "bg-orange-600 text-white"
-      case "ITX-청춘":
-        return "bg-purple-600 text-white"
-      default:
-        return "bg-gray-600 text-white"
-    }
-  }
-
-  const formatPrice = (price: number = 0) => {
-    return `${price.toLocaleString()}원`
-  }
-
   const getTotalPrice = (reservation: PendingBookingCartItem) => {
     return reservation.totalFare ?? reservation.fare ?? 0
   }
@@ -91,15 +73,6 @@ export default function ReservationsPage() {
   const isExpired = (expiresAt?: string) => {
     if (!expiresAt) return false
     return new Date(expiresAt) <= new Date()
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return format(date, "yyyy년 MM월 dd일(EEEE)", { locale: ko })
-  }
-
-  const formatTime = (timeString: string) => {
-    return timeString.substring(0, 5) // "HH:mm" 형식으로 변환
   }
 
   const handleCancelReservation = (pendingBookingId: string) => {

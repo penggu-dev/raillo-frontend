@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { formatPrice } from "@/lib/utils/format";
+import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
 import {
   searchTrains,
   stationUtils,
@@ -594,14 +596,6 @@ export default function TrainSearchPage() {
       }
     }
     setSearchConditionsChanged(true);
-  };
-
-  const getTrainTypeColor = (trainType: string) => {
-    return "bg-blue-600 text-white"; // Only KTX trains, so always blue
-  };
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString() + "원";
   };
 
   const getSeatTypeName = (seatType: string) => {

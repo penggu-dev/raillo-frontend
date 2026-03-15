@@ -5,12 +5,12 @@ import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-import { format } from "date-fns"
-import { ko } from "date-fns/locale"
 import { Train, MapPin, ArrowRight, User } from "lucide-react"
 import { getTickets } from '@/lib/api/booking'
 import { handleError } from '@/lib/utils/errorHandler'
 import { differenceInMinutes, parse } from "date-fns"
+import { formatDate, formatTime } from "@/lib/utils/format"
+import { getTrainTypeColor, getCarTypeName } from "@/lib/utils/ticketUtils"
 
 interface Ticket {
   bookingId: number
@@ -60,42 +60,6 @@ export default function PurchasedTicketsPage() {
 
     fetchTickets()
   }, [isChecking, isAuthenticated])
-
-  const getTrainTypeColor = (trainName: string) => {
-    switch (trainName) {
-      case "KTX":
-      case "KTX-산천":
-        return "bg-blue-600 text-white"
-      case "ITX-새마을":
-        return "bg-green-600 text-white"
-      case "무궁화호":
-        return "bg-orange-600 text-white"
-      case "ITX-청춘":
-        return "bg-purple-600 text-white"
-      default:
-        return "bg-gray-600 text-white"
-    }
-  }
-
-  const getCarTypeName = (carType: string) => {
-    switch (carType) {
-      case "STANDARD":
-        return "일반실"
-      case "FIRST_CLASS":
-        return "특실"
-      default:
-        return carType
-    }
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return format(date, "yyyy년 MM월 dd일(EEEE)", { locale: ko })
-  }
-
-  const formatTime = (timeString: string) => {
-    return timeString.substring(0, 5) // "HH:mm" 형식으로 변환
-  }
 
   // 소요 시간 계산 함수
   const getDuration = (departure: string, arrival: string) => {

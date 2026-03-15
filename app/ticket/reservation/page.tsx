@@ -21,8 +21,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { format, addMinutes } from "date-fns";
-import { ko } from "date-fns/locale";
+import { formatPrice, formatDate, formatTime } from "@/lib/utils/format";
+import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
 import {
   Clock,
   MapPin,
@@ -349,37 +349,9 @@ export default function ReservationPage() {
     }
   };
 
-  const getTrainTypeColor = (trainName: string) => {
-    switch (trainName) {
-      case "KTX":
-        return "bg-blue-600 text-white";
-      case "ITX-새마을":
-        return "bg-green-600 text-white";
-      case "무궁화호":
-        return "bg-orange-600 text-white";
-      case "ITX-청춘":
-        return "bg-purple-600 text-white";
-      default:
-        return "bg-gray-600 text-white";
-    }
-  };
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString() + "원";
-  };
-
   // 대기 예약에는 fare 정보가 없음
   const getTotalPrice = () => {
     return 0;
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return format(date, "yyyy년 MM월 dd일(EEEE)", { locale: ko });
-  };
-
-  const formatTime = (timeString: string) => {
-    return timeString.substring(0, 5); // "HH:mm" 형식으로 변환
   };
 
   if (isChecking) {
