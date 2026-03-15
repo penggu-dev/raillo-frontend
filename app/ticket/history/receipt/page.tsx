@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, ArrowRight, Receipt } from "lucide-react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
-import { getTicketReceipt, TicketReceiptResponse } from "@/lib/api/booking"
+import { getTicketReceipt } from "@/lib/api/booking"
+import type { TicketReceiptResponse } from "@/types/bookingType"
 import { handleError } from "@/lib/utils/errorHandler"
 
 type TicketReceiptDetail = TicketReceiptResponse["result"]

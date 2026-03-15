@@ -19,7 +19,8 @@ import {
   ChevronRight,
   Clock,
 } from "lucide-react";
-import { trainAPI, CalendarInfo } from "@/lib/api/train";
+import { trainAPI } from "@/lib/api/train";
+import type { CalendarInfo } from "@/types/trainType";
 
 // 전역 캐시 (모든 DateTimeSelector 인스턴스가 공유)
 let globalCalendarCache: {

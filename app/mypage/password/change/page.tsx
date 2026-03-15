@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Eye, EyeOff } from "lucide-react"
 import { updatePassword } from "@/lib/api/user"
 import MyPageSidebar from "@/components/layout/MyPageSidebar"
-import { getMemberInfo, MemberInfo } from "@/lib/api/user"
+import { getMemberInfo } from "@/lib/api/user"
+import type { MemberInfo } from "@/types/userType"
 import { useAuth } from "@/hooks/use-auth"
 
 export default function PasswordChangePage() {

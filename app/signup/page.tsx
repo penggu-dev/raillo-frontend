@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Train, Home, Printer, Eye, EyeOff, User, Mail, Lock, Phone } from "lucide-react"
-import { signup, SignupRequest } from "@/lib/api/signup"
+import { signup } from "@/lib/api/signup"
+import type { SignupRequest } from "@/types/authType"
 import { validateSignupForm, formatPhoneNumber, removePhoneNumberFormatting, SignupFormData, Agreements, ValidationErrors } from "@/lib/validation/signup"
 import { handleError } from '@/lib/utils/errorHandler'
 

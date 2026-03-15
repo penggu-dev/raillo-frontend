@@ -9,7 +9,7 @@ import { usePostLogout } from "@/hooks/useAuth";
 
 const HeaderAuthBtn = () => {
   const router = useRouter();
-  const { isAuthenticated, removeTokens } = useAuthStore();
+  const { isInitialized, isAuthenticated, removeTokens } = useAuthStore();
   const { mutateAsync: logout, isPending } = usePostLogout();
 
   const handleLogout = async () => {
@@ -26,6 +26,10 @@ const HeaderAuthBtn = () => {
       removeTokens();
     }
   };
+
+  if (!isInitialized) {
+    return null;
+  }
 
   if (isAuthenticated) {
     return (
