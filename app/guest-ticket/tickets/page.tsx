@@ -7,13 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Train, MapPin, Clock, Calendar, User, ArrowRight, ChevronLeft, Download, Printer, Home, QrCode } from "lucide-react"
+import { TRAIN_TYPE } from "@/constants/trainType"
 
 export default function GuestTicketsPage() {
   // 예시 승차권 데이터
   const tickets = [
     {
       id: "T001",
-      trainType: "KTX",
+      trainType: TRAIN_TYPE.KTX,
       trainNumber: "101",
       departure: {
         station: "서울",
@@ -40,7 +41,7 @@ export default function GuestTicketsPage() {
     },
     {
       id: "T002",
-      trainType: "ITX-새마을",
+      trainType: TRAIN_TYPE.ITX_SAEMAUL,
       trainNumber: "1051",
       departure: {
         station: "서울",

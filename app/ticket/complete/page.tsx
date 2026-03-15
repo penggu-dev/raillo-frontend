@@ -8,6 +8,7 @@ import {Badge} from "@/components/ui/badge"
 import {Separator} from "@/components/ui/separator"
 import {Calendar, CheckCircle, Clock, CreditCard, Download, Home, List, Train, User, ArrowRight, ArrowLeft} from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
+import { TRAIN_TYPE } from "@/constants/trainType"
 import { formatPrice, formatDate } from "@/lib/utils/format"
 
 interface RoundtripCompleteData {
@@ -53,7 +54,7 @@ export default function PaymentCompletePage() {
     arrival: searchParams.get("arrival") || "부산",
     date: searchParams.get("date") || "2024-01-15",
     time: searchParams.get("time") || "06:00",
-    trainType: "KTX",
+    trainType: TRAIN_TYPE.KTX,
     trainNumber: "KTX-101",
     passengers: [
       { name: "홍길동", type: "어른", seat: "1호차 3A" },

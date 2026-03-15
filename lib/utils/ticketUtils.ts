@@ -1,13 +1,15 @@
+import { TRAIN_TYPE } from "@/constants/trainType";
+
 export const getTrainTypeColor = (trainName: string): string => {
   switch (trainName) {
-    case "KTX":
-    case "KTX-산천":
+    case TRAIN_TYPE.KTX:
+    case TRAIN_TYPE.KTX_SANCHEON:
       return "bg-blue-600 text-white"
-    case "ITX-새마을":
+    case TRAIN_TYPE.ITX_SAEMAUL:
       return "bg-green-600 text-white"
-    case "무궁화호":
+    case TRAIN_TYPE.MUGUNGHWA:
       return "bg-orange-600 text-white"
-    case "ITX-청춘":
+    case TRAIN_TYPE.ITX_CHEONGCHUN:
       return "bg-purple-600 text-white"
     default:
       return "bg-gray-600 text-white"

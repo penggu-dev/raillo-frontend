@@ -23,6 +23,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { ko } from "date-fns/locale";
 import type { CarInfo, SeatDetail } from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
+import { TRAIN_TYPE } from "@/constants/trainType";
 
 interface TrainInfo {
   trainScheduleId?: number;
@@ -233,7 +234,7 @@ export default function TrainSearchPage() {
             id: `${train.trainNumber || train.id || index}_${
               train.departureTime || index
             }_${index}`,
-            trainType: train.trainName || train.trainType || "KTX",
+            trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
             trainNumber: train.trainNumber || `${index + 1}`,
             departureTime: train.departureTime
               ? train.departureTime.substring(0, 5)
@@ -328,7 +329,7 @@ export default function TrainSearchPage() {
             id: `inbound_${train.trainNumber || train.id || index}_${
               train.departureTime || index
             }_${index}`,
-            trainType: train.trainName || train.trainType || "KTX",
+            trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
             trainNumber: train.trainNumber || `${index + 1}`,
             departureTime: train.departureTime
               ? train.departureTime.substring(0, 5)
@@ -663,7 +664,7 @@ export default function TrainSearchPage() {
             id: `${train.trainNumber || train.id || index}_${
               train.departureTime || index
             }_${index}_${nextPage}`,
-            trainType: train.trainName || train.trainType || "KTX",
+            trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
             trainNumber: train.trainNumber || `${index + 1}`,
             departureTime: train.departureTime
               ? train.departureTime.substring(0, 5)
@@ -753,7 +754,7 @@ export default function TrainSearchPage() {
             id: `inbound_${train.trainNumber || train.id || index}_${
               train.departureTime || index
             }_${index}_${nextPage}`,
-            trainType: train.trainName || train.trainType || "KTX",
+            trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
             trainNumber: train.trainNumber || `${index + 1}`,
             departureTime: train.departureTime
               ? train.departureTime.substring(0, 5)

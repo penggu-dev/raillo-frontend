@@ -14,6 +14,7 @@ import { Train, ChevronLeft, Home, ChevronRight, ChevronUp, ChevronDown, Printer
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { cn } from "@/lib/utils"
+import { TRAIN_TYPE } from "@/constants/trainType"
 
 export default function GuestBookingPage() {
   const router = useRouter()
@@ -27,7 +28,7 @@ export default function GuestBookingPage() {
 
   // URL에서 예약 정보 가져오기 (실제로는 이전 페이지에서 전달받음)
   const trainInfo = {
-    trainType: searchParams.get("trainType") || "KTX",
+    trainType: searchParams.get("trainType") || TRAIN_TYPE.KTX,
     trainNumber: searchParams.get("trainNumber") || "101",
     departure: searchParams.get("departure") || "서울",
     arrival: searchParams.get("arrival") || "부산",
