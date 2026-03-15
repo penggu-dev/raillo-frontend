@@ -196,7 +196,7 @@ export const api = {
     },
 
     // GET 요청
-    get: <T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> => {
+    get: <T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> => {
         const normalizedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
         const url = new URL(normalizedEndpoint, "http://localhost");
         if (params) {
@@ -211,7 +211,7 @@ export const api = {
     },
 
     // POST 요청
-    post: <T>(endpoint: string, data?: any): Promise<ApiResponse<T>> => {
+    post: <T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> => {
         return apiRequest<T>(endpoint, {
             method: 'POST',
             body: data ? JSON.stringify(data) : undefined,
@@ -219,7 +219,7 @@ export const api = {
     },
 
     // PUT 요청
-    put: <T>(endpoint: string, data?: any): Promise<ApiResponse<T>> => {
+    put: <T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> => {
         return apiRequest<T>(endpoint, {
             method: 'PUT',
             body: data ? JSON.stringify(data) : undefined,
@@ -227,7 +227,7 @@ export const api = {
     },
 
     // PATCH 요청
-    patch: <T>(endpoint: string, data?: any): Promise<ApiResponse<T>> => {
+    patch: <T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> => {
         return apiRequest<T>(endpoint, {
             method: 'PATCH',
             body: data ? JSON.stringify(data) : undefined,
@@ -235,7 +235,7 @@ export const api = {
     },
 
     // DELETE 요청
-    delete: <T>(endpoint: string, data?: any): Promise<ApiResponse<T>> => {
+    delete: <T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> => {
         return apiRequest<T>(endpoint, {
             method: 'DELETE',
             body: data ? JSON.stringify(data) : undefined,

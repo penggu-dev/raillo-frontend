@@ -51,7 +51,7 @@ const LoginField = () => {
         );
         window.location.href = "/";
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleError(error, "로그인에 실패했습니다.");
     } finally {
       setIsLoading(false);

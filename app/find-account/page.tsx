@@ -98,7 +98,7 @@ export default function FindAccountPage() {
         setUserEmail(response.result.email)
         setShowVerification(true)
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleError(error, "회원번호 찾기에 실패했습니다.")
     } finally {
       setIsLoading(false)
@@ -138,7 +138,7 @@ export default function FindAccountPage() {
         console.error('Unexpected response format:', response)
         alert("인증은 성공했지만 회원번호를 찾을 수 없습니다. 다시 시도해주세요.")
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Verification error:', error)
       handleError(error, "인증 코드 검증에 실패했습니다.")
     } finally {
@@ -191,7 +191,7 @@ export default function FindAccountPage() {
         setPasswordUserEmail(response.result.email)
         setShowPasswordVerification(true)
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleError(error, "비밀번호 찾기에 실패했습니다.")
     } finally {
       setIsLoading(false)
@@ -232,7 +232,7 @@ export default function FindAccountPage() {
         console.error('Unexpected response format:', response)
         alert("인증은 성공했지만 임시 토큰을 받을 수 없습니다. 다시 시도해주세요.")
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password verification error:', error)
       handleError(error, "인증 코드 검증에 실패했습니다.")
     } finally {
@@ -298,7 +298,7 @@ export default function FindAccountPage() {
       loginRedirectTimeoutRef.current = setTimeout(() => {
         router.push('/login')
       }, 3000)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password change error:', error)
       handleError(error, "비밀번호 변경에 실패했습니다.")
       // 에러 발생 시 임시 토큰 삭제 (보안상)

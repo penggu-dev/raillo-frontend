@@ -169,7 +169,7 @@ export default function CartPage() {
         await deletePendingBookings([itemToDelete])
         setCartItems((prev) => prev.filter((item) => item.pendingBookingId !== itemToDelete))
         setItemToDelete(null)
-      } catch (e: any) {
+      } catch (e: unknown) {
         handleError(e, '장바구니에서 삭제 중 오류가 발생했습니다.')
       }
     }
@@ -192,7 +192,7 @@ export default function CartPage() {
       await deletePendingBookings(pendingBookingIds)
       setCartItems((prev) => prev.filter((item) => !item.selected))
       setShowDeleteAllDialog(false)
-    } catch (e: any) {
+    } catch (e: unknown) {
       handleError(e, '선택한 항목들을 삭제 중 오류가 발생했습니다.')
     }
   }

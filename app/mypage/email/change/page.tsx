@@ -12,6 +12,7 @@ import MyPageSidebar from "@/components/layout/MyPageSidebar"
 import { getMemberInfo } from "@/lib/api/user"
 import type { MemberInfo } from "@/types/userType"
 import { useAuth } from "@/hooks/use-auth"
+import { handleError } from "@/lib/utils/errorHandler"
 
 
 export default function EmailChangePage() {
@@ -90,20 +91,9 @@ export default function EmailChangePage() {
       await sendEmailVerificationCode(emailAddress)
       alert("인증코드가 이메일로 발송되었습니다.")
       setShowVerification(true)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('인증코드 발송 실패:', error)
-      
-      let errorMessage = "인증코드 발송에 실패했습니다. 다시 시도해주세요."
-      
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message
-      } else if (error?.message) {
-        errorMessage = error.message
-      } else if (typeof error === 'string') {
-        errorMessage = error
-      }
-      
-      alert(errorMessage)
+      handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setIsSubmitting(false)
     }
@@ -134,20 +124,9 @@ export default function EmailChangePage() {
       sessionStorage.removeItem('emailVerified')
       sessionStorage.removeItem('emailVerifiedFor')
       router.push("/mypage")
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('이메일 변경 실패:', error)
-      
-      let errorMessage = "이메일 변경에 실패했습니다. 다시 시도해주세요."
-      
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message
-      } else if (error?.message) {
-        errorMessage = error.message
-      } else if (typeof error === 'string') {
-        errorMessage = error
-      }
-      
-      alert(errorMessage)
+      handleError(error, "이메일 변경에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setIsSubmitting(false)
     }

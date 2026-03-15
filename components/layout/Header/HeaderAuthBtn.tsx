@@ -17,7 +17,7 @@ const HeaderAuthBtn = () => {
       await logout();
       alert("로그아웃되었습니다.");
       router.push("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("로그아웃 에러:", error);
       alert("로그아웃되었습니다.");
       router.push("/");

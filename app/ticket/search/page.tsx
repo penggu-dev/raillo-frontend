@@ -21,6 +21,7 @@ import { TrainList } from "@/components/ui/train-list";
 import { UsageInfo } from "@/components/ui/usage-info";
 import { useAuthStore } from "@/stores/auth-store";
 import { ko } from "date-fns/locale";
+import type { CarInfo, SeatDetail } from "@/types/trainType";
 
 // 2. Add PassengerCounts interface
 interface PassengerCounts {
@@ -54,6 +55,17 @@ interface TrainInfo {
 }
 
 type SeatType = "generalSeat" | "reservedSeat";
+
+interface SearchData {
+  departureStation: string;
+  arrivalStation: string;
+  departureDate: string;
+  departureHour: string;
+  returnDate?: string;
+  returnHour?: string;
+  passengers: PassengerCounts;
+  tripType?: string;
+}
 
 // 예약 정보 타입 정의
 interface ReservationInfo {
@@ -90,16 +102,7 @@ export default function TrainSearchPage() {
   const [searchConditionsChanged, setSearchConditionsChanged] = useState(false);
 
   // 검색 조건 상태
-  const [searchData, setSearchData] = useState<{
-    departureStation: string;
-    arrivalStation: string;
-    departureDate: string;
-    departureHour: string;
-    returnDate?: string;
-    returnHour?: string;
-    passengers: PassengerCounts;
-    tripType?: string;
-  } | null>(null);
+  const [searchData, setSearchData] = useState<SearchData | null>(null);
 
   // Date selection state
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -137,8 +140,8 @@ export default function TrainSearchPage() {
   const [selectedCar, setSelectedCar] = useState(1);
 
   // 객차 및 좌석 조회 상태
-  const [carList, setCarList] = useState<any[]>([]);
-  const [seatList, setSeatList] = useState<any[]>([]);
+  const [carList, setCarList] = useState<CarInfo[]>([]);
+  const [seatList, setSeatList] = useState<SeatDetail[]>([]);
   const [loadingCars, setLoadingCars] = useState(false);
   const [loadingSeats, setLoadingSeats] = useState(false);
 
@@ -153,7 +156,7 @@ export default function TrainSearchPage() {
   const didFetchTrains = useRef(false);
 
   // 실제 API 호출 함수
-  const fetchTrainsFromAPI = async (searchData: any) => {
+  const fetchTrainsFromAPI = async (searchData: SearchData) => {
     setLoading(true);
 
     try {
@@ -166,7 +169,7 @@ export default function TrainSearchPage() {
 
       // 기존 검색 기록 가져오기
       const existingHistory = localStorage.getItem("rail-o-search-history");
-      let historyArray: any[] = [];
+      let historyArray: { departure: string; arrival: string; timestamp: number }[] = [];
 
       if (existingHistory) {
         try {
@@ -199,7 +202,7 @@ export default function TrainSearchPage() {
 
       // 총 승객 수 계산
       const totalPassengers = Object.values(searchData.passengers).reduce(
-        (sum: number, count: any) => sum + (count as number),
+        (sum: number, count: unknown) => sum + (count as number),
         0
       );
 
@@ -299,7 +302,7 @@ export default function TrainSearchPage() {
 
   // 오는 열차 검색 함수
   const fetchInboundTrains = async (
-    searchData: any,
+    searchData: SearchData,
     totalPassengers: number
   ) => {
     try {
@@ -318,7 +321,7 @@ export default function TrainSearchPage() {
       const searchRequest = {
         departureStationId,
         arrivalStationId,
-        operationDate: searchData.returnDate,
+        operationDate: searchData.returnDate ?? searchData.departureDate,
         passengerCount: totalPassengers,
         departureHour: searchData.returnHour?.replace("시", "") || "00",
       };
@@ -379,7 +382,7 @@ export default function TrainSearchPage() {
     setLoading(true);
     try {
       const totalPassengers = Object.values(searchData.passengers).reduce(
-        (sum: number, count: any) => sum + (count as number),
+        (sum: number, count: unknown) => sum + (count as number),
         0
       );
       await fetchInboundTrains(searchData, totalPassengers);
@@ -652,7 +655,7 @@ export default function TrainSearchPage() {
         arrivalStationId,
         operationDate: searchData.departureDate,
         passengerCount: Object.values(searchData.passengers).reduce(
-          (sum: number, count: any) => sum + (count as number),
+          (sum: number, count: unknown) => sum + (count as number),
           0
         ),
         departureHour: searchData.departureHour.replace("시", ""),
@@ -742,7 +745,7 @@ export default function TrainSearchPage() {
         arrivalStationId,
         operationDate: searchData.returnDate || "",
         passengerCount: Object.values(searchData.passengers).reduce(
-          (sum: number, count: any) => sum + (count as number),
+          (sum: number, count: unknown) => sum + (count as number),
           0
         ),
         departureHour: searchData.returnHour?.replace("시", "") || "00",
@@ -985,7 +988,7 @@ export default function TrainSearchPage() {
       } else {
         alert("예약에 실패했습니다.");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       handleError(e, "예약 요청 중 오류가 발생했습니다.");
     }
   };

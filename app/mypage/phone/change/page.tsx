@@ -11,6 +11,7 @@ import MyPageSidebar from "@/components/layout/MyPageSidebar"
 import { getMemberInfo } from "@/lib/api/user"
 import type { MemberInfo } from "@/types/userType"
 import { useAuth } from "@/hooks/use-auth"
+import { handleError } from "@/lib/utils/errorHandler"
 
 export default function PhoneChangePage() {
   const router = useRouter()
@@ -92,20 +93,9 @@ export default function PhoneChangePage() {
       sessionStorage.removeItem('emailVerified')
       sessionStorage.removeItem('emailVerifiedFor')
       router.push("/mypage")
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('휴대폰 번호 변경 실패:', error)
-      
-      let errorMessage = "휴대폰 번호 변경에 실패했습니다. 다시 시도해주세요."
-      
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message
-      } else if (error?.message) {
-        errorMessage = error.message
-      } else if (typeof error === 'string') {
-        errorMessage = error
-      }
-      
-      alert(errorMessage)
+      handleError(error, "휴대폰 번호 변경에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setIsSubmitting(false)
     }
