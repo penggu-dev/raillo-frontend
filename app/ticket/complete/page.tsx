@@ -8,6 +8,7 @@ import {Badge} from "@/components/ui/badge"
 import {Separator} from "@/components/ui/separator"
 import {Calendar, CheckCircle, Clock, CreditCard, Download, Home, List, Train, User, ArrowRight, ArrowLeft} from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
+import { formatPrice, formatDate } from "@/lib/utils/format"
 
 interface RoundtripCompleteData {
   departureStation: string
@@ -62,16 +63,6 @@ export default function PaymentCompletePage() {
     paymentMethod: "신용카드",
     cardNumber: "**** **** **** 1234",
   })
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString("ko-KR")
-  }
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    const days = ["일", "월", "화", "수", "목", "금", "토"]
-    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`
-  }
 
   const getSelectedOutboundTrain = () => {
     if (!roundtripData) return null

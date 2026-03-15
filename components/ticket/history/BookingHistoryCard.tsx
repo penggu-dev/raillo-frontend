@@ -8,17 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { TicketResponse } from "@/types/bookingType";
+import { formatDate, formatTime } from "@/lib/utils/format";
+import { getTrainTypeColor, getCarTypeName, getPassengerTypeName } from "@/lib/utils/ticketUtils";
 
 type BookingHistoryItem = TicketResponse["result"][number];
 
 interface BookingHistoryCardProps {
   booking: BookingHistoryItem;
 }
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return format(date, "yyyy년 MM월 dd일(EEEE)", { locale: ko });
-};
 
 const parseBookingCodeDate = (bookingCode: string) => {
   const rawDate = bookingCode.slice(0, 14);
@@ -53,55 +50,6 @@ const formatPaymentDate = (bookingCode: string) => {
   return format(parsedDate, "yyyy년 MM월 dd일(EEEE)", { locale: ko });
 };
 
-const formatTime = (timeString: string) => timeString.substring(0, 5);
-
-const getTrainTypeColor = (trainName: string) => {
-  switch (trainName) {
-    case "KTX":
-    case "KTX-산천":
-      return "bg-blue-600 text-white";
-    case "ITX-새마을":
-      return "bg-green-600 text-white";
-    case "무궁화호":
-      return "bg-orange-600 text-white";
-    case "ITX-청춘":
-      return "bg-purple-600 text-white";
-    default:
-      return "bg-gray-600 text-white";
-  }
-};
-
-const getCarTypeName = (carType: string) => {
-  switch (carType) {
-    case "STANDARD":
-      return "일반실";
-    case "FIRST_CLASS":
-      return "특실";
-    default:
-      return carType;
-  }
-};
-
-const getPassengerTypeName = (passengerType: string) => {
-  switch (passengerType) {
-    case "ADULT":
-      return "어른";
-    case "CHILD":
-      return "어린이";
-    case "SENIOR":
-      return "경로";
-    case "DISABLED_HEAVY":
-      return "중증장애인";
-    case "DISABLED_LIGHT":
-      return "경증장애인";
-    case "VETERAN":
-      return "국가유공자";
-    case "INFANT":
-      return "유아";
-    default:
-      return passengerType;
-  }
-};
 
 const getTicketStatusName = (status: string) => {
   switch (status) {

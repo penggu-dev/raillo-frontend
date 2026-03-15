@@ -17,11 +17,12 @@ import {
   Loader2
 } from "lucide-react"
 import { useAuth } from '@/hooks/use-auth'
-import { getReservation, ReservationDetailResponse } from '@/lib/api/booking'
+import { getReservation } from '@/lib/api/booking'
+import type { ReservationDetailResponse } from '@/types/bookingType'
 import { processPaymentViaCard, processPaymentViaBankAccount } from '@/lib/api/payment'
 import { handleError } from '@/lib/utils/errorHandler'
-import { format } from "date-fns"
-import { ko } from "date-fns/locale"
+import { formatPrice, formatDate, formatTime } from "@/lib/utils/format"
+import { getTrainTypeColor, getCarTypeName, getPassengerTypeName } from "@/lib/utils/ticketUtils"
 
 export default function PaymentPage() {
   const router = useRouter()
@@ -107,61 +108,6 @@ export default function PaymentPage() {
 
     fetchReservation()
   }, [isChecking, isAuthenticated, reservationId])
-
-  const getTrainTypeColor = (trainName: string) => {
-    switch (trainName) {
-      case "KTX":
-      case "KTX-산천":
-        return "bg-blue-600 text-white"
-      case "ITX-새마을":
-        return "bg-green-600 text-white"
-      case "무궁화호":
-        return "bg-orange-600 text-white"
-      case "ITX-청춘":
-        return "bg-purple-600 text-white"
-      default:
-        return "bg-gray-600 text-white"
-    }
-  }
-
-  const getCarTypeName = (carType: string) => {
-    switch (carType) {
-      case "STANDARD":
-        return "일반실"
-      case "FIRST_CLASS":
-        return "특실"
-      default:
-        return carType
-    }
-  }
-
-  const getPassengerTypeName = (passengerType: string) => {
-    switch (passengerType) {
-      case "ADULT":
-        return "어른"
-      case "CHILD":
-        return "어린이"
-      case "INFANT":
-        return "유아"
-      case "SENIOR":
-        return "경로"
-      default:
-        return passengerType
-    }
-  }
-
-  const formatPrice = (price: number) => {
-    return price.toLocaleString() + "원"
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return format(date, "yyyy년 MM월 dd일(EEEE)", { locale: ko })
-  }
-
-  const formatTime = (timeString: string) => {
-    return timeString.substring(0, 5) // "HH:mm" 형식으로 변환
-  }
 
   const handleCardNumberChange = (value: string, field: number) => {
     const numericValue = value.replace(/[^0-9]/g, "").slice(0, 4)

@@ -13,6 +13,8 @@ import { ko } from "date-fns/locale"
 import { getTicketReceipt } from "@/lib/api/booking"
 import type { TicketReceiptResponse } from "@/types/bookingType"
 import { handleError } from "@/lib/utils/errorHandler"
+import { formatDate, formatTime, formatPrice } from "@/lib/utils/format"
+import { getCarTypeName, getPassengerTypeName, getPaymentMethodName } from "@/lib/utils/ticketUtils"
 
 type TicketReceiptDetail = TicketReceiptResponse["result"]
 
@@ -56,67 +58,10 @@ export default function TicketReceiptDetailPage() {
     fetchReceipt()
   }, [isChecking, isAuthenticated, ticketId])
 
-  const getCarTypeName = (carType: string) => {
-    switch (carType) {
-      case "STANDARD":
-        return "일반실"
-      case "FIRST_CLASS":
-        return "특실"
-      default:
-        return carType
-    }
-  }
-
-  const getPassengerTypeName = (passengerType: string) => {
-    switch (passengerType) {
-      case "ADULT":
-        return "어른"
-      case "CHILD":
-        return "어린이"
-      case "SENIOR":
-        return "경로"
-      case "DISABLED_HEAVY":
-        return "중증장애인"
-      case "DISABLED_LIGHT":
-        return "경증장애인"
-      case "VETERAN":
-        return "국가유공자"
-      case "INFANT":
-        return "유아"
-      default:
-        return passengerType
-    }
-  }
-
-  const getPaymentMethodName = (paymentMethod: string) => {
-    switch (paymentMethod) {
-      case "CARD":
-        return "카드결제"
-      case "BANK_TRANSFER":
-      case "TRANSFER":
-        return "계좌이체"
-      case "EASY_PAY":
-        return "간편결제"
-      default:
-        return paymentMethod
-    }
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return format(date, "yyyy년 MM월 dd일(EEEE)", { locale: ko })
-  }
-
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString)
     return format(date, "yyyy년 MM월 dd일 HH:mm:ss", { locale: ko })
   }
-
-  const formatTime = (timeString: string) => {
-    return timeString.substring(0, 5)
-  }
-
-  const formatPrice = (amount: number) => `${amount.toLocaleString()}원`
 
   if (isChecking || !isAuthenticated) {
     return (
