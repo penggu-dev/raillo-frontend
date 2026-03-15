@@ -1,7 +1,7 @@
 import HeaderAuthBtn from "./HeaderAuthBtn";
 import CartBtn from "./CartBtn";
 import MyPageBtn from "./MyPageBtn";
-import SidebarBtn from "./SidebarBtn";
+import SidebarTrigger from "./SidebarTrigger";
 
 const HeaderActions = () => {
   return (
@@ -10,7 +10,7 @@ const HeaderActions = () => {
         <HeaderAuthBtn />
         <CartBtn />
         <MyPageBtn />
-        <SidebarBtn />
+        <SidebarTrigger />
       </nav>
     </div>
   );

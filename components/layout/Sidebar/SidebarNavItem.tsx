@@ -1,20 +1,20 @@
 import Link from "next/link";
 import { CreditCard, Ticket, Search, LucideIcon } from "lucide-react";
-import { ReactNode } from "react";
+import { DrawerClose } from "@/components/ui/drawer";
 
-type SidebarBtnType =
+type SidebarNavItemType =
   | "ticket-purchased"
   | "ticket-booking"
   | "ticket-reservations";
 
-interface SidebarBtnConfig {
+interface SidebarNavItemConfig {
   href: string;
   icon: LucideIcon;
   iconColor: string;
   label: string;
 }
 
-const SIDEBAR_BTN_CONFIG: Record<SidebarBtnType, SidebarBtnConfig> = {
+const SIDEBAR_NAV_ITEM_CONFIG: Record<SidebarNavItemType, SidebarNavItemConfig> = {
   "ticket-purchased": {
     href: "/ticket/purchased",
     icon: CreditCard,
@@ -35,26 +35,25 @@ const SIDEBAR_BTN_CONFIG: Record<SidebarBtnType, SidebarBtnConfig> = {
   },
 };
 
-interface SidebarBtnProps {
-  type: SidebarBtnType;
-  onClick?: () => void;
-  children?: ReactNode;
+interface SidebarNavItemProps {
+  type: SidebarNavItemType;
 }
 
-const SidebarBtn = ({ type, onClick, children }: SidebarBtnProps) => {
-  const config = SIDEBAR_BTN_CONFIG[type];
+const SidebarNavItem = ({ type }: SidebarNavItemProps) => {
+  const config = SIDEBAR_NAV_ITEM_CONFIG[type];
   const Icon = config.icon;
 
   return (
-    <Link
-      href={config.href}
-      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors bg-white"
-      onClick={onClick}
-    >
-      <Icon className={`h-5 w-5 ${config.iconColor}`} />
-      <span className="text-gray-700">{children || config.label}</span>
-    </Link>
+    <DrawerClose asChild>
+      <Link
+        href={config.href}
+        className="flex items-center gap-3 rounded-lg hover:bg-muted transition-colors bg-white px-4 py-2"
+      >
+        <Icon className={`h-5 w-5 ${config.iconColor}`} />
+        <span className="text-gray-700">{config.label}</span>
+      </Link>
+    </DrawerClose>
   );
 };
 
-export default SidebarBtn;
+export default SidebarNavItem;
