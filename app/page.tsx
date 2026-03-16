@@ -18,11 +18,13 @@ import { StationSelector } from "@/components/ui/station-selector"
 import { DateTimeSelector } from "@/components/ui/date-time-selector"
 import { PassengerSelector } from "@/components/ui/passenger-selector"
 import type { PassengerCounts } from "@/types/passengerType"
+import { useToast } from "@/hooks/use-toast"
 
 export default function HomePage() {
   // 임시 로그인 상태 시뮬레이션 (실제로는 인증 상태에 따라 결정)
   const isLoggedIn = false // Simplified login status
   const router = useRouter()
+  const { toast } = useToast()
 
   // 예매 폼 상태
   const [departureStation, setDepartureStation] = useState("")
@@ -41,7 +43,7 @@ export default function HomePage() {
 
   const handleSearch = async () => {
     if (!departureStation || !arrivalStation || !departureDate) {
-      alert("모든 항목을 선택해주세요.")
+      toast({ title: "입력 오류", description: "모든 항목을 선택해주세요.", variant: "destructive" })
       return
     }
 

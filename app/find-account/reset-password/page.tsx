@@ -10,9 +10,11 @@ import { Label } from "@/components/ui/label"
 import { Train, Home, Printer, Eye, EyeOff } from "lucide-react"
 import { authAPI } from "@/lib/api/auth"
 import { handleError } from "@/lib/utils/errorHandler"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ResetPasswordPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [showPasswords, setShowPasswords] = useState({
     new: false,
     confirm: false,
@@ -39,17 +41,17 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = async () => {
     if (!passwords.new || !passwords.confirm) {
-      alert("모든 필드를 입력해주세요.")
+      toast({ title: "입력 오류", description: "모든 필드를 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (passwords.new !== passwords.confirm) {
-      alert("비밀번호가 일치하지 않습니다.")
+      toast({ title: "입력 오류", description: "비밀번호가 일치하지 않습니다.", variant: "destructive" })
       return
     }
 
     if (passwords.new.length < 8) {
-      alert("비밀번호는 8자 이상이어야 합니다.")
+      toast({ title: "입력 오류", description: "비밀번호는 8자 이상이어야 합니다.", variant: "destructive" })
       return
     }
 
@@ -62,7 +64,7 @@ export default function ResetPasswordPage() {
     try {
       const temporaryToken = sessionStorage.getItem("tempPasswordToken")
       if (!temporaryToken) {
-        alert("임시 토큰이 만료되었습니다. 다시 인증해주세요.")
+        toast({ title: "오류", description: "임시 토큰이 만료되었습니다. 다시 인증해주세요.", variant: "destructive" })
         router.push("/find-account")
         return
       }
@@ -76,10 +78,10 @@ export default function ResetPasswordPage() {
 
       sessionStorage.removeItem("tempPasswordToken")
       sessionStorage.removeItem("tempPasswordEmail")
-      alert("비밀번호가 성공적으로 변경되었습니다.")
+      toast({ description: "비밀번호가 성공적으로 변경되었습니다." })
       router.push("/login")
     } catch (error: unknown) {
-      handleError(error, "비밀번호 변경에 실패했습니다.")
+      toast({ title: "오류", description: handleError(error, "비밀번호 변경에 실패했습니다."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
     }

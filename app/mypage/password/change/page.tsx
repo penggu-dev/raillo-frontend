@@ -14,9 +14,11 @@ import { getMemberInfo } from "@/lib/api/user"
 import type { MemberInfo } from "@/types/userType"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
+import { useToast } from "@/hooks/use-toast"
 
 function PasswordChangePageContent() {
   const router = useRouter()
+  const { toast } = useToast()
 
   // 이메일 인증 체크
   useEffect(() => {
@@ -85,31 +87,31 @@ function PasswordChangePageContent() {
   const handleSubmit = async () => {
     // 유효성 검사
     if (!passwords.new || !passwords.confirm) {
-      alert("모든 필드를 입력해주세요.")
+      toast({ title: "입력 오류", description: "모든 필드를 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (passwords.new !== passwords.confirm) {
-      alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.")
+      toast({ title: "입력 오류", description: "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", variant: "destructive" })
       return
     }
 
     if (passwords.new.length < 8) {
-      alert("비밀번호는 8자 이상이어야 합니다.")
+      toast({ title: "입력 오류", description: "비밀번호는 8자 이상이어야 합니다.", variant: "destructive" })
       return
     }
 
     setIsSubmitting(true)
     try {
       await updatePassword(passwords.new)
-      alert("비밀번호가 성공적으로 변경되었습니다.")
+      toast({ description: "비밀번호가 성공적으로 변경되었습니다." })
       // 변경 완료 후 인증 상태 삭제
       sessionStorage.removeItem('emailVerified')
       sessionStorage.removeItem('emailVerifiedFor')
       router.push("/mypage")
     } catch (error: unknown) {
       console.error('비밀번호 변경 실패:', error)
-      handleError(error, "비밀번호 변경에 실패했습니다. 다시 시도해주세요.")
+      toast({ title: "오류", description: handleError(error, "비밀번호 변경에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
     }

@@ -15,10 +15,12 @@ import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { TRAIN_TYPE } from "@/constants/trainType"
+import { useToast } from "@/hooks/use-toast"
 
 export default function GuestBookingPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { toast } = useToast()
   const [name, setName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [password, setPassword] = useState("")
@@ -63,27 +65,27 @@ export default function GuestBookingPage() {
   const handleNext = () => {
     // 유효성 검사
     if (!name.trim()) {
-      alert("이름을 입력해주세요.")
+      toast({ title: "입력 오류", description: "이름을 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (!phoneNumber || phoneNumber.length < 10) {
-      alert("올바른 전화번호를 입력해주세요.")
+      toast({ title: "입력 오류", description: "올바른 전화번호를 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (!password || password.length !== 5) {
-      alert("비밀번호는 숫자 5자리로 입력해주세요.")
+      toast({ title: "입력 오류", description: "비밀번호는 숫자 5자리로 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (password !== passwordConfirm) {
-      alert("비밀번호가 일치하지 않습니다.")
+      toast({ title: "입력 오류", description: "비밀번호가 일치하지 않습니다.", variant: "destructive" })
       return
     }
 
     if (!agreeTerms) {
-      alert("개인정보 수집 및 이용에 동의해주세요.")
+      toast({ title: "입력 오류", description: "개인정보 수집 및 이용에 동의해주세요.", variant: "destructive" })
       return
     }
 

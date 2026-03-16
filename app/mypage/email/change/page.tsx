@@ -13,10 +13,11 @@ import { getMemberInfo } from "@/lib/api/user"
 import type { MemberInfo } from "@/types/userType"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
-
+import { useToast } from "@/hooks/use-toast"
 
 function EmailChangePageContent() {
   const router = useRouter()
+  const { toast } = useToast()
 
   // 이메일 인증 체크
   useEffect(() => {
@@ -64,24 +65,24 @@ function EmailChangePageContent() {
 
   const handleSendVerificationCode = async () => {
     if (!emailAddress) {
-      alert("이메일 주소를 입력해주세요.")
+      toast({ title: "입력 오류", description: "이메일 주소를 입력해주세요.", variant: "destructive" })
       return
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(emailAddress)) {
-      alert("올바른 이메일 형식을 입력해주세요.")
+      toast({ title: "입력 오류", description: "올바른 이메일 형식을 입력해주세요.", variant: "destructive" })
       return
     }
 
     setIsSubmitting(true)
     try {
       await sendEmailVerificationCode(emailAddress)
-      alert("인증코드가 이메일로 발송되었습니다.")
+      toast({ description: "인증코드가 이메일로 발송되었습니다." })
       setShowVerification(true)
     } catch (error: unknown) {
       console.error('인증코드 발송 실패:', error)
-      handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요.")
+      toast({ title: "오류", description: handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
     }
@@ -95,26 +96,26 @@ function EmailChangePageContent() {
 
   const handleEmailChange = async () => {
     if (!authCode) {
-      alert("인증코드를 입력해주세요.")
+      toast({ title: "입력 오류", description: "인증코드를 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (authCode.length !== 6) {
-      alert("인증코드는 6자리 숫자로 입력해주세요.")
+      toast({ title: "입력 오류", description: "인증코드는 6자리 숫자로 입력해주세요.", variant: "destructive" })
       return
     }
 
     setIsSubmitting(true)
     try {
       await updateEmail(emailAddress, authCode)
-      alert("이메일 변경이 성공적으로 처리되었습니다.")
+      toast({ description: "이메일 변경이 성공적으로 처리되었습니다." })
       // 변경 완료 후 인증 상태 삭제
       sessionStorage.removeItem('emailVerified')
       sessionStorage.removeItem('emailVerifiedFor')
       router.push("/mypage")
     } catch (error: unknown) {
       console.error('이메일 변경 실패:', error)
-      handleError(error, "이메일 변경에 실패했습니다. 다시 시도해주세요.")
+      toast({ title: "오류", description: handleError(error, "이메일 변경에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
     }
