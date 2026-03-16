@@ -10,24 +10,39 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { 
+import {
   ArrowRight,
-  AlertTriangle, 
+  AlertTriangle,
   User,
-  Loader2
+  Loader2,
+  CheckCircle2
 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { getReservationDetail } from '@/lib/api/booking'
 import type { ReservationDetailResponse } from '@/types/bookingType'
 import { processPaymentViaCard, processPaymentViaBankAccount } from '@/lib/api/payment'
 import { handleError } from '@/lib/utils/errorHandler'
+import { useToast } from "@/hooks/use-toast"
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format"
 import { getTrainTypeColor, getCarTypeName, getPassengerTypeName } from "@/lib/utils/ticketUtils"
 
 function PaymentPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+  const { toast } = useToast()
+
+  // 결제완료 다이얼로그
+  const [paymentCompleteOpen, setPaymentCompleteOpen] = useState(false)
+  const [completedPaymentKey, setCompletedPaymentKey] = useState("")
+
   // 상태 관리
   const [reservationData, setReservationData] = useState<ReservationDetailResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -119,19 +134,19 @@ function PaymentPageContent() {
 
   const validateCardPayment = () => {
     if (!cardNumber1 || !cardNumber2 || !cardNumber3 || !cardNumber4) {
-      alert("카드 번호를 모두 입력해주세요.")
+      toast({ title: "입력 오류", description: "카드 번호를 모두 입력해주세요.", variant: "destructive" })
       return false
     }
     if (!expiryMonth || !expiryYear) {
-      alert("유효기간을 입력해주세요.")
+      toast({ title: "입력 오류", description: "유효기간을 입력해주세요.", variant: "destructive" })
       return false
     }
     if (!rrn) {
-      alert("주민등록번호 앞 6자리를 입력해주세요.")
+      toast({ title: "입력 오류", description: "주민등록번호 앞 6자리를 입력해주세요.", variant: "destructive" })
       return false
     }
     if (!cardPassword) {
-      alert("카드 비밀번호 앞 2자리를 입력해주세요.")
+      toast({ title: "입력 오류", description: "카드 비밀번호 앞 2자리를 입력해주세요.", variant: "destructive" })
       return false
     }
     return true
@@ -139,23 +154,23 @@ function PaymentPageContent() {
 
   const validateAccountPayment = () => {
     if (!bankCode) {
-      alert("은행을 선택해주세요.")
+      toast({ title: "입력 오류", description: "은행을 선택해주세요.", variant: "destructive" })
       return false
     }
     if (!accountNumber) {
-      alert("계좌번호를 입력해주세요.")
+      toast({ title: "입력 오류", description: "계좌번호를 입력해주세요.", variant: "destructive" })
       return false
     }
     if (!accountHolderName) {
-      alert("예금주명을 입력해주세요.")
+      toast({ title: "입력 오류", description: "예금주명을 입력해주세요.", variant: "destructive" })
       return false
     }
     if (!identificationNumber) {
-      alert("주민등록번호 앞 6자리를 입력해주세요.")
+      toast({ title: "입력 오류", description: "주민등록번호 앞 6자리를 입력해주세요.", variant: "destructive" })
       return false
     }
     if (!accountPassword) {
-      alert("계좌 비밀번호를 입력해주세요.")
+      toast({ title: "입력 오류", description: "계좌 비밀번호를 입력해주세요.", variant: "destructive" })
       return false
     }
     return true
@@ -163,17 +178,17 @@ function PaymentPageContent() {
 
   const handlePayment = async () => {
     if (!reservationData) {
-      alert("예약 정보를 불러올 수 없습니다.")
+      toast({ title: "오류", description: "예약 정보를 불러올 수 없습니다.", variant: "destructive" })
       return
     }
 
     if (!agreeTerms) {
-      alert("이용약관에 동의해주세요.")
+      toast({ title: "입력 오류", description: "이용약관에 동의해주세요.", variant: "destructive" })
       return
     }
 
     if (paymentMethod === "card" && !agreePersonalInfo) {
-      alert("개인정보 수집 및 이용동의에 동의해주세요.")
+      toast({ title: "입력 오류", description: "개인정보 수집 및 이용동의에 동의해주세요.", variant: "destructive" })
       return
     }
 
@@ -197,8 +212,8 @@ function PaymentPageContent() {
         }
 
         const result = await processPaymentViaCard(request)
-        alert(`결제가 완료되었습니다!\n결제번호: ${result.paymentKey}`)
-        router.push("/ticket/purchased")
+        setCompletedPaymentKey(result.paymentKey)
+        setPaymentCompleteOpen(true)
 
       } else if (paymentMethod === "account") {
         if (!validateAccountPayment()) return
@@ -214,13 +229,13 @@ function PaymentPageContent() {
         }
 
         const result = await processPaymentViaBankAccount(request)
-        alert(`결제가 완료되었습니다!\n결제번호: ${result.paymentKey}`)
-        router.push("/ticket/purchased")
+        setCompletedPaymentKey(result.paymentKey)
+        setPaymentCompleteOpen(true)
       }
     } catch (error: unknown) {
       const errorMessage = handleError(error, '결제 처리 중 오류가 발생했습니다.', false)
       setError(errorMessage)
-      alert(errorMessage)
+      toast({ title: "오류", description: errorMessage, variant: "destructive" })
     } finally {
       setIsProcessing(false)
     }
@@ -606,6 +621,33 @@ function PaymentPageContent() {
           </Card>
         </div>
       </main>
+
+      {/* 결제 완료 다이얼로그 */}
+      <Dialog open={paymentCompleteOpen} onOpenChange={setPaymentCompleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <span>결제 완료</span>
+            </DialogTitle>
+            <DialogDescription className="pt-2 space-y-1">
+              <span className="block">결제가 완료되었습니다.</span>
+              <span className="block font-medium text-gray-900">결제번호: {completedPaymentKey}</span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setPaymentCompleteOpen(false)
+                router.push("/ticket/purchased")
+              }}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              확인
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
