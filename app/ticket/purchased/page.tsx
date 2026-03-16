@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useAuth } from '@/hooks/use-auth'
+import AuthGuard from "@/components/auth/AuthGuard"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
@@ -33,17 +33,13 @@ interface Ticket {
   }[]
 }
 
-export default function PurchasedTicketsPage() {
-  const { isAuthenticated, isChecking } = useAuth({ redirectPath: '/ticket/purchased' })
+function PurchasedTicketsPageContent() {
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   // 승차권 목록 조회
   useEffect(() => {
-    // 로그인 상태가 확인된 후에만 승차권 목록을 조회
-    if (isChecking || !isAuthenticated) return
-
     const fetchTickets = async () => {
       try {
         setLoading(true)
@@ -59,7 +55,7 @@ export default function PurchasedTicketsPage() {
     }
 
     fetchTickets()
-  }, [isChecking, isAuthenticated])
+  }, [])
 
   // 소요 시간 계산 함수
   const getDuration = (departure: string, arrival: string) => {
@@ -71,16 +67,6 @@ export default function PurchasedTicketsPage() {
     const hours = Math.floor(diff / 60)
     const minutes = diff % 60
     return `${hours > 0 ? hours + "시간 " : ""}${minutes}분`
-  }
-
-  // 로그인 상태 확인 중이거나 인증되지 않은 경우 로딩 표시
-  if (isChecking || !isAuthenticated) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">인증을 확인하고 있습니다...</p>
-      </div>
-    )
   }
 
   // 로딩 중인 경우
@@ -274,5 +260,13 @@ export default function PurchasedTicketsPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function PurchasedTicketsPage() {
+  return (
+    <AuthGuard redirectPath="/ticket/purchased">
+      <PurchasedTicketsPageContent />
+    </AuthGuard>
   )
 }

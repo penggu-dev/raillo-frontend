@@ -11,11 +11,10 @@ import {Checkbox} from "@/components/ui/checkbox"
 import {AlertTriangle, ChevronLeft, UserX} from "lucide-react"
 import {deleteAccount} from "@/lib/api/user"
 import Link from "next/link"
-import { useAuth } from "@/hooks/use-auth"
 import { useAuthStore } from "@/stores/auth-store"
+import AuthGuard from "@/components/auth/AuthGuard"
 
-export default function WithdrawPage() {
-    const { isChecking, isAuthenticated } = useAuth()
+function WithdrawPageContent() {
     const removeTokens = useAuthStore((state) => state.removeTokens)
     const [confirmText, setConfirmText] = useState("")
     const [agreements, setAgreements] = useState({
@@ -72,23 +71,6 @@ export default function WithdrawPage() {
         } finally {
             setIsLoading(false)
         }
-    }
-
-    // 로딩 중이거나 인증 확인 중일 때
-    if (isChecking) {
-        return (
-            <div className="min-h-screen bg-gray-50">
-                <div className="container mx-auto px-4 py-16 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">페이지를 불러오는 중...</p>
-                </div>
-            </div>
-        )
-    }
-
-    // 로그인되지 않은 경우 (리다이렉트 중)
-    if (!isAuthenticated) {
-        return null
     }
 
     if (success) {
@@ -254,5 +236,13 @@ export default function WithdrawPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function WithdrawPage() {
+    return (
+        <AuthGuard>
+            <WithdrawPageContent />
+        </AuthGuard>
     )
 }

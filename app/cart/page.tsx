@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/hooks/use-auth"
+import AuthGuard from "@/components/auth/AuthGuard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -69,10 +69,9 @@ interface CartItem {
   selected: boolean
 }
 
-export default function CartPage() {
+function CartPageContent() {
   const router = useRouter()
   const { toast } = useToast()
-  const { isAuthenticated, isLoading: authLoading } = useAuth({ requireAuth: true })
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -111,8 +110,6 @@ export default function CartPage() {
 
   // 장바구니 데이터 로드
   useEffect(() => {
-    // 로그인 상태가 확인된 후에만 장바구니 데이터를 로드
-    if (authLoading || !isAuthenticated) return
     
     const fetchCart = async () => {
       try {
@@ -139,7 +136,7 @@ export default function CartPage() {
     }
 
     fetchCart()
-  }, [authLoading, isAuthenticated])
+  }, [])
 
 
 
@@ -340,21 +337,6 @@ export default function CartPage() {
   const selectedItems = cartItems.filter((item) => item.selected)
   const totalPrice = selectedItems.reduce((sum, item) => sum + getTotalPrice(item), 0)
   const allSelected = cartItems.length > 0 && cartItems.every((item) => item.selected)
-
-  // 로그인 상태 확인 중
-  if (authLoading) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">로그인 상태를 확인하고 있습니다...</p>
-      </div>
-    )
-  }
-
-  // 로그인되지 않은 경우 (리다이렉트 중)
-  if (!isAuthenticated) {
-    return null
-  }
 
   if (loading) {
     return (
@@ -849,5 +831,13 @@ export default function CartPage() {
         </DialogContent>
       </Dialog>
     </div>
+  )
+}
+
+export default function CartPage() {
+  return (
+    <AuthGuard>
+      <CartPageContent />
+    </AuthGuard>
   )
 }

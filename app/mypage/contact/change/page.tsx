@@ -11,12 +11,11 @@ import { Train, ChevronDown, User, CreditCard, Ticket, ShoppingCart, Settings, S
 import { sendEmailVerificationCode, updatePhoneNumber } from "@/lib/api/user"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/hooks/use-auth"
+import AuthGuard from "@/components/auth/AuthGuard"
 
-export default function ContactChangePage() {
+function ContactChangePageContent() {
   const router = useRouter()
   const { toast } = useToast()
-  const { isChecking, isAuthenticated } = useAuth()
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
     ticketInfo: false,
     membershipPerformance: false,
@@ -28,23 +27,6 @@ export default function ContactChangePage() {
   const [phoneNumber2, setPhoneNumber2] = useState("")
   const [phoneNumber3, setPhoneNumber3] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // 로딩 중이거나 인증 확인 중일 때
-  if (isChecking) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-16 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">페이지를 불러오는 중...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // 로그인되지 않은 경우
-  if (!isAuthenticated) {
-    return null
-  }
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({
@@ -372,5 +354,13 @@ export default function ContactChangePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ContactChangePage() {
+  return (
+    <AuthGuard>
+      <ContactChangePageContent />
+    </AuthGuard>
   )
 }

@@ -16,7 +16,7 @@ import {
   User,
   Loader2
 } from "lucide-react"
-import { useAuth } from '@/hooks/use-auth'
+import AuthGuard from "@/components/auth/AuthGuard"
 import { getReservationDetail } from '@/lib/api/booking'
 import type { ReservationDetailResponse } from '@/types/bookingType'
 import { processPaymentViaCard, processPaymentViaBankAccount } from '@/lib/api/payment'
@@ -24,10 +24,9 @@ import { handleError } from '@/lib/utils/errorHandler'
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format"
 import { getTrainTypeColor, getCarTypeName, getPassengerTypeName } from "@/lib/utils/ticketUtils"
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { isAuthenticated, isChecking } = useAuth({ redirectPath: '/ticket/payment' })
   
   // 상태 관리
   const [reservationData, setReservationData] = useState<ReservationDetailResponse | null>(null)
@@ -81,7 +80,6 @@ export default function PaymentPage() {
 
   // 예약 정보 조회
   useEffect(() => {
-    if (isChecking || !isAuthenticated) return
     
     if (!reservationId) {
       setError('예약 정보가 없습니다.')
@@ -107,7 +105,7 @@ export default function PaymentPage() {
     }
 
     fetchReservation()
-  }, [isChecking, isAuthenticated, reservationId])
+  }, [reservationId])
 
   const handleCardNumberChange = (value: string, field: number) => {
     const numericValue = value.replace(/[^0-9]/g, "").slice(0, 4)
@@ -226,23 +224,6 @@ export default function PaymentPage() {
     } finally {
       setIsProcessing(false)
     }
-  }
-
-  // 로그인 상태 확인 중
-  if (isChecking) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
-        <div className="container mx-auto px-4 py-16 text-center flex-1">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">로그인 상태를 확인하고 있습니다...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // 로그인되지 않은 경우
-  if (!isAuthenticated) {
-    return null
   }
 
   // 로딩 중
@@ -626,5 +607,13 @@ export default function PaymentPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function PaymentPage() {
+  return (
+    <AuthGuard redirectPath="/ticket/payment">
+      <PaymentPageContent />
+    </AuthGuard>
   )
 }

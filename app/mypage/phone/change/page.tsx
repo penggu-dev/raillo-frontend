@@ -10,26 +10,22 @@ import { useRouter } from "next/navigation"
 import MyPageSidebar from "@/components/layout/MyPageSidebar"
 import { getMemberInfo } from "@/lib/api/user"
 import type { MemberInfo } from "@/types/userType"
-import { useAuth } from "@/hooks/use-auth"
+import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
 
-export default function PhoneChangePage() {
+function PhoneChangePageContent() {
   const router = useRouter()
-  const { isChecking, isAuthenticated } = useAuth()
-  
+
   // 이메일 인증 체크
   useEffect(() => {
-    if (!isChecking && isAuthenticated) {
-      const emailVerified = sessionStorage.getItem('emailVerified')
-      const emailVerifiedFor = sessionStorage.getItem('emailVerifiedFor')
-      
-      // 휴대폰 번호 변경용 인증이 완료되지 않았거나, 다른 용도로 인증된 경우
-      if (!emailVerified || emailVerifiedFor !== 'phone_change') {
-        router.push('/mypage/verify?purpose=phone_change')
-        return
-      }
+    const emailVerified = sessionStorage.getItem('emailVerified')
+    const emailVerifiedFor = sessionStorage.getItem('emailVerifiedFor')
+
+    // 휴대폰 번호 변경용 인증이 완료되지 않았거나, 다른 용도로 인증된 경우
+    if (!emailVerified || emailVerifiedFor !== 'phone_change') {
+      router.push('/mypage/verify?purpose=phone_change')
     }
-  }, [isChecking, isAuthenticated, router])
+  }, [router])
   
   const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null)
   const [loading, setLoading] = useState(true)
@@ -40,23 +36,20 @@ export default function PhoneChangePage() {
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
-      if (isAuthenticated) {
-        try {
-          const info = await getMemberInfo()
-          setMemberInfo(info)
-        } catch (error) {
-          console.error('회원 정보 조회 실패:', error)
-        } finally {
-          setLoading(false)
-        }
+      try {
+        const info = await getMemberInfo()
+        setMemberInfo(info)
+      } catch (error) {
+        console.error('회원 정보 조회 실패:', error)
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchMemberInfo()
-  }, [isAuthenticated])
+  }, [])
 
-  // 로딩 중이거나 인증 확인 중일 때
-  if (isChecking || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-16 text-center">
@@ -65,11 +58,6 @@ export default function PhoneChangePage() {
         </div>
       </div>
     )
-  }
-
-  // 로그인되지 않은 경우
-  if (!isAuthenticated) {
-    return null
   }
 
   const handlePhoneChange = async () => {
@@ -186,5 +174,13 @@ export default function PhoneChangePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PhoneChangePage() {
+  return (
+    <AuthGuard>
+      <PhoneChangePageContent />
+    </AuthGuard>
   )
 } 

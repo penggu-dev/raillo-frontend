@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from '@/hooks/use-auth'
+import AuthGuard from "@/components/auth/AuthGuard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -26,9 +26,8 @@ import {
 
 
 
-export default function ReservationsPage() {
+function ReservationsPageContent() {
   const router = useRouter()
-  const { isAuthenticated, isChecking } = useAuth({ redirectPath: '/ticket/reservations' })
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [selectedReservation, setSelectedReservation] = useState<string | null>(null)
   const [reservations, setReservations] = useState<PendingBookingCartItem[]>([])
@@ -37,9 +36,6 @@ export default function ReservationsPage() {
 
   // 예약 목록 조회
   useEffect(() => {
-    // 로그인 상태가 확인된 후에만 예약 목록을 조회
-    if (isChecking || !isAuthenticated) return
-
     const fetchReservations = async () => {
       try {
         setLoading(true)
@@ -59,7 +55,7 @@ export default function ReservationsPage() {
     }
 
     fetchReservations()
-  }, [isChecking, isAuthenticated])
+  }, [])
 
   const getTotalPrice = (reservation: PendingBookingCartItem) => {
     return reservation.totalFare ?? reservation.fare ?? 0
@@ -105,16 +101,6 @@ export default function ReservationsPage() {
     }
 
     router.push(`/ticket/reservation?pendingBookingId=${encodeURIComponent(reservation.pendingBookingId)}`)
-  }
-
-  // 로그인 상태 확인 중이거나 인증되지 않은 경우 로딩 표시
-  if (isChecking || !isAuthenticated) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">인증을 확인하고 있습니다...</p>
-      </div>
-    )
   }
 
   if (loading) {
@@ -332,5 +318,13 @@ export default function ReservationsPage() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  )
+}
+
+export default function ReservationsPage() {
+  return (
+    <AuthGuard redirectPath="/ticket/reservations">
+      <ReservationsPageContent />
+    </AuthGuard>
   )
 }

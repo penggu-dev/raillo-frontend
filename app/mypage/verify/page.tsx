@@ -8,14 +8,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft } from "lucide-react"
 import { sendMemberEmailVerification, verifyMemberEmail } from "@/lib/api/user"
-import { useAuth } from "@/hooks/use-auth"
+import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
 
-export default function EmailVerificationPage() {
+function EmailVerificationPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { isChecking, isAuthenticated } = useAuth()
-  const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState("")
   const [authCode, setAuthCode] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -30,33 +28,10 @@ export default function EmailVerificationPage() {
   
   // 변조된 URL 감지 시 마이페이지로 리다이렉트
   useEffect(() => {
-    if (!isChecking && isAuthenticated && !validPurposes.includes(rawPurpose)) {
+    if (!validPurposes.includes(rawPurpose)) {
       router.push('/mypage')
     }
-  }, [isChecking, isAuthenticated, rawPurpose, router])
-
-  useEffect(() => {
-    if (!isChecking) {
-      setLoading(false)
-    }
-  }, [isChecking])
-
-  // 로딩 중이거나 인증 확인 중일 때
-  if (isChecking || loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <div className="flex-1 container mx-auto px-4 py-16 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">페이지를 불러오는 중...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // 로그인되지 않은 경우
-  if (!isAuthenticated) {
-    return null
-  }
+  }, [rawPurpose, router])
 
   const handleSendVerificationCode = async () => {
     setIsSubmitting(true)
@@ -221,4 +196,12 @@ export default function EmailVerificationPage() {
       </div>
     </div>
   )
-} 
+}
+
+export default function EmailVerificationPage() {
+  return (
+    <AuthGuard>
+      <EmailVerificationPageContent />
+    </AuthGuard>
+  )
+}

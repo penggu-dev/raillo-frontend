@@ -11,33 +11,29 @@ import {
 } from "lucide-react"
 import { getMemberInfo } from "@/lib/api/user"
 import type { MemberInfo } from "@/types/userType"
-import { useAuth } from "@/hooks/use-auth"
 import MyPageSidebar from "@/components/layout/MyPageSidebar"
+import AuthGuard from "@/components/auth/AuthGuard"
 
-export default function MyPage() {
-  const { isAuthenticated, isLoading: authLoading } = useAuth({ requireAuth: true })
+function MyPageContent() {
   const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null)
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     const fetchMemberInfo = async () => {
-      if (isAuthenticated) {
-        try {
-          const info = await getMemberInfo()
-          setMemberInfo(info)
-        } catch (error) {
-          console.error('회원 정보 조회 실패:', error)
-          // 에러 발생 시에도 페이지는 표시하되, 기본값 사용
-        } finally {
-          setLoading(false)
-        }
+      try {
+        const info = await getMemberInfo()
+        setMemberInfo(info)
+      } catch (error) {
+        console.error('회원 정보 조회 실패:', error)
+        // 에러 발생 시에도 페이지는 표시하되, 기본값 사용
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchMemberInfo()
-  }, [isAuthenticated])
+  }, [])
 
-  // 로딩 중이거나 인증 확인 중일 때
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-16 text-center">
@@ -46,11 +42,6 @@ export default function MyPage() {
         </div>
       </div>
     )
-  }
-
-  // 로그인되지 않은 경우 (리다이렉트 중)
-  if (!isAuthenticated) {
-    return null
   }
 
   // 회원 정보가 없을 때 기본값 사용
@@ -136,5 +127,13 @@ export default function MyPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function MyPage() {
+  return (
+    <AuthGuard>
+      <MyPageContent />
+    </AuthGuard>
   )
 }
