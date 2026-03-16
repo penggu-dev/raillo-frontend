@@ -19,6 +19,7 @@ import {
   CheckCircle,
 } from "lucide-react"
 import type { PassengerCounts } from "@/types/passengerType"
+import { useToast } from "@/hooks/use-toast"
 
 interface TrainInfo {
   trainScheduleId?: number
@@ -74,6 +75,7 @@ interface RoundtripCompleteData {
 
 export default function RoundtripBookingPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [bookingData, setBookingData] = useState<BookingData | null>(null)
   const [loading, setLoading] = useState(false)
   const [bookingComplete, setBookingComplete] = useState(false)
@@ -139,7 +141,7 @@ export default function RoundtripBookingPage() {
       router.push('/ticket/complete')
     } catch (error) {
       console.error('예매 실패:', error)
-      alert('예매 중 오류가 발생했습니다. 다시 시도해주세요.')
+      toast({ title: "오류", description: "예매 중 오류가 발생했습니다. 다시 시도해주세요.", variant: "destructive" })
     } finally {
       setLoading(false)
     }

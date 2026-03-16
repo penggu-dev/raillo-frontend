@@ -59,10 +59,6 @@ export const handleError = (
 ): string => {
   const message = extractErrorMessage(error, defaultMessage)
   
-  if (showAlert) {
-    alert(message)
-  }
-  
   return message
 }
 

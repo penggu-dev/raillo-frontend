@@ -23,11 +23,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { useToast } from "@/hooks/use-toast"
 
 
 
 function ReservationsPageContent() {
   const router = useRouter()
+  const { toast } = useToast()
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [selectedReservation, setSelectedReservation] = useState<string | null>(null)
   const [reservations, setReservations] = useState<PendingBookingCartItem[]>([])
@@ -80,14 +82,14 @@ function ReservationsPageContent() {
     if (selectedReservation) {
       try {
         await deleteReservation(selectedReservation)
-        alert("예약이 취소되었습니다.")
+        toast({ description: "예약이 취소되었습니다." })
         // 예약 목록 다시 조회
         const response = await getReservationList()
         if (response.result) {
           setReservations(response.result)
         }
       } catch (err) {
-        handleError(err, '예약 취소 중 오류가 발생했습니다.')
+        toast({ title: "오류", description: handleError(err, '예약 취소 중 오류가 발생했습니다.', false), variant: "destructive" })
       }
     }
     setShowCancelDialog(false)
@@ -96,7 +98,7 @@ function ReservationsPageContent() {
 
   const handlePayment = (reservation: PendingBookingCartItem) => {
     if (!reservation.pendingBookingId) {
-      alert("결제 가능한 예약 정보가 없습니다.")
+      toast({ title: "오류", description: "결제 가능한 예약 정보가 없습니다.", variant: "destructive" })
       return
     }
 

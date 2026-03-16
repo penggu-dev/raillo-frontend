@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import { login } from "@/lib/api/auth";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useAuthStore } from "@/stores/auth-store";
+import { useToast } from "@/hooks/use-toast";
 
 const LoginField = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,7 @@ const LoginField = () => {
   const [memberNumber, setMemberNumber] = useState("");
   const [password, setPassword] = useState("");
   const setTokens = useAuthStore((state) => state.setTokens);
+  const { toast } = useToast();
   const memberNumberInputRef = useRef<HTMLInputElement>(null);
 
   // 페이지 로드 시 localStorage에서 회원번호 가져오기
@@ -31,7 +33,7 @@ const LoginField = () => {
     e?.preventDefault(); // form 제출 시 기본 동작 방지
 
     if (!memberNumber || !password) {
-      alert("회원번호와 비밀번호를 모두 입력해주세요.");
+      toast({ title: "입력 오류", description: "회원번호와 비밀번호를 모두 입력해주세요.", variant: "destructive" });
       return;
     }
 
@@ -52,7 +54,7 @@ const LoginField = () => {
         window.location.href = "/";
       }
     } catch (error: unknown) {
-      handleError(error, "로그인에 실패했습니다.");
+      toast({ title: "오류", description: handleError(error, "로그인에 실패했습니다."), variant: "destructive" });
     } finally {
       setIsLoading(false);
     }

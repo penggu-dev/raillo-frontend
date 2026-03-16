@@ -12,9 +12,11 @@ import { getMemberInfo } from "@/lib/api/user"
 import type { MemberInfo } from "@/types/userType"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
+import { useToast } from "@/hooks/use-toast"
 
 function PhoneChangePageContent() {
   const router = useRouter()
+  const { toast } = useToast()
 
   // 이메일 인증 체크
   useEffect(() => {
@@ -62,28 +64,28 @@ function PhoneChangePageContent() {
 
   const handlePhoneChange = async () => {
     if (!phoneNumber1 || !phoneNumber2 || !phoneNumber3) {
-      alert("휴대폰 번호를 모두 입력해주세요.")
+      toast({ title: "입력 오류", description: "휴대폰 번호를 모두 입력해주세요.", variant: "destructive" })
       return
     }
 
     const fullPhoneNumber = `${phoneNumber1}${phoneNumber2}${phoneNumber3}`
     const phoneRegex = /^01[0-9]{9}$/
     if (!phoneRegex.test(fullPhoneNumber)) {
-      alert("올바른 휴대폰 번호 형식을 입력해주세요.")
+      toast({ title: "입력 오류", description: "올바른 휴대폰 번호 형식을 입력해주세요.", variant: "destructive" })
       return
     }
 
     setIsSubmitting(true)
     try {
       await updatePhoneNumber(fullPhoneNumber)
-      alert("휴대폰 번호 변경이 성공적으로 처리되었습니다.")
+      toast({ description: "휴대폰 번호 변경이 성공적으로 처리되었습니다." })
       // 변경 완료 후 인증 상태 삭제
       sessionStorage.removeItem('emailVerified')
       sessionStorage.removeItem('emailVerifiedFor')
       router.push("/mypage")
     } catch (error: unknown) {
       console.error('휴대폰 번호 변경 실패:', error)
-      handleError(error, "휴대폰 번호 변경에 실패했습니다. 다시 시도해주세요.")
+      toast({ title: "오류", description: handleError(error, "휴대폰 번호 변경에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
     }

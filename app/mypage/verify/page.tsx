@@ -10,10 +10,12 @@ import { ArrowLeft } from "lucide-react"
 import { sendMemberEmailVerification, verifyMemberEmail } from "@/lib/api/user"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
+import { useToast } from "@/hooks/use-toast"
 
 function EmailVerificationPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { toast } = useToast()
   const [email, setEmail] = useState("")
   const [authCode, setAuthCode] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -39,12 +41,12 @@ function EmailVerificationPageContent() {
       const response = await sendMemberEmailVerification()
       if (response.result) {
         setEmail(response.result.email)
-        alert("인증코드가 이메일로 발송되었습니다.")
+        toast({ description: "인증코드가 이메일로 발송되었습니다." })
         setShowVerification(true)
       }
     } catch (error: unknown) {
       console.error('인증코드 발송 실패:', error)
-      handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요.")
+      toast({ title: "오류", description: handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
     }
@@ -66,12 +68,12 @@ function EmailVerificationPageContent() {
 
   const handleVerifyEmail = async () => {
     if (!authCode) {
-      alert("인증코드를 입력해주세요.")
+      toast({ title: "입력 오류", description: "인증코드를 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (authCode.length !== 6) {
-      alert("인증코드는 6자리 숫자로 입력해주세요.")
+      toast({ title: "입력 오류", description: "인증코드는 6자리 숫자로 입력해주세요.", variant: "destructive" })
       return
     }
 
@@ -79,7 +81,7 @@ function EmailVerificationPageContent() {
     try {
       const response = await verifyMemberEmail(email, authCode)
       if (response.result?.isVerified) {
-        alert("이메일 인증이 완료되었습니다.")
+        toast({ description: "이메일 인증이 완료되었습니다." })
         // 인증 성공 시 세션에 인증 상태 저장 (용도별로 구분)
         sessionStorage.setItem('emailVerified', 'true')
         sessionStorage.setItem('emailVerifiedFor', verificationPurpose)
@@ -99,11 +101,11 @@ function EmailVerificationPageContent() {
             router.push('/mypage')
         }
       } else {
-        alert("인증코드가 올바르지 않습니다. 다시 확인해주세요.")
+        toast({ title: "오류", description: "인증코드가 올바르지 않습니다. 다시 확인해주세요.", variant: "destructive" })
       }
     } catch (error: unknown) {
       console.error('이메일 인증 실패:', error)
-      handleError(error, "이메일 인증에 실패했습니다. 다시 시도해주세요.")
+      toast({ title: "오류", description: handleError(error, "이메일 인증에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
     }

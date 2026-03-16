@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import PageLayout from "@/components/layout/PageLayout"
 import { authAPI } from "@/lib/api/auth"
 import { handleError } from "@/lib/utils/errorHandler"
+import { useToast } from "@/hooks/use-toast"
 
 export default function FindAccountPage() {
   const [memberName, setMemberName] = useState("")
@@ -39,6 +40,7 @@ export default function FindAccountPage() {
   const loginRedirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const router = useRouter()
+  const { toast } = useToast()
 
   // 페이지 로드 시 URL 파라미터와 sessionStorage에서 상태 복원
   useEffect(() => {
@@ -75,12 +77,12 @@ export default function FindAccountPage() {
 
   const handleFindMember = async () => {
     if (!memberName || !memberPhone) {
-      alert("이름과 휴대폰번호를 모두 입력해주세요.")
+      toast({ title: "입력 오류", description: "이름과 휴대폰번호를 모두 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (memberPhone.length !== 11) {
-      alert("휴대폰번호는 11자리여야 합니다.")
+      toast({ title: "입력 오류", description: "휴대폰번호는 11자리여야 합니다.", variant: "destructive" })
       return
     }
 
@@ -99,7 +101,7 @@ export default function FindAccountPage() {
         setShowVerification(true)
       }
     } catch (error: unknown) {
-      handleError(error, "회원번호 찾기에 실패했습니다.")
+      toast({ title: "오류", description: handleError(error, "회원번호 찾기에 실패했습니다."), variant: "destructive" })
     } finally {
       setIsLoading(false)
     }
@@ -107,12 +109,12 @@ export default function FindAccountPage() {
 
   const handleVerifyAuthCode = async (skipLengthCheck = false) => {
     if (!authCode) {
-      alert("인증 코드를 입력해주세요.")
+      toast({ title: "입력 오류", description: "인증 코드를 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (!skipLengthCheck && authCode.length !== 6) {
-      alert("인증 코드는 6자리여야 합니다.")
+      toast({ title: "입력 오류", description: "인증 코드는 6자리여야 합니다.", variant: "destructive" })
       return
     }
 
@@ -136,11 +138,11 @@ export default function FindAccountPage() {
       } else {
         // 응답은 성공했지만 예상한 데이터가 없는 경우
         console.error('Unexpected response format:', response)
-        alert("인증은 성공했지만 회원번호를 찾을 수 없습니다. 다시 시도해주세요.")
+        toast({ title: "오류", description: "인증은 성공했지만 회원번호를 찾을 수 없습니다. 다시 시도해주세요.", variant: "destructive" })
       }
     } catch (error: unknown) {
       console.error('Verification error:', error)
-      handleError(error, "인증 코드 검증에 실패했습니다.")
+      toast({ title: "오류", description: handleError(error, "인증 코드 검증에 실패했습니다."), variant: "destructive" })
     } finally {
       setIsLoading(false)
     }
@@ -173,7 +175,7 @@ export default function FindAccountPage() {
 
   const handleFindPassword = async () => {
     if (!passwordName || !passwordMemberNumber) {
-      alert("이름과 회원번호를 모두 입력해주세요.")
+      toast({ title: "입력 오류", description: "이름과 회원번호를 모두 입력해주세요.", variant: "destructive" })
       return
     }
 
@@ -192,7 +194,7 @@ export default function FindAccountPage() {
         setShowPasswordVerification(true)
       }
     } catch (error: unknown) {
-      handleError(error, "비밀번호 찾기에 실패했습니다.")
+      toast({ title: "오류", description: handleError(error, "비밀번호 찾기에 실패했습니다."), variant: "destructive" })
     } finally {
       setIsLoading(false)
     }
@@ -200,12 +202,12 @@ export default function FindAccountPage() {
 
   const handleVerifyPasswordAuthCode = async (skipLengthCheck = false) => {
     if (!passwordAuthCode) {
-      alert("인증 코드를 입력해주세요.")
+      toast({ title: "입력 오류", description: "인증 코드를 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (!skipLengthCheck && passwordAuthCode.length !== 6) {
-      alert("인증 코드는 6자리여야 합니다.")
+      toast({ title: "입력 오류", description: "인증 코드는 6자리여야 합니다.", variant: "destructive" })
       return
     }
 
@@ -230,11 +232,11 @@ export default function FindAccountPage() {
       } else {
         // 응답은 성공했지만 예상한 데이터가 없는 경우
         console.error('Unexpected response format:', response)
-        alert("인증은 성공했지만 임시 토큰을 받을 수 없습니다. 다시 시도해주세요.")
+        toast({ title: "오류", description: "인증은 성공했지만 임시 토큰을 받을 수 없습니다. 다시 시도해주세요.", variant: "destructive" })
       }
     } catch (error: unknown) {
       console.error('Password verification error:', error)
-      handleError(error, "인증 코드 검증에 실패했습니다.")
+      toast({ title: "오류", description: handleError(error, "인증 코드 검증에 실패했습니다."), variant: "destructive" })
     } finally {
       setIsLoading(false)
     }
@@ -253,17 +255,17 @@ export default function FindAccountPage() {
 
   const handleChangePassword = async () => {
     if (!newPassword || !confirmPassword) {
-      alert("새 비밀번호와 확인 비밀번호를 모두 입력해주세요.")
+      toast({ title: "입력 오류", description: "새 비밀번호와 확인 비밀번호를 모두 입력해주세요.", variant: "destructive" })
       return
     }
 
     if (newPassword !== confirmPassword) {
-      alert("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.")
+      toast({ title: "입력 오류", description: "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", variant: "destructive" })
       return
     }
 
     if (newPassword.length < 8) {
-      alert("비밀번호는 8자 이상이어야 합니다.")
+      toast({ title: "입력 오류", description: "비밀번호는 8자 이상이어야 합니다.", variant: "destructive" })
       return
     }
 
@@ -276,7 +278,7 @@ export default function FindAccountPage() {
       const token = sessionStorage.getItem('tempPasswordToken') || temporaryToken
       
       if (!token) {
-        alert("임시 토큰이 만료되었습니다. 다시 인증해주세요.")
+        toast({ title: "오류", description: "임시 토큰이 만료되었습니다. 다시 인증해주세요.", variant: "destructive" })
         handleBackToPasswordFind()
         return
       }
@@ -300,7 +302,7 @@ export default function FindAccountPage() {
       }, 3000)
     } catch (error: unknown) {
       console.error('Password change error:', error)
-      handleError(error, "비밀번호 변경에 실패했습니다.")
+      toast({ title: "오류", description: handleError(error, "비밀번호 변경에 실패했습니다."), variant: "destructive" })
       // 에러 발생 시 임시 토큰 삭제 (보안상)
       setTemporaryToken("")
       sessionStorage.removeItem('tempPasswordToken')

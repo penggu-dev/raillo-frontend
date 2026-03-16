@@ -18,9 +18,11 @@ import { StationSelector } from "@/components/ui/station-selector"
 import { DateTimeSelector } from "@/components/ui/date-time-selector"
 import { PassengerSelector } from "@/components/ui/passenger-selector"
 import type { PassengerCounts } from "@/types/passengerType"
+import { useToast } from "@/hooks/use-toast"
 
 export default function TicketBookingPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const [departureStation, setDepartureStation] = useState("")
   const [arrivalStation, setArrivalStation] = useState("")
   const [departureDate, setDepartureDate] = useState<Date>(new Date())
@@ -75,17 +77,17 @@ export default function TicketBookingPage() {
 
   const handleSearch = () => {
     if (!departureStation || !arrivalStation || !departureDate) {
-      alert("출발역, 도착역, 출발일을 모두 선택해주세요.")
+      toast({ title: "입력 오류", description: "출발역, 도착역, 출발일을 모두 선택해주세요.", variant: "destructive" })
       return
     }
 
     if (isRoundtrip && !returnDate) {
-      alert("오는 날짜를 선택해주세요.")
+      toast({ title: "입력 오류", description: "오는 날짜를 선택해주세요.", variant: "destructive" })
       return
     }
 
     if (isRoundtrip && returnDate <= departureDate) {
-      alert("오는 날짜는 가는 날짜보다 늦어야 합니다.")
+      toast({ title: "입력 오류", description: "오는 날짜는 가는 날짜보다 늦어야 합니다.", variant: "destructive" })
       return
     }
 
@@ -93,13 +95,13 @@ export default function TicketBookingPage() {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     if (departureDate < today) {
-      alert("가는 날짜는 오늘 이후여야 합니다.")
+      toast({ title: "입력 오류", description: "가는 날짜는 오늘 이후여야 합니다.", variant: "destructive" })
       return
     }
 
     // 왕복일 때 오는 날짜가 가는 날짜보다 이전인지 확인
     if (isRoundtrip && returnDate <= departureDate) {
-      alert("오는 날짜는 가는 날짜보다 늦어야 합니다.")
+      toast({ title: "입력 오류", description: "오는 날짜는 가는 날짜보다 늦어야 합니다.", variant: "destructive" })
       return
     }
 

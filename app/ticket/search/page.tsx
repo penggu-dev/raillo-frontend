@@ -24,6 +24,7 @@ import { ko } from "date-fns/locale";
 import type { CarInfo, SeatDetail } from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
 import { TRAIN_TYPE } from "@/constants/trainType";
+import { useToast } from "@/hooks/use-toast";
 
 interface TrainInfo {
   trainScheduleId?: number;
@@ -78,6 +79,7 @@ interface ReservationInfo {
 // 3. Update the component to include passenger selection functionality and fix date selection
 export default function TrainSearchPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const initializeAuth = useAuthStore((state) => state.initialize);
   const { mutateAsync: createPendingBooking } = usePostPendingBooking();
   const [allTrains, setAllTrains] = useState<TrainInfo[]>([]);
@@ -206,7 +208,7 @@ export default function TrainSearchPage() {
       );
 
       if (!departureStationId || !arrivalStationId) {
-        alert("역 정보를 찾을 수 없습니다.");
+        toast({ title: "오류", description: "역 정보를 찾을 수 없습니다.", variant: "destructive" });
         setLoading(false);
         return;
       }
@@ -443,7 +445,7 @@ export default function TrainSearchPage() {
   // Update search parameters
   const handleUpdateSearch = () => {
     if (!date) {
-      alert("출발일을 선택해주세요.");
+      toast({ title: "입력 오류", description: "출발일을 선택해주세요.", variant: "destructive" });
       return;
     }
 
@@ -451,7 +453,7 @@ export default function TrainSearchPage() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (date < today) {
-      alert("가는 날짜는 오늘 이후여야 합니다.");
+      toast({ title: "입력 오류", description: "가는 날짜는 오늘 이후여야 합니다.", variant: "destructive" });
       return;
     }
 
@@ -461,7 +463,7 @@ export default function TrainSearchPage() {
       returnDate &&
       returnDate <= date
     ) {
-      alert("오는 날짜는 가는 날짜보다 늦어야 합니다.");
+      toast({ title: "입력 오류", description: "오는 날짜는 가는 날짜보다 늦어야 합니다.", variant: "destructive" });
       return;
     }
 
@@ -606,7 +608,7 @@ export default function TrainSearchPage() {
   const handleSeatSelection = (train: TrainInfo, seatType: SeatType) => {
     const seatInfo = train[seatType];
     if (!seatInfo.available) {
-      alert("선택하신 좌석은 매진되었습니다.");
+      toast({ title: "알림", description: "선택하신 좌석은 매진되었습니다.", variant: "destructive" });
       return;
     }
 
@@ -902,7 +904,7 @@ export default function TrainSearchPage() {
     }
 
     if (!departureStationId || !arrivalStationId) {
-      alert("역 정보를 찾을 수 없습니다.");
+      toast({ title: "오류", description: "역 정보를 찾을 수 없습니다.", variant: "destructive" });
       return;
     }
 
@@ -923,13 +925,13 @@ export default function TrainSearchPage() {
     const seatIds = getSelectedSeatIds();
 
     if (seatIds.length === 0) {
-      alert("선택된 좌석 정보를 찾을 수 없습니다.");
+      toast({ title: "오류", description: "선택된 좌석 정보를 찾을 수 없습니다.", variant: "destructive" });
       return;
     }
 
     // 예약 요청 데이터
     if (!selectedTrain.trainScheduleId) {
-      alert("열차 스케줄 정보를 찾을 수 없습니다.");
+      toast({ title: "오류", description: "열차 스케줄 정보를 찾을 수 없습니다.", variant: "destructive" });
       return;
     }
 
@@ -962,9 +964,7 @@ export default function TrainSearchPage() {
           // 예매 패널 닫기
           closeBookingPanel();
           // 성공 메시지
-          alert(
-            "가는 열차가 장바구니에 추가되었습니다. 이제 오는 열차를 선택하세요."
-          );
+          toast({ description: "가는 열차가 장바구니에 추가되었습니다. 이제 오는 열차를 선택하세요." });
         } else if (isRoundtrip && outboundReserved) {
           // 오는 열차를 장바구니에 추가
           await addToCart(selectedTrain, selectedSeatType, false);
@@ -977,10 +977,10 @@ export default function TrainSearchPage() {
           router.push("/ticket/reservation");
         }
       } else {
-        alert("예약에 실패했습니다.");
+        toast({ title: "오류", description: "예약에 실패했습니다.", variant: "destructive" });
       }
     } catch (e: unknown) {
-      handleError(e, "예약 요청 중 오류가 발생했습니다.");
+      toast({ title: "오류", description: handleError(e, "예약 요청 중 오류가 발생했습니다."), variant: "destructive" });
     }
   };
 
@@ -1039,7 +1039,7 @@ export default function TrainSearchPage() {
     const requiredSeats = getTotalPassengers();
 
     if (seats.length !== requiredSeats) {
-      alert(`${requiredSeats}개의 좌석을 선택해주세요.`);
+      toast({ title: "알림", description: `${requiredSeats}개의 좌석을 선택해주세요.`, variant: "destructive" });
       return;
     }
 

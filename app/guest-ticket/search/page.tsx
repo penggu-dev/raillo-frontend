@@ -15,15 +15,17 @@ import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { User, Phone, Lock, Home, Printer } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function GuestTicketSearchPage() {
   const [name, setName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [password, setPassword] = useState("")
+  const { toast } = useToast()
 
   const handleSearch = () => {
     if (!name || !phoneNumber || !password) {
-      alert("모든 항목을 입력해주세요.")
+      toast({ title: "입력 오류", description: "모든 항목을 입력해주세요.", variant: "destructive" })
       return
     }
 

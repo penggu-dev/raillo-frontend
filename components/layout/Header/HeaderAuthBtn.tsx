@@ -6,20 +6,22 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
 import { usePostLogout } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const HeaderAuthBtn = () => {
   const router = useRouter();
   const { isInitialized, isAuthenticated, removeTokens } = useAuthStore();
   const { mutateAsync: logout, isPending } = usePostLogout();
+  const { toast } = useToast();
 
   const handleLogout = async () => {
     try {
       await logout();
-      alert("로그아웃되었습니다.");
+      toast({ description: "로그아웃되었습니다." });
       router.push("/");
     } catch (error: unknown) {
       console.error("로그아웃 에러:", error);
-      alert("로그아웃되었습니다.");
+      toast({ description: "로그아웃되었습니다." });
       router.push("/");
     } finally {
       // 서버 응답과 무관하게 클라이언트 상태 초기화
