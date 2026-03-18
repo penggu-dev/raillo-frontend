@@ -1,13 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 import { Train, MapPin, ArrowRight, User } from "lucide-react"
-import { getTickets } from '@/lib/api/booking'
-import { handleError } from '@/lib/utils/errorHandler'
+import { useGetTickets } from "@/hooks/useBooking"
 import { differenceInMinutes, parse } from "date-fns"
 import { formatDate, formatTime } from "@/lib/utils/format"
 import { getTrainTypeColor, getCarTypeName } from "@/lib/utils/ticketUtils"
@@ -34,28 +32,7 @@ interface Ticket {
 }
 
 function PurchasedTicketsPageContent() {
-  const [tickets, setTickets] = useState<Ticket[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  // 승차권 목록 조회
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        setLoading(true)
-        const response = await getTickets()
-        setTickets(response.result ?? [])
-      } catch (err) {
-        const errorMessage = handleError(err, '승차권 목록 조회 중 오류가 발생했습니다.', false)
-        setError(errorMessage)
-        setTickets([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchTickets()
-  }, [])
+  const { data: tickets = [], isLoading: loading, isError, error } = useGetTickets()
 
   // 소요 시간 계산 함수
   const getDuration = (departure: string, arrival: string) => {
@@ -97,10 +74,10 @@ function PurchasedTicketsPageContent() {
 
             <div className="space-y-6">
               {/* Error Message */}
-              {error && (
+              {isError && (
                 <Card className="border-red-200 bg-red-50">
                   <CardContent className="p-4">
-                    <p className="text-sm text-red-700">{error}</p>
+                    <p className="text-sm text-red-700">{error?.message ?? "오류가 발생했습니다."}</p>
                   </CardContent>
                 </Card>
               )}

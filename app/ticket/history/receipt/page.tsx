@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
@@ -10,9 +10,8 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, MapPin, ArrowRight, Receipt } from "lucide-react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
-import { getTicketReceipt } from "@/lib/api/booking"
 import type { TicketReceiptResponse } from "@/types/bookingType"
-import { handleError } from "@/lib/utils/errorHandler"
+import { useGetTicketReceipt } from "@/hooks/useBooking"
 import { formatDate, formatTime, formatPrice } from "@/lib/utils/format"
 import { getCarTypeName, getPassengerTypeName, getPaymentMethodName } from "@/lib/utils/ticketUtils"
 
@@ -21,9 +20,6 @@ type TicketReceiptDetail = TicketReceiptResponse["result"]
 export default function TicketReceiptDetailPage() {
   const searchParams = useSearchParams()
   const { isAuthenticated, isChecking } = useAuth({ redirectPath: "/ticket/history" })
-  const [receipt, setReceipt] = useState<TicketReceiptDetail | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   const ticketId = useMemo(() => {
     const raw = searchParams.get("ticketId")
@@ -32,31 +28,7 @@ export default function TicketReceiptDetailPage() {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null
   }, [searchParams])
 
-  useEffect(() => {
-    if (isChecking || !isAuthenticated) return
-
-    const fetchReceipt = async () => {
-      if (!ticketId) {
-        setError("유효한 승차권 ID가 아닙니다.")
-        setLoading(false)
-        return
-      }
-
-      try {
-        setLoading(true)
-        const response = await getTicketReceipt(ticketId)
-        setReceipt(response.result ?? null)
-      } catch (err) {
-        const errorMessage = handleError(err, "영수증 상세 조회 중 오류가 발생했습니다.", false)
-        setError(errorMessage)
-        setReceipt(null)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchReceipt()
-  }, [isChecking, isAuthenticated, ticketId])
+  const { data: receipt = null, isLoading: loading, isError, error } = useGetTicketReceipt(ticketId)
 
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString)
@@ -81,12 +53,12 @@ export default function TicketReceiptDetailPage() {
     )
   }
 
-  if (error || !receipt) {
+  if (isError || !receipt) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="text-red-600 mb-4">
           <p className="text-lg font-semibold">영수증 정보를 불러올 수 없습니다</p>
-          <p className="text-sm">{error ?? "데이터가 없습니다."}</p>
+          <p className="text-sm">{error?.message ?? "데이터가 없습니다."}</p>
         </div>
         <Link href="/ticket/history">
           <Button variant="outline">내역으로 돌아가기</Button>
