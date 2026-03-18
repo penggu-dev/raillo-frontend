@@ -8,9 +8,20 @@ import type {
   AddToCartRequest,
   AddToCartResponse,
   PendingBookingCartItem,
+  PendingBookingRequest,
+  PendingBookingResponse,
   DeletePendingBookingsRequest,
   DeletePendingBookingsResponse,
 } from "@/types/bookingType";
+
+// 대기 예약 생성 함수
+export const createPendingBooking = async (request: PendingBookingRequest): Promise<PendingBookingResponse> => {
+  const response = await api.post<PendingBookingResponse["result"]>("/api/v1/pending-bookings", request);
+  return {
+    message: response.message ?? "대기 예약이 생성되었습니다.",
+    result: response.result,
+  };
+};
 
 // 예약 요청 함수
 export const makeReservation = async (request: ReservationRequest) => {
