@@ -11,9 +11,8 @@ import {
   searchCars,
   searchSeats,
 } from "@/lib/api/train";
-import { makeReservation } from "@/lib/api/booking";
+import { makeReservation, createPendingBooking } from "@/lib/api/booking";
 import { handleError } from "@/lib/utils/errorHandler";
-import { usePostPendingBooking } from "@/hooks/usePendingBooking";
 import { SeatSelectionDialog } from "@/components/ui/seat-selection-dialog";
 import { BookingPanel } from "@/components/ui/booking-panel";
 import { SearchForm } from "@/components/ui/search-form";
@@ -81,7 +80,6 @@ export default function TrainSearchPage() {
   const router = useRouter();
   const { toast } = useToast();
   const initializeAuth = useAuthStore((state) => state.initialize);
-  const { mutateAsync: createPendingBooking } = usePostPendingBooking();
   const [allTrains, setAllTrains] = useState<TrainInfo[]>([]);
   const [displayedTrains, setDisplayedTrains] = useState<TrainInfo[]>([]);
   const [loading, setLoading] = useState(true);

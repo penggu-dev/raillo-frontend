@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { usePostPaymentConfirm } from "@/hooks/usePayment";
+import { confirmPayment } from "@/lib/api/payment";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,9 +14,10 @@ import { PaymentConfirmResult } from "@/types/paymentsType";
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { mutateAsync: confirmPayment, isPending, isError, error } = usePostPaymentConfirm();
   const [paymentResult, setPaymentResult] = useState<PaymentConfirmResult | null>(null);
   const [isConfirming, setIsConfirming] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const confirm = async () => {
@@ -43,6 +44,8 @@ export default function PaymentSuccessPage() {
         }
       } catch (err) {
         console.error("결제 확정 실패:", err);
+        setIsError(true);
+        setError(err instanceof Error ? err : new Error("결제 확정에 실패했습니다."));
       } finally {
         setIsConfirming(false);
       }

@@ -42,7 +42,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { usePostPaymentPrepare } from "@/hooks/usePayment";
+import { preparePayment } from "@/lib/api/payment";
 import { useAuth } from "@/hooks/use-auth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
 
@@ -54,8 +54,6 @@ function ReservationsPageContent() {
   const { isAuthenticated, isChecking } = useAuth({
     redirectPath: "/ticket/reservations",
   });
-  const { mutateAsync: preparePayment } = usePostPaymentPrepare();
-
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [selectedCancelId, setSelectedCancelId] = useState<string | null>(null);
   const [reservations, setReservations] = useState<ReservationItem[]>([]);
