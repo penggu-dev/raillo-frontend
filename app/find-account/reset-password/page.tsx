@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Train, Home, Printer, Eye, EyeOff } from "lucide-react"
-import { authAPI } from "@/lib/api/auth"
+import { changePassword } from "@/lib/api/auth"
 import { handleError } from "@/lib/utils/errorHandler"
 import { useToast } from "@/hooks/use-toast"
 
@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
         return
       }
 
-      await authAPI.changePassword(
+      await changePassword(
         {
           newPassword: passwords.new,
         },
