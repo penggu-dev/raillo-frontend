@@ -1,7 +1,5 @@
 import { api, ApiResponse } from "../api";
 import type {
-  MemberNoLoginResult,
-  TokenReissueResult,
   FindMemberNoRequest,
   FindMemberNoResponse,
   VerifyMemberNoRequest,
@@ -10,23 +8,7 @@ import type {
   FindPasswordResponse,
   VerifyPasswordRequest,
   VerifyPasswordResponse,
-  ChangePasswordRequest,
 } from "@/types/authType";
-
-export const login = async (data: {
-  memberNo: string;
-  password: string;
-}): Promise<ApiResponse<MemberNoLoginResult>> => {
-  return api.post<MemberNoLoginResult>("/auth/login", data);
-};
-
-export const logout = async (): Promise<ApiResponse> => {
-  return api.post("/auth/logout");
-};
-
-export const reissueToken = async (): Promise<ApiResponse<TokenReissueResult>> => {
-  return api.post<TokenReissueResult>("/auth/reissue");
-};
 
 export const findMemberNo = async (
   data: FindMemberNoRequest,
@@ -52,16 +34,18 @@ export const verifyPassword = async (
   return api.post<VerifyPasswordResponse>("/auth/password/verify", data);
 };
 
-export const changePassword = async (
-  requestData: ChangePasswordRequest,
-  temporaryToken: string,
-): Promise<ApiResponse> => {
-  return api.request("/members/password", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${temporaryToken}`,
-    },
-    body: JSON.stringify(requestData),
+export const sendEmailVerificationCode = async (
+  email: string,
+): Promise<ApiResponse<{ message: string }>> => {
+  return api.post<{ message: string }>("/auth/members/me/email-code", { email });
+};
+
+export const updateEmail = async (
+  email: string,
+  authCode: string,
+): Promise<ApiResponse<{ message: string }>> => {
+  return api.put<{ message: string }>("/auth/members/me/email-code", {
+    newEmail: email,
+    authCode,
   });
 };
