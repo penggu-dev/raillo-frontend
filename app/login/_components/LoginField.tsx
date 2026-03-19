@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
-import { login } from "@/lib/api/auth";
+import { login } from "@/lib/api/authentication";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useAuthStore } from "@/stores/auth-store";
 import { useToast } from "@/hooks/use-toast";

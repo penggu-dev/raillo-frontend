@@ -10,8 +10,8 @@ import {
   stationUtils,
   searchCars,
   searchSeats,
-} from "@/lib/api/train";
-import { makeReservation, createPendingBooking } from "@/lib/api/booking";
+} from "@/lib/api/trains";
+import { createPendingBooking } from "@/lib/api/pendingBookings";
 import { handleError } from "@/lib/utils/errorHandler";
 import { SeatSelectionDialog } from "@/components/ui/seat-selection-dialog";
 import { BookingPanel } from "@/components/ui/booking-panel";

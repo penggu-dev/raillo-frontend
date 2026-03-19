@@ -10,7 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText, User, Lock, Mail, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import PageLayout from "@/components/layout/PageLayout"
-import { findMemberNo, verifyMemberNo, findPassword, verifyPassword, changePassword } from "@/lib/api/auth"
+import { findMemberNo, verifyMemberNo, findPassword, verifyPassword } from "@/lib/api/authMembers"
+import { updatePassword } from "@/lib/api/members"
 import { handleError } from "@/lib/utils/errorHandler"
 import { useToast } from "@/hooks/use-toast"
 
@@ -284,9 +285,7 @@ export default function FindAccountPage() {
       }
 
       // 임시 토큰을 사용하여 비밀번호 변경 요청
-      const response = await changePassword({
-        newPassword: newPassword
-      }, token)
+      const response = await updatePassword(newPassword, token)
 
       // API 호출이 성공했다면 (catch 블록에 들어가지 않았다면) 성공으로 간주
       // 성공 상태로 변경

@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format";
 import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
-import { getReservationList, deleteReservation } from "@/lib/api/booking";
+import { getReservationList, deletePendingBookings } from "@/lib/api/pendingBookings";
 import type { PendingBookingCartItem } from "@/types/bookingType";
 import { handleError } from "@/lib/utils/errorHandler";
 import {
@@ -42,7 +42,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { preparePayment } from "@/lib/api/payment";
+import { preparePayment } from "@/lib/api/payments";
 import { useAuth } from "@/hooks/use-auth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
 
@@ -169,7 +169,7 @@ function ReservationsPageContent() {
   const confirmCancelReservation = async () => {
     if (selectedCancelId) {
       try {
-        await deleteReservation(selectedCancelId);
+        await deletePendingBookings([selectedCancelId]);
         toast({ description: "예약이 취소되었습니다." });
         const response = await getReservationList();
         if (response.result) {

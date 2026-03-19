@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTickets, getTicketReceipt } from "@/lib/api/booking";
+import { getTickets, getTicketReceipt } from "@/lib/api/bookings";
 import type { TicketResponse, TicketReceiptResponse } from "@/types/bookingType";
 
 export const useGetTickets = () => {

@@ -33,7 +33,7 @@ import {
   ChevronDown,
   CheckCircle,
 } from "lucide-react";
-import { deleteReservation } from "@/lib/api/booking";
+import { deletePendingBookings } from "@/lib/api/pendingBookings";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useGetPendingBookingList } from "@/hooks/usePendingBooking";
 import type { PendingBookingInfo } from "@/types/bookingType";
@@ -256,7 +256,7 @@ export default function ReservationPage() {
     setShowCancelDialog(false);
     try {
       if (selectedBooking) {
-        const response = await deleteReservation(selectedBooking.pendingBookingId);
+        const response = await deletePendingBookings([selectedBooking.pendingBookingId]);
         const successMessage =
           response.message ??
           response.result?.message ??
