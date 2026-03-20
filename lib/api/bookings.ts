@@ -4,9 +4,11 @@ import type {
   TicketReceiptResponse,
 } from "@/types/bookingType";
 
+export type BookingStatus = "UPCOMING" | "HISTORY" | "ALL";
+
 // 승차권 조회 함수
-export const getTickets = async () => {
-  return api.get<TicketResponse["result"]>("/api/v1/bookings");
+export const getTickets = async (status: BookingStatus = "ALL") => {
+  return api.get<TicketResponse["result"]>("/api/v1/bookings", { status });
 };
 
 // 예매 상세 조회 함수

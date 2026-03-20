@@ -1,12 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTickets, getTicketReceipt } from "@/lib/api/bookings";
-import type { TicketResponse, TicketReceiptResponse } from "@/types/bookingType";
+import type { BookingStatus } from "@/lib/api/bookings";
+import type {
+  TicketResponse,
+  TicketReceiptResponse,
+} from "@/types/bookingType";
 
-export const useGetTickets = () => {
+export const useGetTickets = (status: BookingStatus = "ALL") => {
   return useQuery<TicketResponse["result"], Error>({
-    queryKey: ["tickets"],
+    queryKey: ["tickets", status],
     queryFn: async () => {
-      const response = await getTickets();
+      const response = await getTickets(status);
       return response.result ?? [];
     },
   });
