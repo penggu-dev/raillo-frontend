@@ -1,4 +1,4 @@
-import { api, ApiResponse } from "../api";
+import { api, requireResult } from "../api";
 import type {
   FindMemberNoRequest,
   FindMemberNoResponse,
@@ -12,39 +12,56 @@ import type {
 
 export const findMemberNo = async (
   data: FindMemberNoRequest,
-): Promise<ApiResponse<FindMemberNoResponse>> => {
-  return api.post<FindMemberNoResponse>("/auth/member-no", data);
+): Promise<FindMemberNoResponse> => {
+  const response = await api.post<FindMemberNoResponse>(
+    "/auth/member-no",
+    data,
+  );
+  return requireResult(response.result, "회원번호 찾기에 실패했습니다.");
 };
 
 export const verifyMemberNo = async (
   data: VerifyMemberNoRequest,
-): Promise<ApiResponse<VerifyMemberNoResponse>> => {
-  return api.post<VerifyMemberNoResponse>("/auth/member-no/verify", data);
+): Promise<VerifyMemberNoResponse> => {
+  const response = await api.post<VerifyMemberNoResponse>(
+    "/auth/member-no/verify",
+    data,
+  );
+  return requireResult(response.result, "회원번호 인증에 실패했습니다.");
 };
 
 export const findPassword = async (
   data: FindPasswordRequest,
-): Promise<ApiResponse<FindPasswordResponse>> => {
-  return api.post<FindPasswordResponse>("/auth/password", data);
+): Promise<FindPasswordResponse> => {
+  const response = await api.post<FindPasswordResponse>("/auth/password", data);
+  return requireResult(response.result, "비밀번호 찾기에 실패했습니다.");
 };
 
 export const verifyPassword = async (
   data: VerifyPasswordRequest,
-): Promise<ApiResponse<VerifyPasswordResponse>> => {
-  return api.post<VerifyPasswordResponse>("/auth/password/verify", data);
+): Promise<VerifyPasswordResponse> => {
+  const response = await api.post<VerifyPasswordResponse>(
+    "/auth/password/verify",
+    data,
+  );
+  return requireResult(response.result, "비밀번호 인증에 실패했습니다.");
 };
 
 export const sendEmailVerificationCode = async (
   email: string,
-): Promise<ApiResponse<{ message: string }>> => {
-  return api.post<{ message: string }>("/auth/members/me/email-code", { email });
+): Promise<{ email: string }> => {
+  const response = await api.post<{ email: string }>(
+    "/auth/members/me/email-code",
+    { email },
+  );
+  return requireResult(response.result, "인증코드 발송에 실패했습니다.");
 };
 
 export const updateEmail = async (
   email: string,
   authCode: string,
-): Promise<ApiResponse<{ message: string }>> => {
-  return api.put<{ message: string }>("/auth/members/me/email-code", {
+): Promise<void> => {
+  await api.put("/auth/members/me/email-code", {
     newEmail: email,
     authCode,
   });

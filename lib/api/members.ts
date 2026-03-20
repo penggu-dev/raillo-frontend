@@ -1,23 +1,21 @@
-import { api, ApiResponse } from "../api";
-import type {
-  MemberInfoResponse,
-  MemberInfo,
-} from "@/types/userType";
+import { api, requireResult } from "../api";
+import type { MemberInfoResponse, MemberInfo } from "@/types/userType";
 
-export const getMyInfo = async (): Promise<ApiResponse<MemberInfoResponse>> => {
-  return api.get<MemberInfoResponse>("/api/v1/members/me");
+export const getMyInfo = async (): Promise<MemberInfoResponse> => {
+  const response = await api.get<MemberInfoResponse>("/api/v1/members/me");
+  return requireResult(response.result, "회원 정보를 찾을 수 없습니다.");
 };
 
-export const deleteAccount = async (): Promise<ApiResponse<{ message: string }>> => {
-  return api.delete<{ message: string }>("/api/v1/members");
+export const deleteAccount = async (): Promise<void> => {
+  await api.delete("/api/v1/members");
 };
 
 export const updatePassword = async (
   newPassword: string,
   temporaryToken?: string,
-): Promise<ApiResponse<{ message: string }>> => {
+): Promise<void> => {
   if (temporaryToken) {
-    return api.request<{ message: string }>("/api/v1/members/password", {
+    await api.request("/api/v1/members/password", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -25,39 +23,19 @@ export const updatePassword = async (
       },
       body: JSON.stringify({ newPassword }),
     });
+    return;
   }
-  return api.put<{ message: string }>("/api/v1/members/password", { newPassword });
+  await api.put("/api/v1/members/password", { newPassword });
 };
 
 export const updatePhoneNumber = async (
   newPhoneNumber: string,
-): Promise<ApiResponse<{ message: string }>> => {
-  return api.put<{ message: string }>("/api/v1/members/phone-number", { newPhoneNumber });
+): Promise<void> => {
+  await api.put("/api/v1/members/phone-number", { newPhoneNumber });
 };
 
 export const getMemberInfo = async (): Promise<MemberInfo> => {
-  const response = await getMyInfo();
-  const data = response.result;
-
-  if (!data) {
-    throw new Error("회원 정보를 찾을 수 없습니다.");
-  }
-
-  const getGradeDisplayName = (membership: string): string => {
-    switch (membership) {
-      case "FAMILY":
-        return "패밀리";
-      case "BUSINESS":
-        return "비즈니스";
-      case "VIP":
-        return "VIP";
-      case "VVIP":
-        return "VVIP";
-      default:
-        return "일반";
-    }
-  };
-
+  const data = await getMyInfo();
   return {
     memberId: data.memberDetailInfo.memberNo,
     name: data.name,
@@ -65,7 +43,5 @@ export const getMemberInfo = async (): Promise<MemberInfo> => {
     phoneNumber: data.phoneNumber,
     birthDate: data.memberDetailInfo.birthDate,
     gender: data.memberDetailInfo.gender === "M" ? "남성" : "여성",
-    memberGrade: getGradeDisplayName(data.memberDetailInfo.membership),
-    mileage: data.memberDetailInfo.totalMileage,
   };
 };
