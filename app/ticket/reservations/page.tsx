@@ -23,7 +23,7 @@ import {
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format";
 import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
 import { deletePendingBookings } from "@/lib/api/pendingBookings";
-import { useGetPendingBookingList } from "@/hooks/usePendingBooking";
+import { useGetPendingBookingList, PENDING_BOOKINGS_QUERY_KEY } from "@/hooks/usePendingBooking";
 import type { PendingBookingCartItem } from "@/types/bookingType";
 import { handleError } from "@/lib/utils/errorHandler";
 import {
@@ -153,7 +153,7 @@ function ReservationsPageContent() {
           next.delete(selectedCancelId);
           return next;
         });
-        queryClient.invalidateQueries({ queryKey: ["pendingBookings"] });
+        queryClient.invalidateQueries({ queryKey: PENDING_BOOKINGS_QUERY_KEY });
       } catch (err) {
         toast({
           title: "오류",

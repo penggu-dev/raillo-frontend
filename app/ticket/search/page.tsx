@@ -13,6 +13,7 @@ import {
   searchSeats,
 } from "@/lib/api/trains";
 import { createPendingBooking } from "@/lib/api/pendingBookings";
+import { PENDING_BOOKINGS_QUERY_KEY } from "@/hooks/usePendingBooking";
 import { handleError } from "@/lib/utils/errorHandler";
 import { SeatSelectionDialog } from "@/components/ui/seat-selection-dialog";
 import { BookingPanel } from "@/components/ui/booking-panel";
@@ -1002,7 +1003,7 @@ export default function TrainSearchPage() {
           });
         } else {
           closeBookingPanel();
-          queryClient.invalidateQueries({ queryKey: ["pendingBookings"] });
+          queryClient.invalidateQueries({ queryKey: PENDING_BOOKINGS_QUERY_KEY });
           router.push("/ticket/reservations");
         }
       } else {
