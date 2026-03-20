@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { formatPrice } from "@/lib/utils/format";
@@ -78,6 +79,7 @@ interface ReservationInfo {
 // 3. Update the component to include passenger selection functionality and fix date selection
 export default function TrainSearchPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const initializeAuth = useAuthStore((state) => state.initialize);
   const [allTrains, setAllTrains] = useState<TrainInfo[]>([]);
@@ -229,7 +231,7 @@ export default function TrainSearchPage() {
       };
 
       // 열차 조회 API 호출
-      const response = await searchTrains(searchRequest, 0, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         // 새로운 API 응답 구조 처리
@@ -325,7 +327,7 @@ export default function TrainSearchPage() {
         departureHour: searchData.returnHour?.replace("시", "") || "00",
       };
 
-      const response = await searchTrains(searchRequest, 0, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         const content = response.result.content || response.result;
@@ -676,7 +678,7 @@ export default function TrainSearchPage() {
         departureHour: searchData.departureHour.replace("시", ""),
       };
 
-      const response = await searchTrains(searchRequest, nextPage, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         const content = response.result.content || response.result;
@@ -766,7 +768,7 @@ export default function TrainSearchPage() {
         departureHour: searchData.returnHour?.replace("시", "") || "00",
       };
 
-      const response = await searchTrains(searchRequest, nextPage, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         const content = response.result.content || response.result;
@@ -1000,6 +1002,7 @@ export default function TrainSearchPage() {
           });
         } else {
           closeBookingPanel();
+          queryClient.invalidateQueries({ queryKey: ["pendingBookings"] });
           router.push("/ticket/reservations");
         }
       } else {

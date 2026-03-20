@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import AuthGuard from "@/components/auth/AuthGuard";
@@ -21,7 +22,8 @@ import {
 } from "lucide-react";
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format";
 import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
-import { getReservationList, deletePendingBookings } from "@/lib/api/pendingBookings";
+import { deletePendingBookings } from "@/lib/api/pendingBookings";
+import { useGetPendingBookingList } from "@/hooks/usePendingBooking";
 import type { PendingBookingCartItem } from "@/types/bookingType";
 import { handleError } from "@/lib/utils/errorHandler";
 import {
@@ -46,19 +48,19 @@ import { preparePayment } from "@/lib/api/payments";
 import { useAuth } from "@/hooks/use-auth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
 
-type ReservationItem = PendingBookingCartItem & { selected: boolean };
-
 function ReservationsPageContent() {
   const router = useRouter();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { isAuthenticated, isChecking } = useAuth({
     redirectPath: "/ticket/reservations",
   });
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [selectedCancelId, setSelectedCancelId] = useState<string | null>(null);
-  const [reservations, setReservations] = useState<ReservationItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const { data, isLoading, isError, error } = useGetPendingBookingList();
+  const reservations = data?.result ?? [];
 
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
@@ -98,36 +100,7 @@ function ReservationsPageContent() {
     initPaymentWidget();
   }, [isAuthenticated, isChecking]);
 
-  // 예약 목록 조회
-  useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        setLoading(true);
-        const response = await getReservationList();
-        if (response.result) {
-          setReservations(
-            response.result.map((item) => ({ ...item, selected: false })),
-          );
-        } else {
-          setReservations([]);
-        }
-      } catch (err) {
-        const errorMessage = handleError(
-          err,
-          "예약 목록 조회 중 오류가 발생했습니다.",
-          false,
-        );
-        setError(errorMessage);
-        setReservations([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReservations();
-  }, []);
-
-  const getTotalPrice = (reservation: ReservationItem) => {
+  const getTotalPrice = (reservation: PendingBookingCartItem) => {
     return reservation.totalFare ?? reservation.fare ?? 0;
   };
 
@@ -142,23 +115,27 @@ function ReservationsPageContent() {
   };
 
   const toggleItemSelection = (pendingBookingId: string) => {
-    setReservations((prev) =>
-      prev.map((item) =>
-        item.pendingBookingId === pendingBookingId
-          ? { ...item, selected: !item.selected }
-          : item,
-      ),
-    );
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(pendingBookingId)) {
+        next.delete(pendingBookingId);
+      } else {
+        next.add(pendingBookingId);
+      }
+      return next;
+    });
   };
 
   const toggleAllSelection = () => {
     const valid = reservations.filter((r) => !isExpired(r.expiresAt));
-    const allSelected = valid.every((item) => item.selected);
-    setReservations((prev) =>
-      prev.map((item) =>
-        isExpired(item.expiresAt) ? item : { ...item, selected: !allSelected },
-      ),
+    const allSelected = valid.every((item) =>
+      selectedIds.has(item.pendingBookingId),
     );
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(valid.map((item) => item.pendingBookingId)));
+    }
   };
 
   const handleCancelReservation = (pendingBookingId: string) => {
@@ -171,12 +148,12 @@ function ReservationsPageContent() {
       try {
         await deletePendingBookings([selectedCancelId]);
         toast({ description: "예약이 취소되었습니다." });
-        const response = await getReservationList();
-        if (response.result) {
-          setReservations(
-            response.result.map((item) => ({ ...item, selected: false })),
-          );
-        }
+        setSelectedIds((prev) => {
+          const next = new Set(prev);
+          next.delete(selectedCancelId);
+          return next;
+        });
+        queryClient.invalidateQueries({ queryKey: ["pendingBookings"] });
       } catch (err) {
         toast({
           title: "오류",
@@ -203,7 +180,9 @@ function ReservationsPageContent() {
       return;
     }
 
-    const selected = reservations.filter((item) => item.selected);
+    const selected = reservations.filter((item) =>
+      selectedIds.has(item.pendingBookingId),
+    );
     if (selected.length === 0) {
       toast({
         title: "선택 필요",
@@ -244,7 +223,9 @@ function ReservationsPageContent() {
   const handleRequestPayment = async () => {
     if (!paymentWidgetRef.current || !paymentInfo) return;
 
-    const selected = reservations.filter((item) => item.selected);
+    const selected = reservations.filter((item) =>
+      selectedIds.has(item.pendingBookingId),
+    );
     const orderName =
       selected.length > 1
         ? `${selected[0].trainName} ${selected[0].trainNumber} 외 ${selected.length - 1}매`
@@ -280,16 +261,18 @@ function ReservationsPageContent() {
   };
 
   const validReservations = reservations.filter((r) => !isExpired(r.expiresAt));
-  const selectedItems = reservations.filter((item) => item.selected);
+  const selectedItems = reservations.filter((item) =>
+    selectedIds.has(item.pendingBookingId),
+  );
   const totalPrice = selectedItems.reduce(
     (sum, item) => sum + getTotalPrice(item),
     0,
   );
   const allSelected =
     validReservations.length > 0 &&
-    validReservations.every((item) => item.selected);
+    validReservations.every((item) => selectedIds.has(item.pendingBookingId));
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -298,14 +281,14 @@ function ReservationsPageContent() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="text-red-600 mb-4">
           <p className="text-lg font-semibold">
             예약 목록을 불러올 수 없습니다
           </p>
-          <p className="text-sm">{error}</p>
+          <p className="text-sm">{error?.message}</p>
         </div>
         <Button onClick={() => router.push("/")} variant="outline">
           홈으로 돌아가기
@@ -396,12 +379,12 @@ function ReservationsPageContent() {
               validReservations.map((reservation) => (
                 <Card
                   key={reservation.pendingBookingId}
-                  className={`border-blue-200 ${reservation.selected ? "ring-2 ring-blue-500" : ""}`}
+                  className={`border-blue-200 ${selectedIds.has(reservation.pendingBookingId) ? "ring-2 ring-blue-500" : ""}`}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-3">
                       <Checkbox
-                        checked={reservation.selected}
+                        checked={selectedIds.has(reservation.pendingBookingId)}
                         onCheckedChange={() =>
                           toggleItemSelection(reservation.pendingBookingId)
                         }
