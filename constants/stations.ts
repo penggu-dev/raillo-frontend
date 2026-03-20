@@ -1,22 +1,5 @@
-import { api, ApiResponse } from "../api";
-import type {
-  Station,
-  SeatInfo,
-  TrainSchedule,
-  PageInfo,
-  TrainSearchResponse,
-  TrainSearchRequest,
-  CalendarInfo,
-  CalendarResponse,
-  CarInfo,
-  CarSearchResponse,
-  CarSearchRequest,
-  SeatDetail,
-  SeatSearchResponse,
-  SeatSearchRequest,
-} from "@/types/trainType";
+import type { Station } from "@/types/trainType";
 
-// 역 정보 상수
 export const STATIONS: Station[] = [
   { id: 1, name: "행신" },
   { id: 2, name: "서울" },
@@ -97,7 +80,6 @@ export const STATIONS: Station[] = [
   { id: 77, name: "문경" },
 ];
 
-// 역 정보 유틸리티 함수
 export const stationUtils = {
   getStationName: (id: number): string => {
     const station = STATIONS.find((s) => s.id === id);
@@ -117,42 +99,3 @@ export const stationUtils = {
     return STATIONS.filter((station) => station.name.includes(query));
   },
 };
-
-// 열차 관련 API
-export const trainAPI = {
-  searchTrains: async (
-    request: TrainSearchRequest,
-    page: number = 0,
-    size: number = 10,
-  ): Promise<ApiResponse<TrainSearchResponse>> => {
-    const params = new URLSearchParams({
-      page: String(page),
-      size: String(size),
-    }).toString();
-    return api.post<TrainSearchResponse>(
-      `/api/v1/trains/search?${params}`,
-      request,
-    );
-  },
-
-  getCalendar: async (): Promise<ApiResponse<CalendarInfo[]>> => {
-    return api.get<CalendarInfo[]>("/api/v1/trains/calendar");
-  },
-
-  searchCars: async (
-    request: CarSearchRequest,
-  ): Promise<ApiResponse<CarSearchResponse>> => {
-    return api.post<CarSearchResponse>("/api/v1/trains/cars", request);
-  },
-
-  searchSeats: async (
-    request: SeatSearchRequest,
-  ): Promise<ApiResponse<SeatSearchResponse>> => {
-    return api.post<SeatSearchResponse>("/api/v1/trains/seats", request);
-  },
-};
-
-// 기존 호환성을 위한 export
-export const searchTrains = trainAPI.searchTrains;
-export const searchCars = trainAPI.searchCars;
-export const searchSeats = trainAPI.searchSeats;

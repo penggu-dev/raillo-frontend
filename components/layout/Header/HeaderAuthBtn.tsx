@@ -1,20 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { LogIn, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
-import { usePostLogout } from "@/hooks/useAuth";
+import { logout } from "@/lib/api/authentication";
 import { useToast } from "@/hooks/use-toast";
 
 const HeaderAuthBtn = () => {
   const router = useRouter();
   const { isInitialized, isAuthenticated, removeTokens } = useAuthStore();
-  const { mutateAsync: logout, isPending } = usePostLogout();
+  const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
 
   const handleLogout = async () => {
+    setIsPending(true);
     try {
       await logout();
       toast({ description: "로그아웃되었습니다." });
@@ -26,6 +28,7 @@ const HeaderAuthBtn = () => {
     } finally {
       // 서버 응답과 무관하게 클라이언트 상태 초기화
       removeTokens();
+      setIsPending(false);
     }
   };
 

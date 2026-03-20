@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -19,24 +20,11 @@ import {
   ChevronRight,
   Clock,
 } from "lucide-react";
-import { trainAPI } from "@/lib/api/train";
+import { getCalendar } from "@/lib/api/trains";
 import type { CalendarInfo } from "@/types/trainType";
 
-// 전역 캐시 (모든 DateTimeSelector 인스턴스가 공유)
-let globalCalendarCache: {
-  data: CalendarInfo[];
-  timestamp: number;
-  loading: boolean;
-  promise: Promise<CalendarInfo[]> | null;
-} = {
-  data: [],
-  timestamp: 0,
-  loading: false,
-  promise: null,
-};
-
 // 캐시 유효 시간 (5분)
-const CACHE_DURATION = 5 * 60 * 1000;
+const CALENDAR_STALE_TIME = 5 * 60 * 1000;
 
 interface DateTimeSelectorProps {
   value: Date | undefined;
@@ -58,10 +46,16 @@ export function DateTimeSelector({
   const [selectedHour, setSelectedHour] = useState<string>(
     value
       ? value.getHours().toString().padStart(2, "0") + "시"
-      : new Date().getHours().toString().padStart(2, "0") + "시"
+      : new Date().getHours().toString().padStart(2, "0") + "시",
   );
-  const [calendarData, setCalendarData] = useState<CalendarInfo[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: calendarData = [], isLoading } = useQuery<CalendarInfo[]>({
+    queryKey: ["calendar"],
+    queryFn: async () => {
+      const response = await getCalendar();
+      return response.result ?? [];
+    },
+    staleTime: CALENDAR_STALE_TIME,
+  });
 
   // 오늘 날짜 (시간 제외)
   const today = startOfDay(new Date());
@@ -73,64 +67,10 @@ export function DateTimeSelector({
       : addMonths(today, 1); // 기본값으로 한 달 후
   }, [calendarData, today]);
 
-  // 운행 캘린더 데이터 로드 (캐싱 적용)
-  useEffect(() => {
-    const loadCalendar = async () => {
-      // 캐시가 유효하면 캐시된 데이터 사용
-      const now = Date.now();
-      if (
-        globalCalendarCache.data.length > 0 &&
-        now - globalCalendarCache.timestamp < CACHE_DURATION
-      ) {
-        setCalendarData(globalCalendarCache.data);
-        return;
-      }
-
-      // 이미 로딩 중이면 기존 promise 대기
-      if (globalCalendarCache.loading && globalCalendarCache.promise) {
-        try {
-          const data = await globalCalendarCache.promise;
-          setCalendarData(data);
-        } catch (error) {
-          console.error("운행 캘린더 로드 실패:", error);
-        }
-        return;
-      }
-
-      // 새로운 로딩 시작
-      setIsLoading(true);
-      globalCalendarCache.loading = true;
-
-      const loadPromise = (async () => {
-        try {
-          const response = await trainAPI.getCalendar();
-          if (response.result) {
-            globalCalendarCache.data = response.result;
-            globalCalendarCache.timestamp = now;
-            setCalendarData(response.result);
-            return response.result;
-          }
-          return [];
-        } catch (error) {
-          console.warn("운행 캘린더 로드 실패:", error);
-          return [];
-        } finally {
-          globalCalendarCache.loading = false;
-          globalCalendarCache.promise = null;
-          setIsLoading(false);
-        }
-      })();
-
-      globalCalendarCache.promise = loadPromise;
-    };
-
-    loadCalendar();
-  }, []);
-
   // 시간 옵션 (00시 ~ 23시)
   const hourOptions = Array.from(
     { length: 24 },
-    (_, i) => i.toString().padStart(2, "0") + "시"
+    (_, i) => i.toString().padStart(2, "0") + "시",
   );
 
   // 현재 시간이 선택된 날짜의 과거인지 확인
@@ -146,7 +86,7 @@ export function DateTimeSelector({
       now.getHours(),
       0,
       0,
-      0
+      0,
     );
     return selectedDateTime < nowHourDate;
   }, []);
@@ -162,14 +102,14 @@ export function DateTimeSelector({
       if (calendarData.length > 0) {
         const dateStr = format(date, "yyyy-MM-dd");
         const calendarItem = calendarData.find(
-          (item) => item.operationDate === dateStr
+          (item) => item.operationDate === dateStr,
         );
         return isInRange && calendarItem?.isBookingAvailable === "Y";
       }
 
       return isInRange;
     },
-    [calendarData, today, maxAvailableDate]
+    [calendarData, today, maxAvailableDate],
   );
 
   // 시간 선택 가능 여부 확인
@@ -180,7 +120,7 @@ export function DateTimeSelector({
       }
       return true;
     },
-    [tempDate, today, isPastTime]
+    [tempDate, today, isPastTime],
   );
 
   // 달력 그리드 생성
@@ -207,7 +147,7 @@ export function DateTimeSelector({
       // API 데이터에서 해당 날짜의 정보 가져오기
       const dateStr = format(currentDate, "yyyy-MM-dd");
       const calendarItem = calendarData.find(
-        (item) => item.operationDate === dateStr
+        (item) => item.operationDate === dateStr,
       );
       const isHoliday = calendarItem?.isHoliday === "Y";
       const isBookingAvailable = calendarItem?.isBookingAvailable === "Y";
@@ -226,7 +166,7 @@ export function DateTimeSelector({
                 currentDate.getFullYear() === now.getFullYear();
               if (isToday) {
                 setSelectedHour(
-                  now.getHours().toString().padStart(2, "0") + "시"
+                  now.getHours().toString().padStart(2, "0") + "시",
                 );
               } else {
                 setSelectedHour("00시");
@@ -242,24 +182,24 @@ export function DateTimeSelector({
                 ? isSelected
                   ? "bg-blue-600 text-white font-semibold"
                   : isHoliday
-                  ? isSelectable
-                    ? "text-red-500 hover:bg-red-50"
-                    : "text-red-300 cursor-not-allowed"
-                  : isSelectable
-                  ? isToday
-                    ? "bg-blue-100 text-blue-600 font-semibold hover:bg-blue-200"
-                    : isWeekend
-                    ? currentDate.getDay() === 0
+                    ? isSelectable
                       ? "text-red-500 hover:bg-red-50"
-                      : "text-blue-500 hover:bg-blue-50"
-                    : "text-gray-900 hover:bg-gray-100"
-                  : "text-gray-300 cursor-not-allowed"
+                      : "text-red-300 cursor-not-allowed"
+                    : isSelectable
+                      ? isToday
+                        ? "bg-blue-100 text-blue-600 font-semibold hover:bg-blue-200"
+                        : isWeekend
+                          ? currentDate.getDay() === 0
+                            ? "text-red-500 hover:bg-red-50"
+                            : "text-blue-500 hover:bg-blue-50"
+                          : "text-gray-900 hover:bg-gray-100"
+                      : "text-gray-300 cursor-not-allowed"
                 : "text-gray-300"
             }
           `}
         >
           {currentDate.getDate()}
-        </button>
+        </button>,
       );
     }
 
@@ -280,7 +220,7 @@ export function DateTimeSelector({
     setSelectedHour(
       value
         ? value.getHours().toString().padStart(2, "0") + "시"
-        : new Date().getHours().toString().padStart(2, "0") + "시"
+        : new Date().getHours().toString().padStart(2, "0") + "시",
     );
   };
 
@@ -384,7 +324,7 @@ export function DateTimeSelector({
                     const prevMonth = new Date(
                       tempDate.getFullYear(),
                       tempDate.getMonth() - 1,
-                      1
+                      1,
                     );
                     setTempDate(prevMonth);
                     // 월 변경 시 오늘 날짜면 현재 시간으로, 아니면 00시로 설정
@@ -395,7 +335,7 @@ export function DateTimeSelector({
                       prevMonth.getFullYear() === now.getFullYear();
                     if (isToday) {
                       setSelectedHour(
-                        now.getHours().toString().padStart(2, "0") + "시"
+                        now.getHours().toString().padStart(2, "0") + "시",
                       );
                     } else {
                       setSelectedHour("00시");
@@ -426,7 +366,7 @@ export function DateTimeSelector({
                     const nextMonth = new Date(
                       tempDate.getFullYear(),
                       tempDate.getMonth() + 1,
-                      1
+                      1,
                     );
                     setTempDate(nextMonth);
                     // 월 변경 시 오늘 날짜면 현재 시간으로, 아니면 00시로 설정
@@ -437,18 +377,20 @@ export function DateTimeSelector({
                       nextMonth.getFullYear() === now.getFullYear();
                     if (isToday) {
                       setSelectedHour(
-                        now.getHours().toString().padStart(2, "0") + "시"
+                        now.getHours().toString().padStart(2, "0") + "시",
                       );
                     } else {
                       setSelectedHour("00시");
                     }
                   }}
-                  disabled={
-                    isBefore(
-                      maxAvailableDate,
-                      new Date(tempDate.getFullYear(), tempDate.getMonth() + 1, 1)
-                    )
-                  }
+                  disabled={isBefore(
+                    maxAvailableDate,
+                    new Date(
+                      tempDate.getFullYear(),
+                      tempDate.getMonth() + 1,
+                      1,
+                    ),
+                  )}
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
@@ -464,13 +406,13 @@ export function DateTimeSelector({
                         index === 0
                           ? "text-red-500"
                           : index === 6
-                          ? "text-blue-500"
-                          : "text-gray-700"
+                            ? "text-blue-500"
+                            : "text-gray-700"
                       }`}
                     >
                       {day}
                     </div>
-                  )
+                  ),
                 )}
               </div>
 

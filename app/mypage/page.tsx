@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import {useEffect, useState} from "react"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent} from "@/components/ui/card"
 import {
@@ -9,29 +8,12 @@ import {
   Mail,
   Smartphone,
 } from "lucide-react"
-import { getMemberInfo } from "@/lib/api/user"
-import type { MemberInfo } from "@/types/userType"
+import { useGetMemberInfo } from "@/hooks/useUser"
 import MyPageSidebar from "@/components/layout/MyPageSidebar"
 import AuthGuard from "@/components/auth/AuthGuard"
 
 function MyPageContent() {
-  const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null)
-  const [loading, setLoading] = useState(true)
-  useEffect(() => {
-    const fetchMemberInfo = async () => {
-      try {
-        const info = await getMemberInfo()
-        setMemberInfo(info)
-      } catch (error) {
-        console.error('회원 정보 조회 실패:', error)
-        // 에러 발생 시에도 페이지는 표시하되, 기본값 사용
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchMemberInfo()
-  }, [])
+  const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo()
 
   if (loading) {
     return (

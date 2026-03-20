@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { formatPrice } from "@/lib/utils/format";
@@ -10,10 +11,10 @@ import {
   stationUtils,
   searchCars,
   searchSeats,
-} from "@/lib/api/train";
-import { makeReservation } from "@/lib/api/booking";
+} from "@/lib/api/trains";
+import { createPendingBooking } from "@/lib/api/pendingBookings";
+import { PENDING_BOOKINGS_QUERY_KEY } from "@/hooks/usePendingBooking";
 import { handleError } from "@/lib/utils/errorHandler";
-import { usePostPendingBooking } from "@/hooks/usePendingBooking";
 import { SeatSelectionDialog } from "@/components/ui/seat-selection-dialog";
 import { BookingPanel } from "@/components/ui/booking-panel";
 import { SearchForm } from "@/components/ui/search-form";
@@ -79,9 +80,9 @@ interface ReservationInfo {
 // 3. Update the component to include passenger selection functionality and fix date selection
 export default function TrainSearchPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const initializeAuth = useAuthStore((state) => state.initialize);
-  const { mutateAsync: createPendingBooking } = usePostPendingBooking();
   const [allTrains, setAllTrains] = useState<TrainInfo[]>([]);
   const [displayedTrains, setDisplayedTrains] = useState<TrainInfo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -231,7 +232,7 @@ export default function TrainSearchPage() {
       };
 
       // 열차 조회 API 호출
-      const response = await searchTrains(searchRequest, 0, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         // 새로운 API 응답 구조 처리
@@ -327,7 +328,7 @@ export default function TrainSearchPage() {
         departureHour: searchData.returnHour?.replace("시", "") || "00",
       };
 
-      const response = await searchTrains(searchRequest, 0, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         const content = response.result.content || response.result;
@@ -678,7 +679,7 @@ export default function TrainSearchPage() {
         departureHour: searchData.departureHour.replace("시", ""),
       };
 
-      const response = await searchTrains(searchRequest, nextPage, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         const content = response.result.content || response.result;
@@ -768,7 +769,7 @@ export default function TrainSearchPage() {
         departureHour: searchData.returnHour?.replace("시", "") || "00",
       };
 
-      const response = await searchTrains(searchRequest, nextPage, 10);
+      const response = await searchTrains(searchRequest);
 
       if (response.result) {
         const content = response.result.content || response.result;
@@ -1002,6 +1003,7 @@ export default function TrainSearchPage() {
           });
         } else {
           closeBookingPanel();
+          queryClient.invalidateQueries({ queryKey: PENDING_BOOKINGS_QUERY_KEY });
           router.push("/ticket/reservations");
         }
       } else {

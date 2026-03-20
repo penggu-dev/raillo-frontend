@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Train, Mail } from "lucide-react"
-import { sendEmailVerificationCode, updateEmail } from "@/lib/api/user"
+import { sendEmailVerificationCode, updateEmail } from "@/lib/api/authMembers"
 import { useRouter } from "next/navigation"
 import MyPageSidebar from "@/components/layout/MyPageSidebar"
-import { getMemberInfo } from "@/lib/api/user"
-import type { MemberInfo } from "@/types/userType"
+import { useGetMemberInfo } from "@/hooks/useUser"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
 import { useToast } from "@/hooks/use-toast"
@@ -30,27 +29,11 @@ function EmailChangePageContent() {
     }
   }, [router])
   
-  const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo()
   const [emailAddress, setEmailAddress] = useState("")
   const [authCode, setAuthCode] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showVerification, setShowVerification] = useState(false)
-
-  useEffect(() => {
-    const fetchMemberInfo = async () => {
-      try {
-        const info = await getMemberInfo()
-        setMemberInfo(info)
-      } catch (error) {
-        console.error('회원 정보 조회 실패:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchMemberInfo()
-  }, [])
 
   if (loading) {
     return (

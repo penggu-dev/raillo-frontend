@@ -1,15 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Receipt } from "lucide-react"
-import { getTickets } from "@/lib/api/booking"
 import type { TicketResponse } from "@/types/bookingType"
-import { handleError } from "@/lib/utils/errorHandler"
+import { useGetTickets } from "@/hooks/useBooking"
 import BookingHistoryCard from "@/components/ticket/history/BookingHistoryCard"
 
 type BookingHistoryItem = TicketResponse["result"][number]
@@ -17,30 +16,8 @@ type HistoryTab = "all" | "issued" | "cancelled"
 
 export default function PaymentHistoryPage() {
   const { isAuthenticated, isChecking } = useAuth({ redirectPath: "/ticket/history" })
-  const [bookings, setBookings] = useState<BookingHistoryItem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: bookings = [], isLoading: loading, isError, error } = useGetTickets()
   const [activeTab, setActiveTab] = useState<HistoryTab>("all")
-
-  useEffect(() => {
-    if (isChecking || !isAuthenticated) return
-
-    const fetchBookings = async () => {
-      try {
-        setLoading(true)
-        const response = await getTickets()
-        setBookings(response.result ?? [])
-      } catch (err) {
-        const errorMessage = handleError(err, "예매 내역 조회 중 오류가 발생했습니다.", false)
-        setError(errorMessage)
-        setBookings([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchBookings()
-  }, [isChecking, isAuthenticated])
 
   const isIssuedBooking = (booking: BookingHistoryItem) =>
     booking.tickets.length > 0 && booking.tickets.every((ticket) => ticket.status === "ISSUED")
@@ -110,10 +87,10 @@ export default function PaymentHistoryPage() {
           </div>
 
           <div className="space-y-6">
-            {error && (
+            {isError && (
               <Card className="border-red-200 bg-red-50">
                 <CardContent className="p-4">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-700">{error?.message ?? "오류가 발생했습니다."}</p>
                 </CardContent>
               </Card>
             )}
