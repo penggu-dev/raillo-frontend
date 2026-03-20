@@ -9,10 +9,7 @@ import type {
 export const useGetTickets = (status: BookingStatus = "ALL") => {
   return useQuery<TicketResponse["result"], Error>({
     queryKey: ["tickets", status],
-    queryFn: async () => {
-      const response = await getTickets(status);
-      return response.result ?? [];
-    },
+    queryFn: () => getTickets(status),
   });
 };
 
@@ -21,8 +18,7 @@ export const useGetTicketReceipt = (ticketId: number | null) => {
     queryKey: ["ticketReceipt", ticketId],
     queryFn: async () => {
       if (!ticketId) return null;
-      const response = await getTicketReceipt(ticketId);
-      return response.result ?? null;
+      return getTicketReceipt(ticketId);
     },
     enabled: !!ticketId,
   });

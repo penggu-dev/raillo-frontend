@@ -33,7 +33,11 @@ const LoginField = () => {
     e?.preventDefault(); // form 제출 시 기본 동작 방지
 
     if (!memberNumber || !password) {
-      toast({ title: "입력 오류", description: "회원번호와 비밀번호를 모두 입력해주세요.", variant: "destructive" });
+      toast({
+        title: "입력 오류",
+        description: "회원번호와 비밀번호를 모두 입력해주세요.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -42,19 +46,17 @@ const LoginField = () => {
     setIsLoading(true);
 
     try {
-      const response = await login({ memberNo: memberNumber, password });
-
-      if (response.result) {
-        // 토큰 만료 시각은 ms 단위 절대 시각으로 저장
-        const expiresIn = Date.now() + response.result.accessTokenExpiresIn * 1000;
-        setTokens(
-          response.result.accessToken,
-          expiresIn
-        );
-        window.location.href = "/";
-      }
+      const result = await login({ memberNo: memberNumber, password });
+      // 토큰 만료 시각은 ms 단위 절대 시각으로 저장
+      const expiresIn = Date.now() + result.accessTokenExpiresIn * 1000;
+      setTokens(result.accessToken, expiresIn);
+      window.location.href = "/";
     } catch (error: unknown) {
-      toast({ title: "오류", description: handleError(error, "로그인에 실패했습니다."), variant: "destructive" });
+      toast({
+        title: "오류",
+        description: handleError(error, "로그인에 실패했습니다."),
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

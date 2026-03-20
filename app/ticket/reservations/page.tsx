@@ -23,7 +23,10 @@ import {
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format";
 import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
 import { deletePendingBookings } from "@/lib/api/pendingBookings";
-import { useGetPendingBookingList, PENDING_BOOKINGS_QUERY_KEY } from "@/hooks/usePendingBooking";
+import {
+  useGetPendingBookingList,
+  PENDING_BOOKINGS_QUERY_KEY,
+} from "@/hooks/usePendingBooking";
 import type { PendingBookingCartItem } from "@/types/bookingType";
 import { handleError } from "@/lib/utils/errorHandler";
 import {
@@ -60,7 +63,7 @@ function ReservationsPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const { data, isLoading, isError, error } = useGetPendingBookingList();
-  const reservations = data?.result ?? [];
+  const reservations = data ?? [];
 
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
@@ -194,17 +197,14 @@ function ReservationsPageContent() {
 
     setPaymentLoading(true);
     try {
-      const response = await preparePayment({
+      const result = await preparePayment({
         pendingBookingIds: selected.map((item) => item.pendingBookingId),
       });
-
-      if (response.result) {
-        setPaymentInfo({
-          orderId: response.result.orderId,
-          amount: response.result.amount,
-        });
-        setShowPaymentDialog(true);
-      }
+      setPaymentInfo({
+        orderId: result.orderId,
+        amount: result.amount,
+      });
+      setShowPaymentDialog(true);
     } catch (err) {
       toast({
         title: "결제 준비 실패",
