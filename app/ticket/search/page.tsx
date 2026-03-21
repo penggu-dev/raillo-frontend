@@ -60,22 +60,6 @@ interface SearchData {
   tripType?: string;
 }
 
-// 예약 정보 타입 정의
-interface ReservationInfo {
-  reservationId: number;
-  seatReservationId: number;
-  trainType: string;
-  trainNumber: string;
-  date: string;
-  departureStation: string;
-  arrivalStation: string;
-  departureTime: string;
-  arrivalTime: string;
-  seatClass: string;
-  carNumber: number;
-  seats: string[];
-  price: number;
-}
 
 // 3. Update the component to include passenger selection functionality and fix date selection
 export default function TrainSearchPage() {

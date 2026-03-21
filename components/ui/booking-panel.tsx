@@ -3,16 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Clock, CreditCard, X, Train } from "lucide-react"
-
-// 객차 정보 타입
-interface CarInfo {
-  id: number;
-  carNumber: string;
-  carType: 'STANDARD' | 'FIRST_CLASS';
-  totalSeats: number;
-  remainingSeats: number;
-  seatArrangement: string;
-}
+import type { CarInfo } from "@/types/trainType"
 
 interface TrainInfo {
   trainType: string
