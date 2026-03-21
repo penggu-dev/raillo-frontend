@@ -19,35 +19,12 @@ import {
   CheckCircle,
 } from "lucide-react"
 import type { PassengerCounts } from "@/types/passengerType"
+import type { TrainSchedule } from "@/types/trainType"
 import { useToast } from "@/hooks/use-toast"
 
-interface TrainInfo {
-  trainScheduleId?: number
-  id: string
-  trainType: string
-  trainNumber: string
-  departureTime: string
-  arrivalTime: string
-  duration: string
-  departureStation: string
-  arrivalStation: string
-  generalSeat: {
-    available: boolean
-    price: number
-  }
-  reservedSeat: {
-    available: boolean
-    price: number
-  }
-  standingSeat: {
-    available: boolean
-    price: number
-  }
-}
-
 interface BookingData {
-  outboundTrain: TrainInfo
-  inboundTrain: TrainInfo
+  outboundTrain: TrainSchedule
+  inboundTrain: TrainSchedule
   searchData: {
     departureStation: string
     arrivalStation: string
@@ -66,8 +43,8 @@ interface RoundtripCompleteData {
   passengers: PassengerCounts
   selectedOutbound: string
   selectedInbound: string
-  outboundTrains: Array<TrainInfo & { type: string }>
-  inboundTrains: Array<TrainInfo & { type: string }>
+  outboundTrains: Array<TrainSchedule & { type: string }>
+  inboundTrains: Array<TrainSchedule & { type: string }>
   bookingId: string
   totalPrice: number
   bookingTime: string
@@ -99,7 +76,7 @@ export default function RoundtripBookingPage() {
   const getTotalPrice = () => {
     if (!bookingData) return 0
     // 가는 열차와 오는 열차의 일반실 가격 합계 (실제로는 선택된 좌석 타입에 따라 달라짐)
-    return bookingData.outboundTrain.generalSeat.price + bookingData.inboundTrain.generalSeat.price
+    return bookingData.outboundTrain.standardSeat.fare + bookingData.inboundTrain.standardSeat.fare
   }
 
   const getTotalPassengers = () => {
@@ -118,18 +95,18 @@ export default function RoundtripBookingPage() {
         departureDate: bookingData.searchData.departureDate,
         returnDate: bookingData.searchData.returnDate,
         passengers: bookingData.searchData.passengers,
-        selectedOutbound: bookingData.outboundTrain.id,
-        selectedInbound: bookingData.inboundTrain.id,
+        selectedOutbound: bookingData.outboundTrain.trainScheduleId.toString(),
+        selectedInbound: bookingData.inboundTrain.trainScheduleId.toString(),
         outboundTrains: [
           {
             ...bookingData.outboundTrain,
-            type: bookingData.outboundTrain.trainType,
+            type: bookingData.outboundTrain.trainName,
           },
         ],
         inboundTrains: [
           {
             ...bookingData.inboundTrain,
-            type: bookingData.inboundTrain.trainType,
+            type: bookingData.inboundTrain.trainName,
           },
         ],
         bookingId: `RT-${Date.now()}`,
@@ -216,19 +193,19 @@ export default function RoundtripBookingPage() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <Badge variant="outline">{bookingData.outboundTrain.trainType}</Badge>
+                          <Badge variant="outline">{bookingData.outboundTrain.trainName}</Badge>
                           <span className="font-medium">{bookingData.outboundTrain.trainNumber}</span>
                         </div>
                         <span className="text-lg font-bold text-blue-600">
-                          ₩{bookingData.outboundTrain.generalSeat.price.toLocaleString()}
+                          ₩{bookingData.outboundTrain.standardSeat.fare.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-600">
                         <div className="flex items-center space-x-4">
-                          <span>{bookingData.outboundTrain.departureTime}</span>
+                          <span>{bookingData.outboundTrain.departureTime.substring(0, 5)}</span>
                           <ArrowRight className="h-3 w-3" />
-                          <span>{bookingData.outboundTrain.arrivalTime}</span>
-                          <span>({bookingData.outboundTrain.duration})</span>
+                          <span>{bookingData.outboundTrain.arrivalTime.substring(0, 5)}</span>
+                          <span>({bookingData.outboundTrain.formattedTravelTime})</span>
                         </div>
                       </div>
                     </div>
@@ -250,19 +227,19 @@ export default function RoundtripBookingPage() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <Badge variant="outline">{bookingData.inboundTrain.trainType}</Badge>
+                          <Badge variant="outline">{bookingData.inboundTrain.trainName}</Badge>
                           <span className="font-medium">{bookingData.inboundTrain.trainNumber}</span>
                         </div>
                         <span className="text-lg font-bold text-blue-600">
-                          ₩{bookingData.inboundTrain.generalSeat.price.toLocaleString()}
+                          ₩{bookingData.inboundTrain.standardSeat.fare.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm text-gray-600">
                         <div className="flex items-center space-x-4">
-                          <span>{bookingData.inboundTrain.departureTime}</span>
+                          <span>{bookingData.inboundTrain.departureTime.substring(0, 5)}</span>
                           <ArrowRight className="h-3 w-3" />
-                          <span>{bookingData.inboundTrain.arrivalTime}</span>
-                          <span>({bookingData.inboundTrain.duration})</span>
+                          <span>{bookingData.inboundTrain.arrivalTime.substring(0, 5)}</span>
+                          <span>({bookingData.inboundTrain.formattedTravelTime})</span>
                         </div>
                       </div>
                     </div>
@@ -314,11 +291,11 @@ export default function RoundtripBookingPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span>가는 열차 요금</span>
-                      <span>₩{bookingData.outboundTrain.generalSeat.price.toLocaleString()}</span>
+                      <span>₩{bookingData.outboundTrain.standardSeat.fare.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>오는 열차 요금</span>
-                      <span>₩{bookingData.inboundTrain.generalSeat.price.toLocaleString()}</span>
+                      <span>₩{bookingData.inboundTrain.standardSeat.fare.toLocaleString()}</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between text-lg font-bold">

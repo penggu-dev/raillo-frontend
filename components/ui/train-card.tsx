@@ -4,32 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Zap } from "lucide-react"
-
-interface TrainInfo {
-  id: string
-  trainType: string
-  trainNumber: string
-  departureTime: string
-  arrivalTime: string
-  duration: string
-  departureStation: string
-  arrivalStation: string
-  generalSeat: {
-    available: boolean
-    price: number
-  }
-  reservedSeat: {
-    available: boolean
-    price: number
-  }
-}
-
-type SeatType = "generalSeat" | "reservedSeat"
+import type { TrainSchedule, SeatType } from "@/types/trainType"
 
 interface TrainCardProps {
-  train: TrainInfo
+  train: TrainSchedule
   isSelected: boolean
-  onSeatSelection: (train: TrainInfo, seatType: SeatType) => void
+  onSeatSelection: (train: TrainSchedule, seatType: SeatType) => void
   getTrainTypeColor: (trainType: string) => string
   formatPrice: (price: number) => string
   getSeatTypeName: (seatType: SeatType) => string
@@ -54,27 +34,27 @@ export function TrainCard({
           {/* Train Info */}
           <div className="lg:col-span-4">
             <div className="flex items-center space-x-3 mb-2">
-              <Badge className={`${getTrainTypeColor(train.trainType)} px-3 py-1`}>
-                {train.trainType}
+              <Badge className={`${getTrainTypeColor(train.trainName)} px-3 py-1`}>
+                {train.trainName}
               </Badge>
               <span className="font-semibold text-lg">{train.trainNumber}</span>
               <Zap className="h-4 w-4 text-yellow-500" />
             </div>
             <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <span>{train.departureStation}</span>
+              <span>{train.departureStationName}</span>
               <ArrowRight className="h-4 w-4" />
-              <span>{train.arrivalStation}</span>
+              <span>{train.arrivalStationName}</span>
             </div>
           </div>
 
           {/* Time Info */}
           <div className="lg:col-span-3">
             <div className="flex items-center space-x-2 mb-1">
-              <span className="text-2xl font-bold text-blue-600">{train.departureTime}</span>
+              <span className="text-2xl font-bold text-blue-600">{train.departureTime.substring(0, 5)}</span>
               <ArrowRight className="h-4 w-4 text-gray-400" />
-              <span className="text-2xl font-bold text-blue-600">{train.arrivalTime}</span>
+              <span className="text-2xl font-bold text-blue-600">{train.arrivalTime.substring(0, 5)}</span>
             </div>
-            <div className="text-sm text-gray-600">{train.duration}</div>
+            <div className="text-sm text-gray-600">{train.formattedTravelTime}</div>
           </div>
 
           {/* Seat Options */}
@@ -84,15 +64,15 @@ export function TrainCard({
               <div className="border rounded-lg p-3">
                 <div className="text-sm font-medium mb-1">일반실</div>
                 <div className="text-lg font-bold text-blue-600 mb-2">
-                  {formatPrice(train.generalSeat.price)}
+                  {formatPrice(train.standardSeat.fare)}
                 </div>
                 <Button
                   size="sm"
                   className="w-full"
-                  disabled={!train.generalSeat.available}
-                  onClick={() => onSeatSelection(train, "generalSeat")}
+                  disabled={!train.standardSeat.canReserve}
+                  onClick={() => onSeatSelection(train, "standardSeat")}
                 >
-                  {train.generalSeat.available ? "선택" : "매진"}
+                  {train.standardSeat.canReserve ? "선택" : "매진"}
                 </Button>
               </div>
 
@@ -100,22 +80,21 @@ export function TrainCard({
               <div className="border rounded-lg p-3">
                 <div className="text-sm font-medium mb-1">특실</div>
                 <div className="text-lg font-bold text-blue-600 mb-2">
-                  {formatPrice(train.reservedSeat.price)}
+                  {train.firstClassSeat ? formatPrice(train.firstClassSeat.fare) : "-"}
                 </div>
                 <Button
                   size="sm"
                   className="w-full"
-                  disabled={!train.reservedSeat.available}
-                  onClick={() => onSeatSelection(train, "reservedSeat")}
+                  disabled={!train.firstClassSeat?.canReserve}
+                  onClick={() => onSeatSelection(train, "firstClassSeat")}
                 >
-                  {train.reservedSeat.available ? "선택" : "매진"}
+                  {train.firstClassSeat?.canReserve ? "선택" : "매진"}
                 </Button>
               </div>
-
             </div>
           </div>
         </div>
       </CardContent>
     </Card>
   )
-} 
+}

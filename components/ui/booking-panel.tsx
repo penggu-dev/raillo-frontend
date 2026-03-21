@@ -3,42 +3,22 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Clock, CreditCard, X, Train } from "lucide-react"
-import type { CarInfo } from "@/types/trainType"
-
-interface TrainInfo {
-  trainType: string
-  trainNumber: string
-  departureTime: string
-  arrivalTime: string
-  duration: string
-  departureStation: string
-  arrivalStation: string
-  generalSeat: {
-    available: boolean
-    price: number
-  }
-  reservedSeat: {
-    available: boolean
-    price: number
-  }
-}
+import type { CarInfo, TrainSchedule, SeatType } from "@/types/trainType"
 
 interface BookingPanelProps {
   isOpen: boolean
   onClose: () => void
-  selectedTrain: TrainInfo | null
-  selectedSeatType: string
+  selectedTrain: TrainSchedule | null
+  selectedSeatType: SeatType
   selectedSeats: string[]
   selectedCar: number
   onSeatSelection: () => void
   onBooking: () => void
   getTrainTypeColor: (trainType: string) => string
-  getSeatTypeName: (seatType: string) => string
+  getSeatTypeName: (seatType: SeatType) => string
   formatPrice: (price: number) => string
-  // 새로운 props 추가
   carList: CarInfo[]
   loadingCars: boolean
-  // 좌석 정보 새로고침 함수 추가
   onRefreshSeats: () => void
 }
 
@@ -60,8 +40,9 @@ export function BookingPanel({
 }: BookingPanelProps) {
   if (!isOpen || !selectedTrain) return null
 
-  // 선택된 객차 정보 찾기
   const selectedCarInfo = carList.find(car => parseInt(car.carNumber) === selectedCar)
+  const selectedSeatInfo = selectedTrain[selectedSeatType]
+  const price = selectedSeatInfo?.fare ?? 0
 
   return (
     <>
@@ -74,8 +55,8 @@ export function BookingPanel({
           {/* Panel Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
-              <Badge className={`${getTrainTypeColor(selectedTrain.trainType)} px-3 py-1`}>
-                {selectedTrain.trainType}
+              <Badge className={`${getTrainTypeColor(selectedTrain.trainName)} px-3 py-1`}>
+                {selectedTrain.trainName}
               </Badge>
               <span className="text-xl font-bold">{selectedTrain.trainNumber}</span>
               <span className="text-gray-600">열차 예매</span>
@@ -96,15 +77,15 @@ export function BookingPanel({
                 <div className="w-full">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600">출발</span>
-                    <span className="font-semibold">{selectedTrain.departureTime}</span>
+                    <span className="font-semibold">{selectedTrain.departureTime.substring(0, 5)}</span>
                   </div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600">도착</span>
-                    <span className="font-semibold">{selectedTrain.arrivalTime}</span>
+                    <span className="font-semibold">{selectedTrain.arrivalTime.substring(0, 5)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">소요시간</span>
-                    <span className="font-semibold">{selectedTrain.duration}</span>
+                    <span className="font-semibold">{selectedTrain.formattedTravelTime}</span>
                   </div>
                 </div>
               </div>
@@ -155,11 +136,11 @@ export function BookingPanel({
                 <div className="text-center w-full">
                   <div className="text-sm text-gray-600 mb-1">{getSeatTypeName(selectedSeatType)} (1인 기준)</div>
                   <div className="text-2xl font-bold text-blue-600">
-                    {formatPrice((selectedTrain as any)[selectedSeatType]?.price)}
+                    {formatPrice(price)}
                   </div>
                   {selectedSeats.length > 0 && (
                     <div className="text-sm text-gray-600 mt-1">
-                      총 {formatPrice((selectedTrain as any)[selectedSeatType]?.price * selectedSeats.length)}
+                      총 {formatPrice(price * selectedSeats.length)}
                     </div>
                   )}
                 </div>
@@ -188,12 +169,9 @@ export function BookingPanel({
                   )}
                 </div>
               </div>
-              <Button 
-                onClick={() => {
-                  // 좌석 선택 다이얼로그 열기
-                  onSeatSelection()
-                }} 
-                variant="outline" 
+              <Button
+                onClick={onSeatSelection}
+                variant="outline"
                 className="w-full h-10 text-base font-semibold"
               >
                 {selectedSeats.length > 0 ? "좌석 변경" : "좌석 선택"}
@@ -206,9 +184,9 @@ export function BookingPanel({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="text-sm text-gray-600">
-                  총 {selectedSeats.length}명 / {selectedSeats.length > 0 ? 
-                    formatPrice((selectedTrain as any)[selectedSeatType]?.price * selectedSeats.length) : 
-                    formatPrice((selectedTrain as any)[selectedSeatType]?.price)
+                  총 {selectedSeats.length}명 / {selectedSeats.length > 0 ?
+                    formatPrice(price * selectedSeats.length) :
+                    formatPrice(price)
                   }
                 </div>
               </div>
@@ -225,4 +203,4 @@ export function BookingPanel({
       </div>
     </>
   )
-} 
+}

@@ -22,32 +22,10 @@ import { TrainList } from "@/components/ui/train-list";
 import { UsageInfo } from "@/components/ui/usage-info";
 import { useAuthStore } from "@/stores/auth-store";
 import { ko } from "date-fns/locale";
-import type { CarInfo, SeatDetail } from "@/types/trainType";
+import type { CarInfo, SeatDetail, TrainSchedule, SeatType } from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
-import { TRAIN_TYPE } from "@/constants/trainType";
 import { useToast } from "@/hooks/use-toast";
 
-interface TrainInfo {
-  trainScheduleId?: number;
-  id: string;
-  trainType: string;
-  trainNumber: string;
-  departureTime: string;
-  arrivalTime: string;
-  duration: string;
-  departureStation: string;
-  arrivalStation: string;
-  generalSeat: {
-    available: boolean;
-    price: number;
-  };
-  reservedSeat: {
-    available: boolean;
-    price: number;
-  };
-}
-
-type SeatType = "generalSeat" | "reservedSeat";
 
 function TrainSearchPage() {
   const router = useRouter();
@@ -92,23 +70,23 @@ function TrainSearchPage() {
     return d;
   }, [returnDateStr, returnHour]);
 
-  const [allTrains, setAllTrains] = useState<TrainInfo[]>([]);
-  const [displayedTrains, setDisplayedTrains] = useState<TrainInfo[]>([]);
+  const [allTrains, setAllTrains] = useState<TrainSchedule[]>([]);
+  const [displayedTrains, setDisplayedTrains] = useState<TrainSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
-  const [selectedTrain, setSelectedTrain] = useState<TrainInfo | null>(null);
-  const [selectedSeatType, setSelectedSeatType] = useState<SeatType>("generalSeat");
+  const [selectedTrain, setSelectedTrain] = useState<TrainSchedule | null>(null);
+  const [selectedSeatType, setSelectedSeatType] = useState<SeatType>("standardSeat");
   const [showBookingPanel, setShowBookingPanel] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [searchConditionsChanged, setSearchConditionsChanged] = useState(false);
 
   // 왕복 관련 상태
-  const [outboundTrains, setOutboundTrains] = useState<TrainInfo[]>([]);
-  const [inboundTrains, setInboundTrains] = useState<TrainInfo[]>([]);
-  const [selectedOutboundTrain, setSelectedOutboundTrain] = useState<TrainInfo | null>(null);
-  const [selectedInboundTrain, setSelectedInboundTrain] = useState<TrainInfo | null>(null);
+  const [outboundTrains, setOutboundTrains] = useState<TrainSchedule[]>([]);
+  const [inboundTrains, setInboundTrains] = useState<TrainSchedule[]>([]);
+  const [selectedOutboundTrain, setSelectedOutboundTrain] = useState<TrainSchedule | null>(null);
+  const [selectedInboundTrain, setSelectedInboundTrain] = useState<TrainSchedule | null>(null);
   const [outboundReserved, setOutboundReserved] = useState(false);
 
   // 오는 열차 더보기 관련 상태
@@ -196,31 +174,11 @@ function TrainSearchPage() {
       };
 
       const result = await searchTrains(searchRequest);
-      const resultArray = Array.isArray(result.content) ? result.content : [];
+      const resultArray: TrainSchedule[] = Array.isArray(result.content) ? result.content : [];
 
-      const apiTrains: TrainInfo[] = resultArray.map((train: any, index: number) => ({
-        trainScheduleId: train.trainScheduleId || 0,
-        id: `${train.trainNumber || train.id || index}_${train.departureTime || index}_${index}`,
-        trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
-        trainNumber: train.trainNumber || `${index + 1}`,
-        departureTime: train.departureTime ? train.departureTime.substring(0, 5) : "00:00",
-        arrivalTime: train.arrivalTime ? train.arrivalTime.substring(0, 5) : "00:00",
-        duration: train.formattedTravelTime || train.travelTime || "0시간 0분",
-        departureStation: train.departureStationName || train.departureStation || departureStation,
-        arrivalStation: train.arrivalStationName || train.arrivalStation || arrivalStation,
-        generalSeat: {
-          available: train.standardSeat?.canReserve === true,
-          price: train.standardSeat?.fare || 8400,
-        },
-        reservedSeat: {
-          available: train.firstClassSeat?.canReserve === true,
-          price: train.firstClassSeat?.fare || 13200,
-        },
-      }));
-
-      setAllTrains(apiTrains);
-      setDisplayedTrains(apiTrains);
-      setTotalResults(result.totalElements || apiTrains.length);
+      setAllTrains(resultArray);
+      setDisplayedTrains(resultArray);
+      setTotalResults(result.totalElements || resultArray.length);
       setHasNext(result.hasNext ?? false);
     } catch (error) {
       console.error("열차 검색 실패:", error);
@@ -253,27 +211,7 @@ function TrainSearchPage() {
       };
 
       const result = await searchTrains(searchRequest);
-      const resultArray = Array.isArray(result.content) ? result.content : [];
-
-      const inbound: TrainInfo[] = resultArray.map((train: any, index: number) => ({
-        trainScheduleId: train.trainScheduleId || 0,
-        id: `inbound_${train.trainNumber || train.id || index}_${train.departureTime || index}_${index}`,
-        trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
-        trainNumber: train.trainNumber || `${index + 1}`,
-        departureTime: train.departureTime ? train.departureTime.substring(0, 5) : "00:00",
-        arrivalTime: train.arrivalTime ? train.arrivalTime.substring(0, 5) : "00:00",
-        duration: train.formattedTravelTime || train.travelTime || "0시간 0분",
-        departureStation: train.departureStationName || train.departureStation || arrivalStation,
-        arrivalStation: train.arrivalStationName || train.arrivalStation || departureStation,
-        generalSeat: {
-          available: train.standardSeat?.canReserve === true,
-          price: train.standardSeat?.fare || 8400,
-        },
-        reservedSeat: {
-          available: train.firstClassSeat?.canReserve === true,
-          price: train.firstClassSeat?.fare || 13200,
-        },
-      }));
+      const inbound: TrainSchedule[] = Array.isArray(result.content) ? result.content : [];
 
       setInboundTrains(inbound);
       setInboundHasNext(result.hasNext ?? false);
@@ -401,20 +339,20 @@ function TrainSearchPage() {
     setSearchConditionsChanged(true);
   };
 
-  const getSeatTypeName = (seatType: string) => {
+  const getSeatTypeName = (seatType: SeatType) => {
     switch (seatType) {
-      case "generalSeat":
+      case "standardSeat":
         return "일반실";
-      case "reservedSeat":
+      case "firstClassSeat":
         return "특실";
       default:
         return "";
     }
   };
 
-  const handleSeatSelection = (train: TrainInfo, seatType: SeatType) => {
+  const handleSeatSelection = (train: TrainSchedule, seatType: SeatType) => {
     const seatInfo = train[seatType];
-    if (!seatInfo.available) {
+    if (!seatInfo?.canReserve) {
       toast({
         title: "알림",
         description: "선택하신 좌석은 매진되었습니다.",
@@ -463,27 +401,7 @@ function TrainSearchPage() {
       };
 
       const result = await searchTrains(searchRequest);
-      const resultArray = Array.isArray(result.content) ? result.content : [];
-
-      const newTrains: TrainInfo[] = resultArray.map((train: any, index: number) => ({
-        trainScheduleId: train.trainScheduleId || 0,
-        id: `${train.trainNumber || train.id || index}_${train.departureTime || index}_${index}_${nextPage}`,
-        trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
-        trainNumber: train.trainNumber || `${index + 1}`,
-        departureTime: train.departureTime ? train.departureTime.substring(0, 5) : "00:00",
-        arrivalTime: train.arrivalTime ? train.arrivalTime.substring(0, 5) : "00:00",
-        duration: train.formattedTravelTime || train.travelTime || "0시간 0분",
-        departureStation: train.departureStationName || train.departureStation || departureStation,
-        arrivalStation: train.arrivalStationName || train.arrivalStation || arrivalStation,
-        generalSeat: {
-          available: train.standardSeat?.canReserve === true,
-          price: train.standardSeat?.fare || 8400,
-        },
-        reservedSeat: {
-          available: train.firstClassSeat?.canReserve === true,
-          price: train.firstClassSeat?.fare || 13200,
-        },
-      }));
+      const newTrains: TrainSchedule[] = Array.isArray(result.content) ? result.content : [];
 
       setAllTrains((prev) => [...prev, ...newTrains]);
       setDisplayedTrains((prev) => [...prev, ...newTrains]);
@@ -533,25 +451,7 @@ function TrainSearchPage() {
       const result = await searchTrains(searchRequest);
       const resultArray = Array.isArray(result.content) ? result.content : [];
 
-      const newInboundTrains: TrainInfo[] = resultArray.map((train: any, index: number) => ({
-        trainScheduleId: train.trainScheduleId || 0,
-        id: `inbound_${train.trainNumber || train.id || index}_${train.departureTime || index}_${index}_${nextPage}`,
-        trainType: train.trainName || train.trainType || TRAIN_TYPE.KTX,
-        trainNumber: train.trainNumber || `${index + 1}`,
-        departureTime: train.departureTime ? train.departureTime.substring(0, 5) : "00:00",
-        arrivalTime: train.arrivalTime ? train.arrivalTime.substring(0, 5) : "00:00",
-        duration: train.formattedTravelTime || train.travelTime || "0시간 0분",
-        departureStation: train.departureStationName || train.departureStation || arrivalStation,
-        arrivalStation: train.arrivalStationName || train.arrivalStation || departureStation,
-        generalSeat: {
-          available: train.standardSeat?.canReserve === true,
-          price: train.standardSeat?.fare || 8400,
-        },
-        reservedSeat: {
-          available: train.firstClassSeat?.canReserve === true,
-          price: train.firstClassSeat?.fare || 13200,
-        },
-      }));
+      const newInboundTrains: TrainSchedule[] = resultArray;
 
       setInboundTrains((prev) => [...prev, ...newInboundTrains]);
       setInboundCurrentPage(nextPage);
@@ -617,7 +517,7 @@ function TrainSearchPage() {
     const isInboundTrain =
       isRoundtrip &&
       outboundReserved &&
-      selectedTrain.id.startsWith("inbound_");
+      inboundTrains.some((t) => t.trainScheduleId === selectedTrain.trainScheduleId);
 
     let departureStationId, arrivalStationId;
     if (isInboundTrain) {

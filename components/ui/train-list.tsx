@@ -5,35 +5,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Train, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { TrainCard } from "./train-card"
-
-interface TrainInfo {
-  id: string
-  trainType: string
-  trainNumber: string
-  departureTime: string
-  arrivalTime: string
-  duration: string
-  departureStation: string
-  arrivalStation: string
-  generalSeat: {
-    available: boolean
-    price: number
-  }
-  reservedSeat: {
-    available: boolean
-    price: number
-  }
-}
-
-type SeatType = "generalSeat" | "reservedSeat"
+import type { TrainSchedule, SeatType } from "@/types/trainType"
 
 interface TrainListProps {
-  displayedTrains: TrainInfo[]
+  displayedTrains: TrainSchedule[]
   totalResults: number
-  selectedTrain: TrainInfo | null
+  selectedTrain: TrainSchedule | null
   loadingMore: boolean
   hasMoreTrains: boolean
-  onSeatSelection: (train: TrainInfo, seatType: SeatType) => void
+  onSeatSelection: (train: TrainSchedule, seatType: SeatType) => void
   onLoadMore: () => void
   getTrainTypeColor: (trainType: string) => string
   formatPrice: (price: number) => string
@@ -73,9 +53,9 @@ export function TrainList({
     <div className="space-y-4">
       {displayedTrains.map((train) => (
         <TrainCard
-          key={train.id}
+          key={train.trainScheduleId}
           train={train}
-          isSelected={selectedTrain?.id === train.id}
+          isSelected={selectedTrain?.trainScheduleId === train.trainScheduleId}
           onSeatSelection={onSeatSelection}
           getTrainTypeColor={getTrainTypeColor}
           formatPrice={formatPrice}
@@ -109,4 +89,4 @@ export function TrainList({
       )}
     </div>
   )
-} 
+}

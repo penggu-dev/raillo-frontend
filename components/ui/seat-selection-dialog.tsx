@@ -4,22 +4,17 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { X } from "lucide-react"
-import type { CarInfo, SeatDetail } from "@/types/trainType"
+import type { CarInfo, SeatDetail, TrainSchedule, SeatType } from "@/types/trainType"
 
 interface SeatSelectionDialogProps {
   isOpen: boolean
   onClose: () => void
-  selectedTrain: {
-    trainType: string
-    trainNumber: string
-    departureStation?: string
-    arrivalStation?: string
-  } | null
-  selectedSeatType: string
+  selectedTrain: TrainSchedule | null
+  selectedSeatType: SeatType
   selectedSeats: string[]
   onSeatClick: (seatNumber: string) => void
   onApply: (selectedSeats: string[], selectedCar: number) => void
-  getSeatTypeName: (seatType: string) => string
+  getSeatTypeName: (seatType: SeatType) => string
   getTotalPassengers: () => number
   // 새로운 props 추가
   carList: CarInfo[]
@@ -68,9 +63,9 @@ export function SeatSelectionDialog({
     if (isOpen && carList.length > 0) {
       // 선택된 좌석 타입에 맞는 첫 번째 객차 선택
       const suitableCar = carList.find(car => {
-        if (selectedSeatType === "reservedSeat") {
+        if (selectedSeatType === "firstClassSeat") {
           return car.carType === "FIRST_CLASS"
-        } else if (selectedSeatType === "generalSeat") {
+        } else if (selectedSeatType === "standardSeat") {
           return car.carType === "STANDARD"
         }
         return true
@@ -79,9 +74,9 @@ export function SeatSelectionDialog({
       // 적절한 객차를 찾지 못한 경우, 좌석 타입에 맞는 객차만 필터링해서 첫 번째 선택
       if (!suitableCar) {
         const filteredCars = carList.filter(car => {
-          if (selectedSeatType === "reservedSeat") {
+          if (selectedSeatType === "firstClassSeat") {
             return car.carType === "FIRST_CLASS"
-          } else if (selectedSeatType === "generalSeat") {
+          } else if (selectedSeatType === "standardSeat") {
             return car.carType === "STANDARD"
           }
           return true
@@ -132,9 +127,9 @@ export function SeatSelectionDialog({
   // 좌석 타입에 따른 객차 필터링
   const getFilteredCars = () => {
     return carList.filter(car => {
-      if (selectedSeatType === "reservedSeat") {
+      if (selectedSeatType === "firstClassSeat") {
         return car.carType === "FIRST_CLASS"
-      } else if (selectedSeatType === "generalSeat") {
+      } else if (selectedSeatType === "standardSeat") {
         return car.carType === "STANDARD"
       }
       return true
@@ -224,7 +219,7 @@ export function SeatSelectionDialog({
           <div className="flex items-center space-x-3">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
             <h2 className="text-xl font-bold text-gray-800">
-              좌석선택 - {selectedTrain.trainType} {selectedTrain.trainNumber}
+              좌석선택 - {selectedTrain.trainName} {selectedTrain.trainNumber}
             </h2>
             {selectedCar && (
               <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
@@ -375,7 +370,7 @@ export function SeatSelectionDialog({
                             {isReserved && (
                               <div className="flex justify-between items-center px-2 py-1">
                                 <span className="font-semibold text-blue-700 text-sm">
-                                  {selectedTrain.departureStation || "출발역"}
+                                  {selectedTrain.departureStationName || "출발역"}
                                 </span>
                                 <div className="flex items-center space-x-1">
                                   {Array.from({ length: 6 }, (_, i) => (
@@ -383,7 +378,7 @@ export function SeatSelectionDialog({
                                   ))}
                                 </div>
                                 <span className="font-semibold text-blue-700 text-sm">
-                                  {selectedTrain.arrivalStation || "도착역"}
+                                  {selectedTrain.arrivalStationName || "도착역"}
                                 </span>
                               </div>
                             )}
@@ -426,7 +421,7 @@ export function SeatSelectionDialog({
                           {!isReserved && (
                             <div className="flex justify-between items-center px-2 py-1">
                               <span className="font-semibold text-blue-700 text-sm">
-                                {selectedTrain.departureStation || "출발역"}
+                                {selectedTrain.departureStationName || "출발역"}
                               </span>
                               <div className="flex items-center space-x-1">
                                 {Array.from({ length: 6 }, (_, i) => (
@@ -434,7 +429,7 @@ export function SeatSelectionDialog({
                                 ))}
                               </div>
                               <span className="font-semibold text-blue-700 text-sm">
-                                {selectedTrain.arrivalStation || "도착역"}
+                                {selectedTrain.arrivalStationName || "도착역"}
                               </span>
                             </div>
                           )}

@@ -5,6 +5,10 @@ export interface Station {
   name: string;
 }
 
+// ========== 좌석 타입 ==========
+
+export type SeatType = "standardSeat" | "firstClassSeat";
+
 // ========== 열차 ==========
 
 export interface SeatInfo {
