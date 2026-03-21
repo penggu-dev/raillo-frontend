@@ -1,37 +1,36 @@
-import { api } from "../api";
+import { api, requireResult } from "../api";
 import type {
   PendingBookingCartItem,
   PendingBookingRequest,
-  PendingBookingResponse,
   DeletePendingBookingsRequest,
-  DeletePendingBookingsResponse,
 } from "@/types/bookingType";
 
 // 대기 예약 생성 함수
 export const createPendingBooking = async (
   request: PendingBookingRequest,
-): Promise<PendingBookingResponse> => {
-  const response = await api.post<PendingBookingResponse["result"]>(
+): Promise<{ pendingBookingId: string }> => {
+  const response = await api.post<{ pendingBookingId: string }>(
     "/api/v1/pending-bookings",
     request,
   );
-  return {
-    message: response.message ?? "대기 예약이 생성되었습니다.",
-    result: response.result,
-  };
+  return requireResult(response.result, "대기 예약 생성에 실패했습니다.");
 };
 
-export const deletePendingBookings = async (pendingBookingIds: string[]) => {
+export const deletePendingBookings = async (
+  pendingBookingIds: string[],
+): Promise<void> => {
   const request: DeletePendingBookingsRequest = {
     pendingBookingIds,
   };
-  return api.delete<DeletePendingBookingsResponse>(
-    "/api/v1/pending-bookings",
-    request,
-  );
+  await api.delete("/api/v1/pending-bookings", request);
 };
 
 // 예약 목록 조회 함수
-export const getReservationList = async () => {
-  return api.get<PendingBookingCartItem[]>("/api/v1/pending-bookings");
+export const getReservationList = async (): Promise<
+  PendingBookingCartItem[]
+> => {
+  const response = await api.get<PendingBookingCartItem[]>(
+    "/api/v1/pending-bookings",
+  );
+  return response.result ?? [];
 };

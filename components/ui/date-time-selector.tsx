@@ -50,10 +50,7 @@ export function DateTimeSelector({
   );
   const { data: calendarData = [], isLoading } = useQuery<CalendarInfo[]>({
     queryKey: ["calendar"],
-    queryFn: async () => {
-      const response = await getCalendar();
-      return response.result ?? [];
-    },
+    queryFn: () => getCalendar(),
     staleTime: CALENDAR_STALE_TIME,
   });
 

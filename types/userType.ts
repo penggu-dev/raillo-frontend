@@ -2,11 +2,9 @@
 
 export interface MemberDetailInfo {
   memberNo: string;
-  membership: string;
   email: string;
   birthDate: string;
   gender: "M" | "F";
-  totalMileage: number;
 }
 
 export interface MemberInfoResponse {
@@ -23,6 +21,4 @@ export interface MemberInfo {
   phoneNumber: string;
   birthDate: string;
   gender: string;
-  memberGrade: string;
-  mileage: number;
 }

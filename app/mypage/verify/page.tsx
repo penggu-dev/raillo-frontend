@@ -1,119 +1,152 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowLeft } from "lucide-react"
-import { sendMemberEmailVerification, verifyMemberEmail } from "@/lib/api/authentication"
-import AuthGuard from "@/components/auth/AuthGuard"
-import { handleError } from "@/lib/utils/errorHandler"
-import { useToast } from "@/hooks/use-toast"
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft } from "lucide-react";
+import {
+  sendMemberEmailVerification,
+  verifyMemberEmail,
+} from "@/lib/api/authentication";
+import AuthGuard from "@/components/auth/AuthGuard";
+import { handleError } from "@/lib/utils/errorHandler";
+import { useToast } from "@/hooks/use-toast";
 
 function EmailVerificationPageContent() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { toast } = useToast()
-  const [email, setEmail] = useState("")
-  const [authCode, setAuthCode] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showVerification, setShowVerification] = useState(false)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [authCode, setAuthCode] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
 
   // 인증 용도 파악 및 유효성 검증
-  const rawPurpose = searchParams.get('purpose') || 'general'
-  
+  const rawPurpose = searchParams.get("purpose") || "general";
+
   // 유효한 purpose 값만 허용
-  const validPurposes = ['email_change', 'password_change', 'phone_change', 'general']
-  const verificationPurpose = validPurposes.includes(rawPurpose) ? rawPurpose : 'general'
-  
+  const validPurposes = [
+    "email_change",
+    "password_change",
+    "phone_change",
+    "general",
+  ];
+  const verificationPurpose = validPurposes.includes(rawPurpose)
+    ? rawPurpose
+    : "general";
+
   // 변조된 URL 감지 시 마이페이지로 리다이렉트
   useEffect(() => {
     if (!validPurposes.includes(rawPurpose)) {
-      router.push('/mypage')
+      router.push("/mypage");
     }
-  }, [rawPurpose, router])
+  }, [rawPurpose, router]);
 
   const handleSendVerificationCode = async () => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      const response = await sendMemberEmailVerification()
-      if (response.result) {
-        setEmail(response.result.email)
-        toast({ description: "인증코드가 이메일로 발송되었습니다." })
-        setShowVerification(true)
-      }
+      const result = await sendMemberEmailVerification();
+      setEmail(result.email);
+      toast({ description: "인증코드가 이메일로 발송되었습니다." });
+      setShowVerification(true);
     } catch (error: unknown) {
-      console.error('인증코드 발송 실패:', error)
-      toast({ title: "오류", description: handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
+      console.error("인증코드 발송 실패:", error);
+      toast({
+        title: "오류",
+        description: handleError(
+          error,
+          "인증코드 발송에 실패했습니다. 다시 시도해주세요.",
+        ),
+        variant: "destructive",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleAuthCodeChange = (value: string) => {
     // 숫자만 허용, 6자리 제한
-    const numericValue = value.replace(/[^0-9]/g, "").slice(0, 6)
-    setAuthCode(numericValue)
-  }
+    const numericValue = value.replace(/[^0-9]/g, "").slice(0, 6);
+    setAuthCode(numericValue);
+  };
 
   const handleGoBack = () => {
     // 인증 상태 초기화
-    sessionStorage.removeItem('emailVerified')
-    sessionStorage.removeItem('emailVerifiedFor')
+    sessionStorage.removeItem("emailVerified");
+    sessionStorage.removeItem("emailVerifiedFor");
     // 마이페이지로 돌아가기
-    router.push('/mypage')
-  }
+    router.push("/mypage");
+  };
 
   const handleVerifyEmail = async () => {
     if (!authCode) {
-      toast({ title: "입력 오류", description: "인증코드를 입력해주세요.", variant: "destructive" })
-      return
+      toast({
+        title: "입력 오류",
+        description: "인증코드를 입력해주세요.",
+        variant: "destructive",
+      });
+      return;
     }
 
     if (authCode.length !== 6) {
-      toast({ title: "입력 오류", description: "인증코드는 6자리 숫자로 입력해주세요.", variant: "destructive" })
-      return
+      toast({
+        title: "입력 오류",
+        description: "인증코드는 6자리 숫자로 입력해주세요.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      const response = await verifyMemberEmail(email, authCode)
-      if (response.result?.isVerified) {
-        toast({ description: "이메일 인증이 완료되었습니다." })
+      const result = await verifyMemberEmail(email, authCode);
+      if (result.isVerified) {
+        toast({ description: "이메일 인증이 완료되었습니다." });
         // 인증 성공 시 세션에 인증 상태 저장 (용도별로 구분)
-        sessionStorage.setItem('emailVerified', 'true')
-        sessionStorage.setItem('emailVerifiedFor', verificationPurpose)
-        
+        sessionStorage.setItem("emailVerified", "true");
+        sessionStorage.setItem("emailVerifiedFor", verificationPurpose);
+
         // 용도에 따라 적절한 페이지로 리다이렉트
         switch (verificationPurpose) {
-          case 'email_change':
-            router.push('/mypage/email/change')
-            break
-          case 'password_change':
-            router.push('/mypage/password/change')
-            break
-          case 'phone_change':
-            router.push('/mypage/phone/change')
-            break
+          case "email_change":
+            router.push("/mypage/email/change");
+            break;
+          case "password_change":
+            router.push("/mypage/password/change");
+            break;
+          case "phone_change":
+            router.push("/mypage/phone/change");
+            break;
           default:
-            router.push('/mypage')
+            router.push("/mypage");
         }
       } else {
-        toast({ title: "오류", description: "인증코드가 올바르지 않습니다. 다시 확인해주세요.", variant: "destructive" })
+        toast({
+          title: "오류",
+          description: "인증코드가 올바르지 않습니다. 다시 확인해주세요.",
+          variant: "destructive",
+        });
       }
     } catch (error: unknown) {
-      console.error('이메일 인증 실패:', error)
-      toast({ title: "오류", description: handleError(error, "이메일 인증에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
+      console.error("이메일 인증 실패:", error);
+      toast({
+        title: "오류",
+        description: handleError(
+          error,
+          "이메일 인증에 실패했습니다. 다시 시도해주세요.",
+        ),
+        variant: "destructive",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
           {/* 뒤로가기 버튼 */}
@@ -127,11 +160,13 @@ function EmailVerificationPageContent() {
               <span>뒤로가기</span>
             </Button>
           </div>
-          
+
           <Card>
             <CardContent className="p-8">
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">이메일 인증</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-6">
+                  이메일 인증
+                </h1>
                 <div className="space-y-3 text-gray-700">
                   <p>• 회원정보 변경을 위해 이메일 인증이 필요합니다.</p>
                   <p>• 등록된 이메일로 인증코드가 발송됩니다.</p>
@@ -156,7 +191,10 @@ function EmailVerificationPageContent() {
               ) : (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="auth-code" className="text-sm font-medium text-gray-700">
+                    <Label
+                      htmlFor="auth-code"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       인증코드 <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -197,7 +235,7 @@ function EmailVerificationPageContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function EmailVerificationPage() {
@@ -205,5 +243,5 @@ export default function EmailVerificationPage() {
     <AuthGuard>
       <EmailVerificationPageContent />
     </AuthGuard>
-  )
+  );
 }

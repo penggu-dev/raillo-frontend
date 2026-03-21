@@ -1,4 +1,4 @@
-import { api, ApiResponse } from "../api";
+import { api, requireResult } from "../api";
 import type {
   TrainSearchResponse,
   TrainSearchRequest,
@@ -13,22 +13,35 @@ export { STATIONS, stationUtils } from "@/constants/stations";
 
 export const searchTrains = async (
   request: TrainSearchRequest,
-): Promise<ApiResponse<TrainSearchResponse>> => {
-  return api.post<TrainSearchResponse>(`/api/v1/trains/search`, request);
+): Promise<TrainSearchResponse> => {
+  const response = await api.post<TrainSearchResponse>(
+    `/api/v1/trains/search`,
+    request,
+  );
+  return requireResult(response.result, "열차 조회에 실패했습니다.");
 };
 
-export const getCalendar = async (): Promise<ApiResponse<CalendarInfo[]>> => {
-  return api.get<CalendarInfo[]>("/api/v1/trains/calendar");
+export const getCalendar = async (): Promise<CalendarInfo[]> => {
+  const response = await api.get<CalendarInfo[]>("/api/v1/trains/calendar");
+  return response.result ?? [];
 };
 
 export const searchCars = async (
   request: CarSearchRequest,
-): Promise<ApiResponse<CarSearchResponse>> => {
-  return api.post<CarSearchResponse>("/api/v1/trains/cars", request);
+): Promise<CarSearchResponse> => {
+  const response = await api.post<CarSearchResponse>(
+    "/api/v1/trains/cars",
+    request,
+  );
+  return requireResult(response.result, "호차 조회에 실패했습니다.");
 };
 
 export const searchSeats = async (
   request: SeatSearchRequest,
-): Promise<ApiResponse<SeatSearchResponse>> => {
-  return api.post<SeatSearchResponse>("/api/v1/trains/seats", request);
+): Promise<SeatSearchResponse> => {
+  const response = await api.post<SeatSearchResponse>(
+    "/api/v1/trains/seats",
+    request,
+  );
+  return requireResult(response.result, "좌석 조회에 실패했습니다.");
 };

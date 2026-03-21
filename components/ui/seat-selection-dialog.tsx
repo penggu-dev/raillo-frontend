@@ -4,26 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { X } from "lucide-react"
-
-// 객차 정보 타입
-interface CarInfo {
-  id: number;
-  carNumber: string;
-  carType: 'STANDARD' | 'FIRST_CLASS';
-  totalSeats: number;
-  remainingSeats: number;
-  seatArrangement: string;
-}
-
-// 좌석 정보 타입
-interface SeatDetail {
-  seatId: number;
-  seatNumber: string;
-  isAvailable: boolean;
-  seatDirection: 'FORWARD' | 'BACKWARD';
-  seatType: 'WINDOW' | 'AISLE';
-  remarks: string;
-}
+import type { CarInfo, SeatDetail } from "@/types/trainType"
 
 interface SeatSelectionDialogProps {
   isOpen: boolean
