@@ -7,27 +7,15 @@ import { ArrowRight } from "lucide-react"
 import { DateTimeSelector } from "@/components/ui/date-time-selector"
 import { PassengerSelector } from "@/components/ui/passenger-selector"
 import { StationSelector } from "@/components/ui/station-selector"
-import { format } from "date-fns"
 import type { PassengerCounts } from "@/types/passengerType"
 
-interface SearchData {
-  departureStation: string
-  arrivalStation: string
-  departureDate: string
-  departureHour: string
-  returnDate?: string
-  returnHour?: string
-  passengers: PassengerCounts
-  tripType?: string
-}
-
 interface SearchFormProps {
-  searchData: SearchData | null
   departureStation: string
   arrivalStation: string
   date: Date | undefined
   returnDate?: Date | undefined
   passengerCounts: PassengerCounts
+  isRoundtrip: boolean
   searchConditionsChanged: boolean
   onDepartureStationChange: (station: string) => void
   onArrivalStationChange: (station: string) => void
@@ -39,12 +27,12 @@ interface SearchFormProps {
 }
 
 export function SearchForm({
-  searchData,
   departureStation,
   arrivalStation,
   date,
   returnDate,
   passengerCounts,
+  isRoundtrip,
   searchConditionsChanged,
   onDepartureStationChange,
   onArrivalStationChange,
@@ -54,8 +42,6 @@ export function SearchForm({
   onSearch,
   onBothStationsChange,
 }: SearchFormProps) {
-  const isRoundtrip = searchData?.tripType === 'roundtrip'
-  
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
@@ -64,11 +50,11 @@ export function SearchForm({
             {/* 출발역 선택 */}
             <div className="flex items-center">
               <StationSelector
-                value={searchData?.departureStation || departureStation}
+                value={departureStation}
                 onValueChange={onDepartureStationChange}
                 placeholder="출발역 선택"
                 label=""
-                otherStation={searchData?.arrivalStation || arrivalStation}
+                otherStation={arrivalStation}
                 onBothStationsChange={onBothStationsChange || ((departure, arrival) => {
                   onDepartureStationChange(departure)
                   onArrivalStationChange(arrival)
@@ -81,11 +67,11 @@ export function SearchForm({
             {/* 도착역 선택 */}
             <div className="flex items-center">
               <StationSelector
-                value={searchData?.arrivalStation || arrivalStation}
+                value={arrivalStation}
                 onValueChange={onArrivalStationChange}
                 placeholder="도착역 선택"
                 label=""
-                otherStation={searchData?.departureStation || departureStation}
+                otherStation={departureStation}
                 onBothStationsChange={onBothStationsChange || ((departure, arrival) => {
                   onDepartureStationChange(departure)
                   onArrivalStationChange(arrival)
@@ -103,38 +89,18 @@ export function SearchForm({
                   <div className="flex items-center">
                     <span className="text-sm text-gray-600 mr-2 flex items-center h-full">가는 날</span>
                     <DateTimeSelector
-                      value={
-                        searchData?.departureDate 
-                          ? (() => {
-                              const dateWithTime = new Date(searchData.departureDate)
-                              if (searchData.departureHour) {
-                                dateWithTime.setHours(parseInt(searchData.departureHour), 0, 0, 0)
-                              }
-                              return dateWithTime
-                            })()
-                          : date
-                      }
+                      value={date}
                       onValueChange={onDateChange}
                       placeholder="가는 날짜 선택"
                       label=""
                     />
                   </div>
-                  
+
                   {/* 오는 날짜 */}
                   <div className="flex items-center">
                     <span className="text-sm text-gray-600 mr-2 flex items-center h-full">오는 날</span>
                     <DateTimeSelector
-                      value={
-                        searchData?.returnDate 
-                          ? (() => {
-                              const dateWithTime = new Date(searchData.returnDate)
-                              if (searchData.returnHour) {
-                                dateWithTime.setHours(parseInt(searchData.returnHour), 0, 0, 0)
-                              }
-                              return dateWithTime
-                            })()
-                          : returnDate
-                      }
+                      value={returnDate}
                       onValueChange={onReturnDateChange || onDateChange}
                       placeholder="오는 날짜 선택"
                       label=""
@@ -143,17 +109,7 @@ export function SearchForm({
                 </>
               ) : (
                 <DateTimeSelector
-                  value={
-                    searchData?.departureDate 
-                      ? (() => {
-                          const dateWithTime = new Date(searchData.departureDate)
-                          if (searchData.departureHour) {
-                            dateWithTime.setHours(parseInt(searchData.departureHour), 0, 0, 0)
-                          }
-                          return dateWithTime
-                        })()
-                      : date
-                  }
+                  value={date}
                   onValueChange={onDateChange}
                   placeholder="날짜 선택"
                   label=""
@@ -166,7 +122,7 @@ export function SearchForm({
             {/* Passenger Selection */}
             <div className="flex items-center">
               <PassengerSelector
-                value={searchData?.passengers || passengerCounts}
+                value={passengerCounts}
                 onValueChange={onPassengerChange}
                 placeholder="인원 선택"
                 label=""
@@ -175,8 +131,9 @@ export function SearchForm({
             </div>
           </div>
 
-          <Button 
-            onClick={onSearch} 
+          <Button
+            onClick={onSearch}
+            disabled={Object.values(passengerCounts).reduce((sum, c) => sum + c, 0) === 0}
             variant={searchConditionsChanged ? "default" : "outline"}
             className={searchConditionsChanged ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}
           >
@@ -186,4 +143,4 @@ export function SearchForm({
       </CardContent>
     </Card>
   )
-} 
+}

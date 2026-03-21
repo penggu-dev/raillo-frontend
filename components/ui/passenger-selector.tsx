@@ -20,7 +20,7 @@ export function PassengerSelector({ value, onValueChange, placeholder, label, si
   const [tempPassengerCounts, setTempPassengerCounts] = useState<PassengerCounts>(value)
 
   const passengerTypes = [
-    { key: "adult", label: "어른", description: "(13세 이상, 정상가)", min: 1, max: 9 },
+    { key: "adult", label: "어른", description: "(13세 이상, 정상가)", min: 0, max: 9 },
     { key: "child", label: "어린이", description: "(6~12세, 40% 할인)", min: 0, max: 9 },
     { key: "infant", label: "유아", description: "(6세 미만, 75% 할인)", min: 0, max: 9 },
     { key: "senior", label: "경로", description: "(65세 이상, 30% 할인)", min: 0, max: 9 },
@@ -30,7 +30,7 @@ export function PassengerSelector({ value, onValueChange, placeholder, label, si
   ]
 
   const simplePassengerTypes = [
-    { key: "adult", label: "어른", description: "(13세 이상)", min: 1, max: 9 },
+    { key: "adult", label: "어른", description: "(13세 이상)", min: 0, max: 9 },
   ]
 
   const typesToShow = simple ? simplePassengerTypes : passengerTypes

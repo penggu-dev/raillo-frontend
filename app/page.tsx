@@ -31,7 +31,7 @@ export default function HomePage() {
   const [arrivalStation, setArrivalStation] = useState("")
   const [departureDate, setDepartureDate] = useState<Date>(new Date())
   const [passengers, setPassengers] = useState<PassengerCounts>({
-    adult: 1,
+    adult: 0,
     child: 0,
     infant: 0,
     senior: 0,
@@ -78,17 +78,26 @@ export default function HomePage() {
 
     localStorage.setItem('rail-o-search-history', JSON.stringify(history))
 
-    // 검색 조건을 localStorage에 저장하여 새로고침 시에도 유지
-    const searchData = {
-      departureStation,
-      arrivalStation,
-      departureDate: `${departureDate.getFullYear()}-${(departureDate.getMonth() + 1).toString().padStart(2, '0')}-${departureDate.getDate().toString().padStart(2, '0')}`,
-      departureHour: departureDate.getHours().toString().padStart(2, '0'),
-      passengers
-    }
+    const params = new URLSearchParams({
+      departure: departureStation,
+      arrival: arrivalStation,
+      date: `${departureDate.getFullYear()}-${(departureDate.getMonth() + 1).toString().padStart(2, '0')}-${departureDate.getDate().toString().padStart(2, '0')}`,
+      hour: departureDate.getHours().toString().padStart(2, '0'),
+    })
+    const passengerEntries: [string, number][] = [
+      ['adult', passengers.adult],
+      ['child', passengers.child],
+      ['infant', passengers.infant],
+      ['senior', passengers.senior],
+      ['severelydisabled', passengers.severelydisabled],
+      ['mildlydisabled', passengers.mildlydisabled],
+      ['veteran', passengers.veteran],
+    ]
+    passengerEntries.forEach(([key, value]) => {
+      if (value > 0) params.set(key, value.toString())
+    })
 
-    localStorage.setItem('searchData', JSON.stringify(searchData))
-    router.push('/ticket/search')
+    router.push(`/ticket/search?${params.toString()}`)
   }
 
   const swapStations = () => {
@@ -220,6 +229,7 @@ export default function HomePage() {
                   <Button
                     size="lg"
                     onClick={handleSearch}
+                    disabled={Object.values(passengers).reduce((sum, c) => sum + c, 0) === 0}
                     className="w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold h-12 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     <Search className="mr-3 h-5 w-5" />
