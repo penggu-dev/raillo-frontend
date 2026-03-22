@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Train, Home, Printer, Eye, EyeOff } from "lucide-react"
 import { updatePassword } from "@/lib/api/members"
 import { handleError } from "@/lib/utils/errorHandler"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/useToast"
 
 export default function ResetPasswordPage() {
   const router = useRouter()

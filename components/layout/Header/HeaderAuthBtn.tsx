@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
 import { logout } from "@/lib/api/authentication";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 
 const HeaderAuthBtn = () => {
   const router = useRouter();

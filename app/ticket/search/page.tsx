@@ -24,7 +24,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { ko } from "date-fns/locale";
 import type { CarInfo, SeatDetail, TrainSchedule, SeatType } from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 
 
 function TrainSearchPage() {

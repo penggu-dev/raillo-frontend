@@ -10,7 +10,8 @@ interface UseAuthOptions {
 
 export function useAuth(options: UseAuthOptions = {}) {
   const { redirectTo = "/login", requireAuth = true, redirectPath } = options;
-  const { accessToken, tokenExpiresIn, isInitialized, initialize } = useAuthStore();
+  const { accessToken, tokenExpiresIn, isInitialized, initialize } =
+    useAuthStore();
   const router = useRouter();
 
   const isAuthenticated =
@@ -31,7 +32,14 @@ export function useAuth(options: UseAuthOptions = {}) {
         : redirectTo;
       router.push(redirectUrl);
     }
-  }, [isInitialized, isAuthenticated, requireAuth, redirectTo, redirectPath, router]);
+  }, [
+    isInitialized,
+    isAuthenticated,
+    requireAuth,
+    redirectTo,
+    redirectPath,
+    router,
+  ]);
 
   useEffect(() => {
     if (!isInitialized) {

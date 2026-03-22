@@ -10,7 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Train, ChevronDown, User, CreditCard, Ticket, ShoppingCart, Settings, Star } from "lucide-react"
 import { sendEmailVerificationCode } from "@/lib/api/authMembers"
 import { updatePhoneNumber } from "@/lib/api/members"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/useToast"
 import { useRouter } from "next/navigation"
 import AuthGuard from "@/components/auth/AuthGuard"
 

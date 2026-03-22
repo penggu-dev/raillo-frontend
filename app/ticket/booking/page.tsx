@@ -18,7 +18,7 @@ import { StationSelector } from "@/components/ui/station-selector"
 import { DateTimeSelector } from "@/components/ui/date-time-selector"
 import { PassengerSelector } from "@/components/ui/passenger-selector"
 import type { PassengerCounts } from "@/types/passengerType"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/useToast"
 
 export default function TicketBookingPage() {
   const router = useRouter()

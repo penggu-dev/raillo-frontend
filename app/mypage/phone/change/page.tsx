@@ -11,7 +11,7 @@ import MyPageSidebar from "@/components/layout/MyPageSidebar"
 import { useGetMemberInfo } from "@/hooks/useUser"
 import AuthGuard from "@/components/auth/AuthGuard"
 import { handleError } from "@/lib/utils/errorHandler"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/useToast"
 
 function PhoneChangePageContent() {
   const router = useRouter()

@@ -8,7 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import { login } from "@/lib/api/authentication";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useAuthStore } from "@/stores/auth-store";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 
 const LoginField = () => {
   const [showPassword, setShowPassword] = useState(false);

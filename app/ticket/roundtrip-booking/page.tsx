@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 import type { PassengerCounts } from "@/types/passengerType"
 import type { TrainSchedule } from "@/types/trainType"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/useToast"
 
 interface BookingData {
   outboundTrain: TrainSchedule

@@ -7,7 +7,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge"
 import {Separator} from "@/components/ui/separator"
 import {Calendar, CheckCircle, Clock, CreditCard, Download, Home, List, Train, User, ArrowRight, ArrowLeft} from "lucide-react"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/hooks/useAuth"
 import { TRAIN_TYPE } from "@/constants/trainType"
 import { formatPrice, formatDate } from "@/lib/utils/format"
 

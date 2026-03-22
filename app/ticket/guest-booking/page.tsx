@@ -15,7 +15,7 @@ import { format } from "date-fns"
 import { ko } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { TRAIN_TYPE } from "@/constants/trainType"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/useToast"
 
 export default function GuestBookingPage() {
   const router = useRouter()
