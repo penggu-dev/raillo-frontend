@@ -149,7 +149,7 @@ export default function SignupCompletePage() {
                     variant="outline"
                     className="flex-1 border-green-600 text-green-600 hover:bg-green-50"
                   >
-                    <Link href="/ticket/booking">기차표 예매</Link>
+                    <Link href="/">기차표 예매</Link>
                   </Button>
                 </div>
               </div>

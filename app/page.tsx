@@ -295,7 +295,7 @@ export default function HomePage() {
               </Link>
 
               {/* 열차 조회 */}
-              <Link href="/ticket/booking">
+              <Link href="/">
                 <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-purple-200 bg-white/80 backdrop-blur-sm">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4">
