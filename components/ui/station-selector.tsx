@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
@@ -42,7 +42,6 @@ export function StationSelector({
 }: StationSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
-  const [filteredStations, setFilteredStations] = useState<Station[]>(STATIONS)
   const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([])
 
   // 검색 기록 로드
@@ -58,13 +57,9 @@ export function StationSelector({
     }
   }, [])
 
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredStations(STATIONS)
-    } else {
-      const filtered = stationUtils.searchStations(searchTerm)
-      setFilteredStations(filtered)
-    }
+  const filteredStations = useMemo(() => {
+    if (searchTerm.trim() === "") return STATIONS
+    return stationUtils.searchStations(searchTerm)
   }, [searchTerm])
 
   const handleStationSelect = (station: Station) => {

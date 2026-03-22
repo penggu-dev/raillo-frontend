@@ -26,6 +26,12 @@ import type { CalendarInfo } from "@/types/trainType";
 // 캐시 유효 시간 (5분)
 const CALENDAR_STALE_TIME = 5 * 60 * 1000;
 
+// 시간 옵션 (00시 ~ 23시) — 렌더와 무관한 상수
+const HOUR_OPTIONS = Array.from(
+  { length: 24 },
+  (_, i) => i.toString().padStart(2, "0") + "시",
+);
+
 interface DateTimeSelectorProps {
   value: Date | undefined;
   onValueChange: (date: Date) => void;
@@ -64,11 +70,6 @@ export function DateTimeSelector({
       : addMonths(today, 1); // 기본값으로 한 달 후
   }, [calendarData, today]);
 
-  // 시간 옵션 (00시 ~ 23시)
-  const hourOptions = Array.from(
-    { length: 24 },
-    (_, i) => i.toString().padStart(2, "0") + "시",
-  );
 
   // 현재 시간이 선택된 날짜의 과거인지 확인
   const isPastTime = useCallback((date: Date, hour: string) => {
@@ -227,7 +228,7 @@ export function DateTimeSelector({
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
-        const idx = hourOptions.findIndex((h) => h === selectedHour);
+        const idx = HOUR_OPTIONS.findIndex((h) => h === selectedHour);
         const btn = hourRefs.current[idx];
         const container = scrollContainerRef.current;
         if (btn && container) {
@@ -242,7 +243,7 @@ export function DateTimeSelector({
 
   useEffect(() => {
     if (isOpen) {
-      const idx = hourOptions.findIndex((h) => h === selectedHour);
+      const idx = HOUR_OPTIONS.findIndex((h) => h === selectedHour);
       const btn = hourRefs.current[idx];
       const container = scrollContainerRef.current;
       if (btn && container) {
@@ -424,7 +425,7 @@ export function DateTimeSelector({
               <h4 className="text-sm font-medium mb-3">시간 선택</h4>
               <div className="w-full overflow-x-auto" ref={scrollContainerRef}>
                 <div className="flex gap-2 min-w-max pb-2">
-                  {hourOptions.map((hour, idx) => (
+                  {HOUR_OPTIONS.map((hour, idx) => (
                     <Button
                       key={hour}
                       ref={(el) => {
