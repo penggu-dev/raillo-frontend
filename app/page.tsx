@@ -14,9 +14,9 @@ import {
   MapPin,
   Clock,
 } from "lucide-react"
-import { StationSelector } from "@/components/ui/station-selector"
-import { DateTimeSelector } from "@/components/ui/date-time-selector"
-import { PassengerSelector } from "@/components/ui/passenger-selector"
+import { StationSelector } from "@/components/ticket/search/station-selector"
+import { DateTimeSelector } from "@/components/ticket/search/date-time-selector"
+import { PassengerSelector } from "@/components/ticket/search/passenger-selector"
 import type { PassengerCounts } from "@/types/passengerType"
 import { useToast } from "@/hooks/useToast"
 

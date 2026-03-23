@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ArrowRight } from "lucide-react"
-import { DateTimeSelector } from "@/components/ui/date-time-selector"
-import { PassengerSelector } from "@/components/ui/passenger-selector"
-import { StationSelector } from "@/components/ui/station-selector"
+import { DateTimeSelector } from "@/components/ticket/search/date-time-selector"
+import { PassengerSelector } from "@/components/ticket/search/passenger-selector"
+import { StationSelector } from "@/components/ticket/search/station-selector"
 import type { PassengerCounts } from "@/types/passengerType"
 
 interface SearchFormProps {
