@@ -135,8 +135,8 @@ function TrainSearchPage() {
       if (existingHistory) {
         try {
           historyArray = JSON.parse(existingHistory);
-        } catch (error) {
-          console.error("기존 검색 기록 파싱 실패:", error);
+        } catch {
+          // 파싱 실패 시 빈 배열로 시작
         }
       }
 
@@ -198,7 +198,6 @@ function TrainSearchPage() {
       const arrStationId = stationUtils.getStationId(departureStation);
 
       if (!depStationId || !arrStationId) {
-        console.error("역 정보를 찾을 수 없습니다.");
         return;
       }
 
@@ -215,8 +214,8 @@ function TrainSearchPage() {
 
       setInboundTrains(inbound);
       setInboundHasNext(result.hasNext ?? false);
-    } catch (error) {
-      console.error("오는 열차 검색 실패:", error);
+    } catch {
+      // 오는 열차 검색 실패 시 목록 미표시
     }
   };
 
@@ -231,8 +230,8 @@ function TrainSearchPage() {
         0,
       );
       await fetchInboundTrains(totalPassengers);
-    } catch (error) {
-      console.error("오는 열차 검색 실패:", error);
+    } catch {
+      // 오는 열차 검색 실패 시 목록 미표시
     } finally {
       setLoading(false);
     }
@@ -382,7 +381,6 @@ function TrainSearchPage() {
       const arrivalStationId = stationUtils.getStationId(arrivalStation);
 
       if (!departureStationId || !arrivalStationId) {
-        console.error("역 정보를 찾을 수 없습니다.");
         setLoadingMore(false);
         return;
       }
@@ -430,7 +428,6 @@ function TrainSearchPage() {
       const arrStationId = stationUtils.getStationId(departureStation);
 
       if (!depStationId || !arrStationId) {
-        console.error("역 정보를 찾을 수 없습니다.");
         setLoadingInboundMore(false);
         return;
       }
@@ -456,8 +453,7 @@ function TrainSearchPage() {
       setInboundTrains((prev) => [...prev, ...newInboundTrains]);
       setInboundCurrentPage(nextPage);
       setInboundHasNext(result.hasNext ?? false);
-    } catch (error) {
-      console.error("오는 열차 더보기 로딩 중 오류 발생:", error);
+    } catch {
       setInboundHasNext(false);
     } finally {
       setLoadingInboundMore(false);
@@ -647,7 +643,6 @@ function TrainSearchPage() {
       const arrivalStationId = stationUtils.getStationId(arrivalStation);
 
       if (!departureStationId || !arrivalStationId) {
-        console.error("역 정보를 찾을 수 없습니다.");
         return;
       }
 
@@ -678,7 +673,6 @@ function TrainSearchPage() {
       const arrivalStationId = stationUtils.getStationId(arrivalStation);
 
       if (!departureStationId || !arrivalStationId) {
-        console.error("역 정보를 찾을 수 없습니다.");
         return;
       }
 

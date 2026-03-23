@@ -53,7 +53,6 @@ function EmailVerificationPageContent() {
       toast({ description: "인증코드가 이메일로 발송되었습니다." });
       setShowVerification(true);
     } catch (error: unknown) {
-      console.error("인증코드 발송 실패:", error);
       toast({
         title: "오류",
         description: handleError(
@@ -131,7 +130,6 @@ function EmailVerificationPageContent() {
         });
       }
     } catch (error: unknown) {
-      console.error("이메일 인증 실패:", error);
       toast({
         title: "오류",
         description: handleError(

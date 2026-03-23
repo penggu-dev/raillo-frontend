@@ -95,8 +95,8 @@ function ReservationsPageContent() {
 
         const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
         paymentWidgetRef.current = paymentWidget;
-      } catch (err) {
-        console.error("토스 페이먼츠 위젯 초기화 실패:", err);
+      } catch {
+        // 위젯 초기화 실패 시 결제 UI 미표시
       }
     };
 

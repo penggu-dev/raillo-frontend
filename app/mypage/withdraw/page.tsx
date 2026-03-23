@@ -66,7 +66,6 @@ function WithdrawPageContent() {
                 router.push('/')
             }, 3000)
         } catch (error: unknown) {
-            console.error('회원탈퇴 실패:', error)
             setError(error instanceof Error ? error.message : "회원탈퇴 처리 중 오류가 발생했습니다.")
         } finally {
             setIsLoading(false)
