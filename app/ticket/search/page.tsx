@@ -181,7 +181,7 @@ function TrainSearchPage() {
       setTotalResults(result.totalElements || resultArray.length);
       setHasNext(result.hasNext ?? false);
     } catch (error) {
-      console.error("열차 검색 실패:", error);
+      toast({ title: "오류", description: handleError(error, "열차 검색에 실패했습니다."), variant: "destructive" });
       setAllTrains([]);
       setDisplayedTrains([]);
       setTotalResults(0);
@@ -409,7 +409,7 @@ function TrainSearchPage() {
         setTotalResults(displayedTrains.length);
       }
     } catch (error) {
-      console.error("더보기 로딩 중 오류 발생:", error);
+      toast({ title: "오류", description: handleError(error, "열차 목록을 불러오는 데 실패했습니다."), variant: "destructive" });
       setHasNext(false);
     } finally {
       setLoadingMore(false);
@@ -656,7 +656,7 @@ function TrainSearchPage() {
       const result = await searchCars(request);
       setCarList(result.carInfos);
     } catch (error) {
-      console.error("객차 조회 중 오류 발생:", error);
+      toast({ title: "오류", description: handleError(error, "객차 정보를 불러오는 데 실패했습니다."), variant: "destructive" });
       setCarList([]);
     } finally {
       setLoadingCars(false);
@@ -686,7 +686,7 @@ function TrainSearchPage() {
       const result = await searchSeats(request);
       setSeatList(result.seatList);
     } catch (error) {
-      console.error("좌석 조회 중 오류 발생:", error);
+      toast({ title: "오류", description: handleError(error, "좌석 정보를 불러오는 데 실패했습니다."), variant: "destructive" });
       setSeatList([]);
     } finally {
       setLoadingSeats(false);
