@@ -52,7 +52,7 @@ const Breadcrumb = () => {
       {breadcrumbs.length > 1 && (
         <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
           {breadcrumbs.map((breadcrumb, index) => (
-            <div key={index} className="flex items-center space-x-2">
+            <div key={breadcrumb.path} className="flex items-center space-x-2">
               {index > 0 && <ChevronRight className="h-4 w-4" />}
               {index === 0 ? (
                 // 홈만 클릭 가능

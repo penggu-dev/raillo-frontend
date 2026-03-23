@@ -145,7 +145,7 @@ export default function PaymentCompletePage() {
               <CardContent>
                 <div className="space-y-3">
                   {paymentData.passengers.map((passenger, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div key={passenger.seat} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div>
                         <p className="font-medium">{passenger.name}</p>
                         <p className="text-sm text-gray-600">{passenger.type}</p>

@@ -135,7 +135,7 @@ export function StationSelector({
                 <div className="space-y-2">
                   {searchHistory.map((history, index) => (
                     <button
-                      key={index}
+                      key={history.timestamp}
                       onClick={() => handleHistorySelect(history)}
                       className="w-full text-left p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200"
                     >
