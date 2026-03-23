@@ -22,7 +22,7 @@ const SIDEBAR_NAV_ITEM_CONFIG: Record<SidebarNavItemType, SidebarNavItemConfig> 
     label: "승차권 확인",
   },
   "ticket-booking": {
-    href: "/ticket/booking",
+    href: "/",
     icon: Ticket,
     iconColor: "text-blue-600",
     label: "승차권 예매",

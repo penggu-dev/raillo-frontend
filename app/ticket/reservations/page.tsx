@@ -351,7 +351,7 @@ function ReservationsPageContent() {
                   <p className="text-gray-600 mb-6">
                     새로운 예약을 진행하세요.
                   </p>
-                  <Link href="/ticket/booking">
+                  <Link href="/">
                     <Button className="bg-blue-600 hover:bg-blue-700">
                       승차권 예매하기
                     </Button>
@@ -368,7 +368,7 @@ function ReservationsPageContent() {
                   <p className="text-gray-600 mb-6">
                     결제 기한이 지난 예약은 자동으로 삭제됩니다.
                   </p>
-                  <Link href="/ticket/booking">
+                  <Link href="/">
                     <Button className="bg-blue-600 hover:bg-blue-700">
                       승차권 예매하기
                     </Button>
