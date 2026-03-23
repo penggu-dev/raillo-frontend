@@ -9,7 +9,6 @@ import type {
   SeatSearchRequest,
 } from "@/types/trainType";
 
-export { STATIONS, stationUtils } from "@/constants/stations";
 
 export const searchTrains = async (
   request: TrainSearchRequest,

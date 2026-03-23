@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Search, MapPin, X, Clock, ArrowRight } from "lucide-react"
-import { STATIONS, stationUtils } from "@/lib/api/trains"
+import { STATIONS, stationUtils } from "@/constants/stations"
 import type { Station } from "@/types/trainType"
 
 interface StationSelectorProps {

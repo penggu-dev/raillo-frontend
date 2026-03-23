@@ -6,12 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { formatPrice } from "@/lib/utils/format";
 import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
-import {
-  searchTrains,
-  stationUtils,
-  searchCars,
-  searchSeats,
-} from "@/lib/api/trains";
+import { searchTrains, searchCars, searchSeats } from "@/lib/api/trains";
+import { stationUtils } from "@/constants/stations";
 import { createPendingBooking } from "@/lib/api/pendingBookings";
 import { PENDING_BOOKINGS_QUERY_KEY } from "@/hooks/usePendingBooking";
 import { handleError } from "@/lib/utils/errorHandler";
