@@ -64,7 +64,6 @@ function EmailChangePageContent() {
       toast({ description: "인증코드가 이메일로 발송되었습니다." })
       setShowVerification(true)
     } catch (error: unknown) {
-      console.error('인증코드 발송 실패:', error)
       toast({ title: "오류", description: handleError(error, "인증코드 발송에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)
@@ -97,7 +96,6 @@ function EmailChangePageContent() {
       sessionStorage.removeItem('emailVerifiedFor')
       router.push("/mypage")
     } catch (error: unknown) {
-      console.error('이메일 변경 실패:', error)
       toast({ title: "오류", description: handleError(error, "이메일 변경에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)

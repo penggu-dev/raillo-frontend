@@ -58,8 +58,8 @@ export default function HomePage() {
     if (existingHistory) {
       try {
         history = JSON.parse(existingHistory)
-      } catch (error) {
-        console.error('기존 검색 기록 파싱 실패:', error)
+      } catch {
+        // 파싱 실패 시 빈 배열로 시작
       }
     }
 

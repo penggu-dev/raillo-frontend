@@ -39,8 +39,8 @@ export function TossPaymentWidget({
           { variantKey: "DEFAULT" },
         );
         paymentMethodsWidgetRef.current = widget;
-      } catch (err) {
-        console.error("결제 수단 UI 렌더링 실패:", err);
+      } catch {
+        // 렌더링 실패 시 위젯 미표시
       }
     };
     render();

@@ -22,7 +22,6 @@ const HeaderAuthBtn = () => {
       toast({ description: "로그아웃되었습니다." });
       router.push("/");
     } catch (error: unknown) {
-      console.error("로그아웃 에러:", error);
       toast({ description: "로그아웃되었습니다." });
       router.push("/");
     } finally {

@@ -93,7 +93,6 @@ function PasswordChangePageContent() {
       sessionStorage.removeItem('emailVerifiedFor')
       router.push("/mypage")
     } catch (error: unknown) {
-      console.error('비밀번호 변경 실패:', error)
       toast({ title: "오류", description: handleError(error, "비밀번호 변경에 실패했습니다. 다시 시도해주세요."), variant: "destructive" })
     } finally {
       setIsSubmitting(false)

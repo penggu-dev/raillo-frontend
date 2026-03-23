@@ -159,7 +159,6 @@ export default function FindAccountPage() {
       // 회원번호 찾기 결과 페이지로 이동
       router.push("/find-account/result");
     } catch (error: unknown) {
-      console.error("Verification error:", error);
       toast({
         title: "오류",
         description: handleError(error, "인증 코드 검증에 실패했습니다."),
@@ -263,7 +262,6 @@ export default function FindAccountPage() {
       sessionStorage.setItem("tempPasswordEmail", passwordUserEmail);
       setShowPasswordChange(true);
     } catch (error: unknown) {
-      console.error("Password verification error:", error);
       toast({
         title: "오류",
         description: handleError(error, "인증 코드 검증에 실패했습니다."),
@@ -350,7 +348,6 @@ export default function FindAccountPage() {
         router.push("/login");
       }, 3000);
     } catch (error: unknown) {
-      console.error("Password change error:", error);
       toast({
         title: "오류",
         description: handleError(error, "비밀번호 변경에 실패했습니다."),

@@ -51,8 +51,8 @@ export function StationSelector({
       try {
         const history = JSON.parse(savedHistory) as SearchHistory[]
         setSearchHistory(history.slice(0, MAX_HISTORY_ITEMS))
-      } catch (error) {
-        console.error('검색 기록 로드 실패:', error)
+      } catch {
+        // 파싱 실패 시 검색 기록 없이 시작
       }
     }
   }, [])

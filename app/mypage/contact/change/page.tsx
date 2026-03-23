@@ -66,7 +66,6 @@ function ContactChangePageContent() {
       // 인증코드 입력 페이지로 이동하거나 상태를 변경할 수 있습니다
       router.push("/mypage/email/change")
     } catch (error) {
-      console.error('이메일 인증코드 발송 실패:', error)
       toast({
         title: "오류",
         description: "이메일 인증코드 발송에 실패했습니다. 다시 시도해주세요.",
@@ -107,7 +106,6 @@ function ContactChangePageContent() {
       })
       router.push("/mypage")
     } catch (error) {
-      console.error('휴대폰 번호 변경 실패:', error)
       toast({
         title: "오류",
         description: "휴대폰 번호 변경에 실패했습니다. 다시 시도해주세요.",
