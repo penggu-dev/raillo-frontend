@@ -21,8 +21,6 @@ import type { PassengerCounts } from "@/types/passengerType"
 import { useToast } from "@/hooks/useToast"
 
 export default function HomePage() {
-  // 임시 로그인 상태 시뮬레이션 (실제로는 인증 상태에 따라 결정)
-  const isLoggedIn = false // Simplified login status
   const router = useRouter()
   const { toast } = useToast()
 
