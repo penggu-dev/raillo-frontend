@@ -13,14 +13,11 @@ interface SearchFormProps {
   departureStation: string
   arrivalStation: string
   date: Date | undefined
-  returnDate?: Date | undefined
   passengerCounts: PassengerCounts
-  isRoundtrip: boolean
   searchConditionsChanged: boolean
   onDepartureStationChange: (station: string) => void
   onArrivalStationChange: (station: string) => void
   onDateChange: (date: Date) => void
-  onReturnDateChange?: (date: Date) => void
   onPassengerChange: (passengers: PassengerCounts) => void
   onSearch: () => void
   onBothStationsChange?: (departure: string, arrival: string) => void
@@ -30,14 +27,11 @@ export function SearchForm({
   departureStation,
   arrivalStation,
   date,
-  returnDate,
   passengerCounts,
-  isRoundtrip,
   searchConditionsChanged,
   onDepartureStationChange,
   onArrivalStationChange,
   onDateChange,
-  onReturnDateChange,
   onPassengerChange,
   onSearch,
   onBothStationsChange,
@@ -83,38 +77,12 @@ export function SearchForm({
 
             {/* Date Selection */}
             <div className="flex items-center space-x-2">
-              {isRoundtrip ? (
-                <>
-                  {/* 가는 날짜 */}
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-600 mr-2 flex items-center h-full">가는 날</span>
-                    <DateTimeSelector
-                      value={date}
-                      onValueChange={onDateChange}
-                      placeholder="가는 날짜 선택"
-                      label=""
-                    />
-                  </div>
-
-                  {/* 오는 날짜 */}
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-600 mr-2 flex items-center h-full">오는 날</span>
-                    <DateTimeSelector
-                      value={returnDate}
-                      onValueChange={onReturnDateChange || onDateChange}
-                      placeholder="오는 날짜 선택"
-                      label=""
-                    />
-                  </div>
-                </>
-              ) : (
-                <DateTimeSelector
-                  value={date}
-                  onValueChange={onDateChange}
-                  placeholder="날짜 선택"
-                  label=""
-                />
-              )}
+              <DateTimeSelector
+                value={date}
+                onValueChange={onDateChange}
+                placeholder="날짜 선택"
+                label=""
+              />
             </div>
 
             <Separator orientation="vertical" className="hidden md:block h-6" />
