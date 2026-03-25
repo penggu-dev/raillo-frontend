@@ -4,22 +4,10 @@ import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import {
-  format,
-  addMonths,
-  startOfDay,
-  isBefore,
-  isSameDay,
-  parseISO,
-} from "date-fns";
+import { format, addMonths, startOfDay, isBefore, isSameDay, parseISO } from "date-fns";
 import { ko } from "date-fns/locale";
-import {
-  CalendarIcon,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-} from "lucide-react";
+import { CalendarIcon, X, Clock } from "lucide-react";
+import { DateCalendar } from "@/components/ticket/search/DateCalendar";
 import { getCalendar } from "@/lib/api/trains";
 import type { CalendarInfo } from "@/types/trainType";
 
@@ -120,89 +108,6 @@ export function DateTimeSelector({
     },
     [tempDate, today, isPastTime],
   );
-
-  // 달력 그리드 생성
-  const generateCalendarDays = () => {
-    const year = tempDate.getFullYear();
-    const month = tempDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay());
-
-    const days = [];
-
-    for (let i = 0; i < 42; i++) {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(startDate.getDate() + i);
-
-      const isCurrentMonth = currentDate.getMonth() === month;
-      const isToday = isSameDay(currentDate, today);
-      const isSelected = isSameDay(currentDate, tempDate);
-      const isSelectable = isDateSelectable(currentDate);
-      const isWeekend =
-        currentDate.getDay() === 0 || currentDate.getDay() === 6;
-
-      // API 데이터에서 해당 날짜의 정보 가져오기
-      const dateStr = format(currentDate, "yyyy-MM-dd");
-      const calendarItem = calendarData.find(
-        (item) => item.operationDate === dateStr,
-      );
-      const isHoliday = calendarItem?.isHoliday === "Y";
-      const isBookingAvailable = calendarItem?.isBookingAvailable === "Y";
-
-      days.push(
-        <button
-          key={i}
-          onClick={() => {
-            if (isSelectable && isCurrentMonth) {
-              setTempDate(new Date(currentDate));
-              // 오늘 날짜 선택 시 현재 시간으로, 다른 날짜 선택 시 00시로 설정
-              const now = new Date();
-              const isToday =
-                currentDate.getDate() === now.getDate() &&
-                currentDate.getMonth() === now.getMonth() &&
-                currentDate.getFullYear() === now.getFullYear();
-              if (isToday) {
-                setSelectedHour(
-                  now.getHours().toString().padStart(2, "0") + "시",
-                );
-              } else {
-                setSelectedHour("00시");
-              }
-            }
-          }}
-          disabled={!isSelectable || !isCurrentMonth}
-          aria-label={`${format(currentDate, "yyyy년 MM월 dd일")} 날짜 선택`}
-          className={`
-            p-2 text-sm transition-colors relative h-9
-            ${
-              isCurrentMonth
-                ? isSelected
-                  ? "bg-blue-600 text-white font-semibold"
-                  : isHoliday
-                    ? isSelectable
-                      ? "text-red-500 hover:bg-red-50"
-                      : "text-red-300 cursor-not-allowed"
-                    : isSelectable
-                      ? isToday
-                        ? "bg-blue-100 text-blue-600 font-semibold hover:bg-blue-200"
-                        : isWeekend
-                          ? currentDate.getDay() === 0
-                            ? "text-red-500 hover:bg-red-50"
-                            : "text-blue-500 hover:bg-blue-50"
-                          : "text-gray-900 hover:bg-gray-100"
-                      : "text-gray-300 cursor-not-allowed"
-                : "text-gray-300"
-            }
-          `}
-        >
-          {currentDate.getDate()}
-        </button>,
-      );
-    }
-
-    return days;
-  };
 
   const handleApply = () => {
     const selectedDateTime = new Date(tempDate);
@@ -313,112 +218,16 @@ export function DateTimeSelector({
             </div>
 
             {/* 달력 */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-4">
-                <button
-                  className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
-                  aria-label="이전 달로 이동"
-                  onClick={() => {
-                    const prevMonth = new Date(
-                      tempDate.getFullYear(),
-                      tempDate.getMonth() - 1,
-                      1,
-                    );
-                    setTempDate(prevMonth);
-                    // 월 변경 시 오늘 날짜면 현재 시간으로, 아니면 00시로 설정
-                    const now = new Date();
-                    const isToday =
-                      prevMonth.getDate() === now.getDate() &&
-                      prevMonth.getMonth() === now.getMonth() &&
-                      prevMonth.getFullYear() === now.getFullYear();
-                    if (isToday) {
-                      setSelectedHour(
-                        now.getHours().toString().padStart(2, "0") + "시",
-                      );
-                    } else {
-                      setSelectedHour("00시");
-                    }
-                  }}
-                  disabled={
-                    tempDate.getMonth() === today.getMonth() &&
-                    tempDate.getFullYear() === today.getFullYear()
-                  }
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <div className="text-center">
-                  <h3 className="text-lg font-bold">
-                    {format(tempDate, "yyyy. MM.", { locale: ko })}
-                  </h3>
-                  {!isLoading && calendarData.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      예약 가능: {format(today, "MM/dd")} ~{" "}
-                      {format(maxAvailableDate, "MM/dd")}
-                    </p>
-                  )}
-                </div>
-                <button
-                  className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
-                  aria-label="다음 달로 이동"
-                  onClick={() => {
-                    const nextMonth = new Date(
-                      tempDate.getFullYear(),
-                      tempDate.getMonth() + 1,
-                      1,
-                    );
-                    setTempDate(nextMonth);
-                    // 월 변경 시 오늘 날짜면 현재 시간으로, 아니면 00시로 설정
-                    const now = new Date();
-                    const isToday =
-                      nextMonth.getDate() === now.getDate() &&
-                      nextMonth.getMonth() === now.getMonth() &&
-                      nextMonth.getFullYear() === now.getFullYear();
-                    if (isToday) {
-                      setSelectedHour(
-                        now.getHours().toString().padStart(2, "0") + "시",
-                      );
-                    } else {
-                      setSelectedHour("00시");
-                    }
-                  }}
-                  disabled={isBefore(
-                    maxAvailableDate,
-                    new Date(
-                      tempDate.getFullYear(),
-                      tempDate.getMonth() + 1,
-                      1,
-                    ),
-                  )}
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
-
-              {/* 요일 헤더 */}
-              <div className="grid grid-cols-7 bg-gray-50">
-                {["일", "월", "화", "수", "목", "금", "토"].map(
-                  (day, index) => (
-                    <div
-                      key={day}
-                      className={`p-2 text-center text-sm font-medium h-9 flex items-center justify-center ${
-                        index === 0
-                          ? "text-red-500"
-                          : index === 6
-                            ? "text-blue-500"
-                            : "text-gray-700"
-                      }`}
-                    >
-                      {day}
-                    </div>
-                  ),
-                )}
-              </div>
-
-              {/* 달력 그리드 */}
-              <div className="grid grid-cols-7 border rounded-lg overflow-hidden bg-white">
-                {generateCalendarDays()}
-              </div>
-            </div>
+            <DateCalendar
+              tempDate={tempDate}
+              setTempDate={setTempDate}
+              setSelectedHour={setSelectedHour}
+              calendarData={calendarData}
+              isLoading={isLoading}
+              today={today}
+              maxAvailableDate={maxAvailableDate}
+              isDateSelectable={isDateSelectable}
+            />
 
             {/* 시간 선택 */}
             <div className="mb-4">
