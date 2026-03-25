@@ -15,7 +15,8 @@ export function FindPasswordTab() {
   const [passwordName, setPasswordName] = useState("");
   const [passwordMemberNumber, setPasswordMemberNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showPasswordVerification, setShowPasswordVerification] = useState(false);
+  const [showPasswordVerification, setShowPasswordVerification] =
+    useState(false);
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showPasswordSuccess, setShowPasswordSuccess] = useState(false);
   const [passwordUserEmail, setPasswordUserEmail] = useState("");
@@ -23,7 +24,9 @@ export function FindPasswordTab() {
   const [temporaryToken, setTemporaryToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const loginRedirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loginRedirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const router = useRouter();
   const { toast } = useToast();
@@ -154,7 +157,8 @@ export function FindPasswordTab() {
     setIsLoading(true);
 
     try {
-      const token = sessionStorage.getItem("tempPasswordToken") || temporaryToken;
+      const token =
+        sessionStorage.getItem("tempPasswordToken") || temporaryToken;
 
       if (!token) {
         toast({
@@ -189,7 +193,9 @@ export function FindPasswordTab() {
     }
   };
 
-  const handlePasswordAuthCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordAuthCodeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
     setPasswordAuthCode(value);
   };
@@ -207,7 +213,11 @@ export function FindPasswordTab() {
     sessionStorage.removeItem("tempPasswordEmail");
   };
 
-  if (!showPasswordVerification && !showPasswordChange && !showPasswordSuccess) {
+  if (
+    !showPasswordVerification &&
+    !showPasswordChange &&
+    !showPasswordSuccess
+  ) {
     return (
       <div className="space-y-6">
         <div className="text-center mb-6">
@@ -218,10 +228,19 @@ export function FindPasswordTab() {
           </p>
         </div>
 
-        <div className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleFindPassword();
+          }}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="passwordName" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="passwordName"
+                className="text-sm font-medium text-gray-700"
+              >
                 이름
               </Label>
               <div className="relative">
@@ -234,12 +253,16 @@ export function FindPasswordTab() {
                   onChange={(e) => setPasswordName(e.target.value)}
                   className="pl-10"
                   disabled={isLoading}
+                  autoComplete="name"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="passwordMemberNumber" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="passwordMemberNumber"
+                className="text-sm font-medium text-gray-700"
+              >
                 회원번호
               </Label>
               <div className="relative">
@@ -252,6 +275,7 @@ export function FindPasswordTab() {
                   onChange={(e) => setPasswordMemberNumber(e.target.value)}
                   className="pl-10"
                   disabled={isLoading}
+                  autoComplete="username"
                 />
               </div>
             </div>
@@ -259,7 +283,7 @@ export function FindPasswordTab() {
 
           <div className="text-center pt-4">
             <Button
-              onClick={handleFindPassword}
+              type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
               size="lg"
               disabled={isLoading}
@@ -274,16 +298,19 @@ export function FindPasswordTab() {
               )}
             </Button>
           </div>
-        </div>
+        </form>
 
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <FileText className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-900 mb-1">비밀번호 찾기 안내</h3>
+              <h3 className="font-semibold text-gray-900 mb-1">
+                비밀번호 찾기 안내
+              </h3>
               <p className="text-sm text-gray-600 leading-relaxed">
                 회원번호를 모르시는 경우 먼저 회원번호 찾기를 이용해 주세요.
-                본인 확인 후 등록된 이메일로 인증 코드가 전송되며, 인증 완료 시 새 비밀번호를 설정할 수 있습니다.
+                본인 확인 후 등록된 이메일로 인증 코드가 전송되며, 인증 완료 시
+                새 비밀번호를 설정할 수 있습니다.
               </p>
             </div>
           </div>
@@ -308,17 +335,29 @@ export function FindPasswordTab() {
         </div>
 
         <div className="text-center mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">이메일 인증</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            이메일 인증
+          </h3>
           <p className="text-gray-700">
-            <span className="font-medium">{passwordUserEmail}</span>로 인증 코드를 전송했습니다.
+            <span className="font-medium">{passwordUserEmail}</span>로 인증
+            코드를 전송했습니다.
             <br />
             이메일을 확인하여 인증 코드를 입력해주세요.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleVerifyPasswordAuthCode(false);
+          }}
+          className="space-y-4"
+        >
           <div className="space-y-2">
-            <Label htmlFor="passwordAuthCode" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="passwordAuthCode"
+              className="text-sm font-medium text-gray-700"
+            >
               인증 코드
             </Label>
             <div className="relative">
@@ -332,6 +371,7 @@ export function FindPasswordTab() {
                 className={`pl-10 ${passwordAuthCode.length === 6 ? "border-green-500 focus:border-green-500" : ""}`}
                 maxLength={6}
                 disabled={isLoading}
+                autoComplete="one-time-code"
               />
               {passwordAuthCode.length > 0 && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
@@ -343,7 +383,7 @@ export function FindPasswordTab() {
 
           <div className="text-center pt-4">
             <Button
-              onClick={() => handleVerifyPasswordAuthCode(false)}
+              type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
               size="lg"
               disabled={isLoading}
@@ -358,16 +398,18 @@ export function FindPasswordTab() {
               )}
             </Button>
           </div>
-        </div>
+        </form>
 
         <div className="bg-blue-50 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <Mail className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-900 mb-1">인증 코드 안내</h3>
+              <h3 className="font-semibold text-gray-900 mb-1">
+                인증 코드 안내
+              </h3>
               <p className="text-sm text-gray-600 leading-relaxed">
-                이메일로 전송된 6자리 인증 코드를 입력해주세요.
-                인증 코드는 5분간 유효합니다.
+                이메일로 전송된 6자리 인증 코드를 입력해주세요. 인증 코드는
+                5분간 유효합니다.
               </p>
             </div>
           </div>
@@ -392,13 +434,24 @@ export function FindPasswordTab() {
         </div>
 
         <div className="text-center mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">새 비밀번호 설정</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            새 비밀번호 설정
+          </h3>
           <p className="text-gray-700">새로운 비밀번호를 입력해주세요.</p>
         </div>
 
-        <div className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleChangePassword();
+          }}
+          className="space-y-4"
+        >
           <div className="space-y-2">
-            <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="newPassword"
+              className="text-sm font-medium text-gray-700"
+            >
               새 비밀번호
             </Label>
             <div className="relative">
@@ -411,12 +464,16 @@ export function FindPasswordTab() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="pl-10"
                 disabled={isLoading}
+                autoComplete="new-password"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-sm font-medium text-gray-700"
+            >
               새 비밀번호 확인
             </Label>
             <div className="relative">
@@ -429,13 +486,14 @@ export function FindPasswordTab() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="pl-10"
                 disabled={isLoading}
+                autoComplete="new-password"
               />
             </div>
           </div>
 
           <div className="text-center pt-4">
             <Button
-              onClick={handleChangePassword}
+              type="submit"
               className={`font-semibold px-8 py-3 ${
                 isLoading
                   ? "bg-gray-400 cursor-not-allowed"
@@ -454,16 +512,19 @@ export function FindPasswordTab() {
               )}
             </Button>
           </div>
-        </div>
+        </form>
 
         <div className="bg-green-50 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <Lock className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-900 mb-1">비밀번호 변경 안내</h3>
+              <h3 className="font-semibold text-gray-900 mb-1">
+                비밀번호 변경 안내
+              </h3>
               <p className="text-sm text-gray-600 leading-relaxed">
-                비밀번호는 8자 이상이어야 하며, 영문, 숫자, 특수문자를 포함하는 것을 권장합니다.
-                비밀번호 변경 후 자동으로 로그인 페이지로 이동합니다.
+                비밀번호는 8자 이상이어야 하며, 영문, 숫자, 특수문자를 포함하는
+                것을 권장합니다. 비밀번호 변경 후 자동으로 로그인 페이지로
+                이동합니다.
               </p>
             </div>
           </div>
@@ -476,15 +537,29 @@ export function FindPasswordTab() {
     <div className="space-y-6">
       <div className="text-center mb-8">
         <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-          <svg className="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          <svg
+            className="h-10 w-10 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
           </svg>
         </div>
-        <h3 className="text-2xl font-bold text-gray-900 mb-4">비밀번호 변경 완료!</h3>
+        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          비밀번호 변경 완료!
+        </h3>
         <p className="text-gray-700 text-lg mb-6">
           비밀번호가 성공적으로 변경되었습니다.
           <br />
-          <span className="text-blue-600 font-medium">3초 후 로그인 페이지로 이동합니다.</span>
+          <span className="text-blue-600 font-medium">
+            3초 후 로그인 페이지로 이동합니다.
+          </span>
         </p>
       </div>
 
@@ -500,14 +575,24 @@ export function FindPasswordTab() {
 
       <div className="bg-green-50 rounded-lg p-4 mt-6">
         <div className="flex items-start space-x-3">
-          <svg className="h-5 w-5 text-green-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="h-5 w-5 text-green-600 mt-1 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           <div>
             <h3 className="font-semibold text-gray-900 mb-1">변경 완료 안내</h3>
             <p className="text-sm text-gray-600 leading-relaxed">
-              새로운 비밀번호로 로그인하실 수 있습니다.
-              보안을 위해 정기적으로 비밀번호를 변경하시는 것을 권장합니다.
+              새로운 비밀번호로 로그인하실 수 있습니다. 보안을 위해 정기적으로
+              비밀번호를 변경하시는 것을 권장합니다.
             </p>
           </div>
         </div>

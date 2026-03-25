@@ -187,7 +187,13 @@ function EmailVerificationPageContent() {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleVerifyEmail();
+                  }}
+                  className="space-y-6"
+                >
                   <div className="space-y-2">
                     <Label
                       htmlFor="auth-code"
@@ -203,6 +209,7 @@ function EmailVerificationPageContent() {
                       placeholder="인증코드 6자리 입력"
                       maxLength={6}
                       className="w-full"
+                      autoComplete="one-time-code"
                     />
                     <p className="text-xs text-gray-500">
                       {email}로 발송된 6자리 인증코드를 입력해주세요.
@@ -211,13 +218,14 @@ function EmailVerificationPageContent() {
 
                   <div className="flex space-x-3">
                     <Button
-                      onClick={handleVerifyEmail}
+                      type="submit"
                       disabled={isSubmitting}
                       className="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
                     >
                       {isSubmitting ? "처리 중..." : "인증 확인"}
                     </Button>
                     <Button
+                      type="button"
                       onClick={handleSendVerificationCode}
                       disabled={isSubmitting}
                       variant="outline"
@@ -226,7 +234,7 @@ function EmailVerificationPageContent() {
                       재발송
                     </Button>
                   </div>
-                </div>
+                </form>
               )}
             </CardContent>
           </Card>

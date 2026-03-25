@@ -124,17 +124,26 @@ export function FindMemberTab() {
       <div className="space-y-6">
         <div className="text-center mb-6">
           <p className="text-gray-700">
-            본인이름과 회원가입 시 입력한 휴대전화 번호로
-            회원번호를 찾으실 수 있습니다.
+            본인이름과 회원가입 시 입력한 휴대전화 번호로 회원번호를 찾으실 수
+            있습니다.
             <br />
             이메일 인증을 통해 본인 확인 후 회원번호를 확인할 수 있습니다.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleFindMember();
+          }}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="memberName" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="memberName"
+                className="text-sm font-medium text-gray-700"
+              >
                 이름
               </Label>
               <div className="relative">
@@ -147,12 +156,16 @@ export function FindMemberTab() {
                   onChange={(e) => setMemberName(e.target.value)}
                   className="pl-10"
                   disabled={isLoading}
+                  autoComplete="name"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="memberPhone" className="text-sm font-medium text-gray-700">
+              <Label
+                htmlFor="memberPhone"
+                className="text-sm font-medium text-gray-700"
+              >
                 휴대폰번호
               </Label>
               <Input
@@ -163,13 +176,14 @@ export function FindMemberTab() {
                 onChange={handlePhoneChange}
                 maxLength={11}
                 disabled={isLoading}
+                autoComplete="tel"
               />
             </div>
           </div>
 
           <div className="text-center pt-4">
             <Button
-              onClick={handleFindMember}
+              type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
               size="lg"
               disabled={isLoading}
@@ -184,18 +198,21 @@ export function FindMemberTab() {
               )}
             </Button>
           </div>
-        </div>
+        </form>
 
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <FileText className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
             <div>
-              <h3 className="font-semibold text-gray-900 mb-1">회원번호 찾기 안내</h3>
+              <h3 className="font-semibold text-gray-900 mb-1">
+                회원번호 찾기 안내
+              </h3>
               <p className="text-sm text-gray-600 leading-relaxed">
-                등록된 이메일 주소로 인증 코드가 전송됩니다.
-                이메일을 확인하여 6자리 인증 코드를 입력해주세요.
+                등록된 이메일 주소로 인증 코드가 전송됩니다. 이메일을 확인하여
+                6자리 인증 코드를 입력해주세요.
                 <br />
-                휴대폰번호가 변경되었거나 회원정보와 일치하지 않는 경우 고객센터로 문의해주세요.
+                휴대폰번호가 변경되었거나 회원정보와 일치하지 않는 경우
+                고객센터로 문의해주세요.
               </p>
             </div>
           </div>
@@ -219,17 +236,29 @@ export function FindMemberTab() {
       </div>
 
       <div className="text-center mb-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">이메일 인증</h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          이메일 인증
+        </h3>
         <p className="text-gray-700">
-          <span className="font-medium">{userEmail}</span>로 인증 코드를 전송했습니다.
+          <span className="font-medium">{userEmail}</span>로 인증 코드를
+          전송했습니다.
           <br />
           이메일을 확인하여 인증 코드를 입력해주세요.
         </p>
       </div>
 
-      <div className="space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleVerifyAuthCode(false);
+        }}
+        className="space-y-4"
+      >
         <div className="space-y-2">
-          <Label htmlFor="authCode" className="text-sm font-medium text-gray-700">
+          <Label
+            htmlFor="authCode"
+            className="text-sm font-medium text-gray-700"
+          >
             인증 코드
           </Label>
           <div className="relative">
@@ -243,6 +272,7 @@ export function FindMemberTab() {
               className={`pl-10 ${authCode.length === 6 ? "border-green-500 focus:border-green-500" : ""}`}
               maxLength={6}
               disabled={isLoading}
+              autoComplete="one-time-code"
             />
             {authCode.length > 0 && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
@@ -254,7 +284,7 @@ export function FindMemberTab() {
 
         <div className="text-center pt-4">
           <Button
-            onClick={() => handleVerifyAuthCode(false)}
+            type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3"
             size="lg"
             disabled={isLoading}
@@ -269,7 +299,7 @@ export function FindMemberTab() {
             )}
           </Button>
         </div>
-      </div>
+      </form>
 
       <div className="bg-blue-50 rounded-lg p-4">
         <div className="flex items-start space-x-3">
@@ -277,8 +307,8 @@ export function FindMemberTab() {
           <div>
             <h3 className="font-semibold text-gray-900 mb-1">인증 코드 안내</h3>
             <p className="text-sm text-gray-600 leading-relaxed">
-              이메일로 전송된 6자리 인증 코드를 입력해주세요.
-              인증 코드는 5분간 유효합니다.
+              이메일로 전송된 6자리 인증 코드를 입력해주세요. 인증 코드는 5분간
+              유효합니다.
             </p>
           </div>
         </div>
