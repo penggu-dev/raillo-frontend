@@ -31,6 +31,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       accessToken,
       tokenExpiresIn: expiresIn,
     });
+    // middleware에서 인증 여부 확인용 쿠키 (7일)
+    document.cookie = `has_session=1; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
   },
 
   removeTokens: () => {
@@ -39,6 +41,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       accessToken: null,
       tokenExpiresIn: null,
     });
+    document.cookie = "has_session=; path=/; max-age=0; SameSite=Lax";
   },
 
   getToken: () => get().accessToken,
