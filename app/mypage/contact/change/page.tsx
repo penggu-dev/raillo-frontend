@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,108 +28,83 @@ import {
 import { sendEmailVerificationCode } from "@/lib/api/authMembers";
 import { updatePhoneNumber } from "@/lib/api/members";
 import { useToast } from "@/hooks/useToast";
-import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/auth/AuthGuard";
+
+const emailSchema = z.object({
+  email: z
+    .string()
+    .min(1, "이메일 주소를 입력해주세요.")
+    .email("올바른 이메일 형식을 입력해주세요."),
+});
+
+const phoneSchema = z.object({
+  phoneNumber: z
+    .string()
+    .regex(/^01[0-9]{9}$/, "올바른 휴대폰 번호 형식을 입력해주세요."),
+});
+
+type EmailFormValues = z.infer<typeof emailSchema>;
+type PhoneFormValues = z.infer<typeof phoneSchema>;
 
 function ContactChangePageContent() {
   const router = useRouter();
   const { toast } = useToast();
+
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
     ticketInfo: false,
     membershipPerformance: false,
     paymentManagement: false,
   });
 
-  const [emailAddress, setEmailAddress] = useState("");
   const [phoneNumber1, setPhoneNumber1] = useState("");
   const [phoneNumber2, setPhoneNumber2] = useState("");
   const [phoneNumber3, setPhoneNumber3] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const toggleSection = (section: string) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const handleEmailVerification = async () => {
-    if (!emailAddress) {
-      toast({
-        title: "입력 오류",
-        description: "이메일 주소를 입력해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
+  const emailForm = useForm<EmailFormValues>({
+    resolver: zodResolver(emailSchema),
+    defaultValues: { email: "" },
+  });
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailAddress)) {
-      toast({
-        title: "입력 오류",
-        description: "올바른 이메일 형식을 입력해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
+  const phoneForm = useForm<PhoneFormValues>({
+    resolver: zodResolver(phoneSchema),
+    defaultValues: { phoneNumber: "" },
+  });
 
-    setIsSubmitting(true);
+  const updatePhoneField = (p1: string, p2: string, p3: string) => {
+    phoneForm.setValue("phoneNumber", `${p1}${p2}${p3}`, {
+      shouldValidate: true,
+    });
+  };
+
+  const onEmailVerification = async (data: EmailFormValues) => {
     try {
-      await sendEmailVerificationCode(emailAddress);
-      toast({
-        title: "성공",
-        description: "이메일 인증코드가 발송되었습니다.",
-      });
-      // 인증코드 입력 페이지로 이동하거나 상태를 변경할 수 있습니다
+      await sendEmailVerificationCode(data.email);
+      toast({ title: "성공", description: "이메일 인증코드가 발송되었습니다." });
       router.push("/mypage/email/change");
-    } catch (error) {
+    } catch {
       toast({
         title: "오류",
         description: "이메일 인증코드 발송에 실패했습니다. 다시 시도해주세요.",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  const handlePhoneVerification = async () => {
-    if (!phoneNumber1 || !phoneNumber2 || !phoneNumber3) {
-      toast({
-        title: "입력 오류",
-        description: "휴대폰 번호를 모두 입력해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const fullPhoneNumber = `${phoneNumber1}${phoneNumber2}${phoneNumber3}`;
-    const phoneRegex = /^01[0-9]{8}$/;
-    if (!phoneRegex.test(fullPhoneNumber)) {
-      toast({
-        title: "입력 오류",
-        description: "올바른 휴대폰 번호 형식을 입력해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
+  const onPhoneVerification = async (data: PhoneFormValues) => {
     try {
-      await updatePhoneNumber(fullPhoneNumber);
-      toast({
-        title: "성공",
-        description: "휴대폰 번호 변경이 성공적으로 처리되었습니다.",
-      });
+      await updatePhoneNumber(data.phoneNumber);
+      toast({ title: "성공", description: "휴대폰 번호 변경이 성공적으로 처리되었습니다." });
       router.push("/mypage");
-    } catch (error) {
+    } catch {
       toast({
         title: "오류",
         description: "휴대폰 번호 변경에 실패했습니다. 다시 시도해주세요.",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -163,7 +142,6 @@ function ContactChangePageContent() {
             <Card>
               <CardContent className="p-0">
                 <nav className="space-y-1">
-                  {/* 마이 코레일 */}
                   <Link
                     href="/mypage"
                     className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
@@ -172,7 +150,6 @@ function ContactChangePageContent() {
                     <span>마이 RAILLO</span>
                   </Link>
 
-                  {/* 승차권 정보 */}
                   <Collapsible
                     open={openSections.ticketInfo}
                     onOpenChange={() => toggleSection("ticketInfo")}
@@ -204,7 +181,6 @@ function ContactChangePageContent() {
                     </CollapsibleContent>
                   </Collapsible>
 
-                  {/* 기차여행정보 */}
                   <Collapsible
                     open={openSections.membershipPerformance}
                     onOpenChange={() => toggleSection("membershipPerformance")}
@@ -222,7 +198,6 @@ function ContactChangePageContent() {
                     </CollapsibleTrigger>
                   </Collapsible>
 
-                  {/* 멤버십 실적 조회 */}
                   <Collapsible
                     open={openSections.paymentManagement}
                     onOpenChange={() => toggleSection("paymentManagement")}
@@ -240,7 +215,6 @@ function ContactChangePageContent() {
                     </CollapsibleTrigger>
                   </Collapsible>
 
-                  {/* 회원정보관리 */}
                   <div className="px-4 py-3 text-blue-600 bg-blue-50 border-r-2 border-blue-600">
                     <div className="flex items-center space-x-3">
                       <Settings className="h-5 w-5" />
@@ -248,7 +222,6 @@ function ContactChangePageContent() {
                     </div>
                   </div>
 
-                  {/* 장바구니 */}
                   <Link
                     href="/cart"
                     className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
@@ -306,11 +279,8 @@ function ContactChangePageContent() {
                   </div>
 
                   <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleEmailVerification();
-                    }}
-                    className="flex items-center space-x-4"
+                    onSubmit={emailForm.handleSubmit(onEmailVerification)}
+                    className="flex items-start space-x-4"
                   >
                     <div className="flex-1">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -318,20 +288,24 @@ function ContactChangePageContent() {
                       </label>
                       <Input
                         type="email"
-                        value={emailAddress}
-                        onChange={(e) => setEmailAddress(e.target.value)}
                         placeholder="이메일 주소를 입력하세요"
-                        className="w-full"
+                        {...emailForm.register("email")}
+                        className={`w-full ${emailForm.formState.errors.email ? "border-red-500" : ""}`}
                         autoComplete="email"
                       />
+                      {emailForm.formState.errors.email && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {emailForm.formState.errors.email.message}
+                        </p>
+                      )}
                     </div>
                     <Button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={emailForm.formState.isSubmitting}
                       variant="outline"
                       className="mt-7 px-6 py-2 rounded-full border-blue-600 text-blue-600 hover:bg-blue-50 disabled:opacity-50"
                     >
-                      {isSubmitting ? "처리 중..." : "이메일 인증"}
+                      {emailForm.formState.isSubmitting ? "처리 중..." : "이메일 인증"}
                     </Button>
                   </form>
                 </div>
@@ -354,10 +328,7 @@ function ContactChangePageContent() {
                   </div>
 
                   <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handlePhoneVerification();
-                    }}
+                    onSubmit={phoneForm.handleSubmit(onPhoneVerification)}
                     className="space-y-4"
                   >
                     <div>
@@ -368,7 +339,10 @@ function ContactChangePageContent() {
                         <Input
                           type="text"
                           value={phoneNumber1}
-                          onChange={(e) => setPhoneNumber1(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber1(e.target.value);
+                            updatePhoneField(e.target.value, phoneNumber2, phoneNumber3);
+                          }}
                           placeholder="010"
                           className="w-20 text-center"
                           maxLength={3}
@@ -378,7 +352,10 @@ function ContactChangePageContent() {
                         <Input
                           type="text"
                           value={phoneNumber2}
-                          onChange={(e) => setPhoneNumber2(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber2(e.target.value);
+                            updatePhoneField(phoneNumber1, e.target.value, phoneNumber3);
+                          }}
                           placeholder="0000"
                           className="w-24 text-center"
                           maxLength={4}
@@ -388,22 +365,30 @@ function ContactChangePageContent() {
                         <Input
                           type="text"
                           value={phoneNumber3}
-                          onChange={(e) => setPhoneNumber3(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber3(e.target.value);
+                            updatePhoneField(phoneNumber1, phoneNumber2, e.target.value);
+                          }}
                           placeholder="0000"
                           className="w-24 text-center"
                           maxLength={4}
                           autoComplete="tel-local-suffix"
                         />
                       </div>
+                      {phoneForm.formState.errors.phoneNumber && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {phoneForm.formState.errors.phoneNumber.message}
+                        </p>
+                      )}
                     </div>
 
                     <Button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={phoneForm.formState.isSubmitting}
                       variant="outline"
                       className="px-6 py-2 rounded-full border-blue-600 text-blue-600 hover:bg-blue-50 disabled:opacity-50"
                     >
-                      {isSubmitting ? "처리 중..." : "휴대폰 인증/변경"}
+                      {phoneForm.formState.isSubmitting ? "처리 중..." : "휴대폰 인증/변경"}
                     </Button>
                   </form>
                 </div>
