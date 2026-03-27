@@ -1,38 +1,59 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { updatePhoneNumber } from "@/lib/api/members";
-import { useRouter } from "next/navigation";
 import MyPageSidebar from "@/components/layout/MyPageSidebar";
 import { useGetMemberInfo } from "@/hooks/useUser";
 import AuthGuard from "@/components/auth/AuthGuard";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 
+const phoneSchema = z.object({
+  phoneNumber: z
+    .string()
+    .regex(/^01[0-9]{9}$/, "올바른 휴대폰 번호 형식을 입력해주세요."),
+});
+
+type PhoneFormValues = z.infer<typeof phoneSchema>;
+
 function PhoneChangePageContent() {
   const router = useRouter();
   const { toast } = useToast();
 
-  // 이메일 인증 체크
   useEffect(() => {
     const emailVerified = sessionStorage.getItem("emailVerified");
     const emailVerifiedFor = sessionStorage.getItem("emailVerifiedFor");
 
-    // 휴대폰 번호 변경용 인증이 완료되지 않았거나, 다른 용도로 인증된 경우
     if (!emailVerified || emailVerifiedFor !== "phone_change") {
       router.push("/mypage/verify?purpose=phone_change");
     }
   }, [router]);
 
   const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo();
+
   const [phoneNumber1, setPhoneNumber1] = useState("");
   const [phoneNumber2, setPhoneNumber2] = useState("");
   const [phoneNumber3, setPhoneNumber3] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<PhoneFormValues>({
+    resolver: zodResolver(phoneSchema),
+    defaultValues: { phoneNumber: "" },
+  });
+
+  const updatePhoneField = (p1: string, p2: string, p3: string) => {
+    setValue("phoneNumber", `${p1}${p2}${p3}`, { shouldValidate: true });
+  };
 
   if (loading) {
     return (
@@ -45,32 +66,10 @@ function PhoneChangePageContent() {
     );
   }
 
-  const handlePhoneChange = async () => {
-    if (!phoneNumber1 || !phoneNumber2 || !phoneNumber3) {
-      toast({
-        title: "입력 오류",
-        description: "휴대폰 번호를 모두 입력해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const fullPhoneNumber = `${phoneNumber1}${phoneNumber2}${phoneNumber3}`;
-    const phoneRegex = /^01[0-9]{9}$/;
-    if (!phoneRegex.test(fullPhoneNumber)) {
-      toast({
-        title: "입력 오류",
-        description: "올바른 휴대폰 번호 형식을 입력해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
+  const onSubmit = async (data: PhoneFormValues) => {
     try {
-      await updatePhoneNumber(fullPhoneNumber);
+      await updatePhoneNumber(data.phoneNumber);
       toast({ description: "휴대폰 번호 변경이 성공적으로 처리되었습니다." });
-      // 변경 완료 후 인증 상태 삭제
       sessionStorage.removeItem("emailVerified");
       sessionStorage.removeItem("emailVerifiedFor");
       router.push("/mypage");
@@ -83,8 +82,6 @@ function PhoneChangePageContent() {
         ),
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -121,13 +118,7 @@ function PhoneChangePageContent() {
                     <p>• 입력하신 휴대폰 번호로 인증 SMS가 발송됩니다.</p>
                   </div>
 
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handlePhoneChange();
-                    }}
-                    className="space-y-4"
-                  >
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         새 휴대폰 번호
@@ -136,7 +127,10 @@ function PhoneChangePageContent() {
                         <Input
                           type="text"
                           value={phoneNumber1}
-                          onChange={(e) => setPhoneNumber1(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber1(e.target.value);
+                            updatePhoneField(e.target.value, phoneNumber2, phoneNumber3);
+                          }}
                           placeholder="010"
                           className="w-20 text-center"
                           maxLength={3}
@@ -146,7 +140,10 @@ function PhoneChangePageContent() {
                         <Input
                           type="text"
                           value={phoneNumber2}
-                          onChange={(e) => setPhoneNumber2(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber2(e.target.value);
+                            updatePhoneField(phoneNumber1, e.target.value, phoneNumber3);
+                          }}
                           placeholder="0000"
                           className="w-24 text-center"
                           maxLength={4}
@@ -156,13 +153,21 @@ function PhoneChangePageContent() {
                         <Input
                           type="text"
                           value={phoneNumber3}
-                          onChange={(e) => setPhoneNumber3(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber3(e.target.value);
+                            updatePhoneField(phoneNumber1, phoneNumber2, e.target.value);
+                          }}
                           placeholder="0000"
                           className="w-24 text-center"
                           maxLength={4}
                           autoComplete="tel-local-suffix"
                         />
                       </div>
+                      {errors.phoneNumber && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.phoneNumber.message}
+                        </p>
+                      )}
                     </div>
 
                     <Button

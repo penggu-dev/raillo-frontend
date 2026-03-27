@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,82 +13,44 @@ import { Train, Home, Printer, Eye, EyeOff } from "lucide-react";
 import { updatePassword } from "@/lib/api/members";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
+import { passwordSchema, PasswordFormValues } from "@/lib/validation/password";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   const { toast } = useToast();
+
   const [showPasswords, setShowPasswords] = useState({
     new: false,
     confirm: false,
   });
-  const [passwords, setPasswords] = useState({
-    new: "",
-    confirm: "",
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<PasswordFormValues>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: { newPassword: "", confirmPassword: "" },
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const togglePasswordVisibility = (field: "new" | "confirm") => {
-    setShowPasswords((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
+  const watchNew = watch("newPassword");
+  const watchConfirm = watch("confirmPassword");
 
-  const handlePasswordChange = (field: "new" | "confirm", value: string) => {
-    setPasswords((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = async () => {
-    if (!passwords.new || !passwords.confirm) {
+  const onSubmit = async (data: PasswordFormValues) => {
+    const temporaryToken = sessionStorage.getItem("tempPasswordToken");
+    if (!temporaryToken) {
       toast({
-        title: "입력 오류",
-        description: "모든 필드를 입력해주세요.",
+        title: "오류",
+        description: "임시 토큰이 만료되었습니다. 다시 인증해주세요.",
         variant: "destructive",
       });
+      router.push("/find-account");
       return;
     }
-
-    if (passwords.new !== passwords.confirm) {
-      toast({
-        title: "입력 오류",
-        description: "비밀번호가 일치하지 않습니다.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (passwords.new.length < 8) {
-      toast({
-        title: "입력 오류",
-        description: "비밀번호는 8자 이상이어야 합니다.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (isSubmitting) {
-      return;
-    }
-
-    setIsSubmitting(true);
 
     try {
-      const temporaryToken = sessionStorage.getItem("tempPasswordToken");
-      if (!temporaryToken) {
-        toast({
-          title: "오류",
-          description: "임시 토큰이 만료되었습니다. 다시 인증해주세요.",
-          variant: "destructive",
-        });
-        router.push("/find-account");
-        return;
-      }
-
-      await updatePassword(passwords.new, temporaryToken);
-
+      await updatePassword(data.newPassword, temporaryToken);
       sessionStorage.removeItem("tempPasswordToken");
       sessionStorage.removeItem("tempPasswordEmail");
       toast({ description: "비밀번호가 성공적으로 변경되었습니다." });
@@ -97,8 +61,6 @@ export default function ResetPasswordPage() {
         description: handleError(error, "비밀번호 변경에 실패했습니다."),
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -184,13 +146,7 @@ export default function ResetPasswordPage() {
                 </div>
               </div>
 
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmit();
-                }}
-                className="space-y-6"
-              >
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* 신규 비밀번호 */}
                 <div className="space-y-2">
                   <Label
@@ -204,11 +160,8 @@ export default function ResetPasswordPage() {
                       id="new-password"
                       type={showPasswords.new ? "text" : "password"}
                       placeholder="신규 비밀번호를 입력하세요"
-                      value={passwords.new}
-                      onChange={(e) =>
-                        handlePasswordChange("new", e.target.value)
-                      }
-                      className="pr-10 h-12 text-lg"
+                      {...register("newPassword")}
+                      className={`pr-10 h-12 text-lg ${errors.newPassword ? "border-red-500" : ""}`}
                       autoComplete="new-password"
                     />
                     <Button
@@ -216,7 +169,12 @@ export default function ResetPasswordPage() {
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => togglePasswordVisibility("new")}
+                      onClick={() =>
+                        setShowPasswords((prev) => ({
+                          ...prev,
+                          new: !prev.new,
+                        }))
+                      }
                     >
                       {showPasswords.new ? (
                         <EyeOff className="h-4 w-4 text-gray-400" />
@@ -225,6 +183,11 @@ export default function ResetPasswordPage() {
                       )}
                     </Button>
                   </div>
+                  {errors.newPassword && (
+                    <p className="text-xs text-red-500">
+                      {errors.newPassword.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* 비밀번호 확인 */}
@@ -240,11 +203,8 @@ export default function ResetPasswordPage() {
                       id="confirm-password"
                       type={showPasswords.confirm ? "text" : "password"}
                       placeholder="확인 비밀번호를 입력하세요"
-                      value={passwords.confirm}
-                      onChange={(e) =>
-                        handlePasswordChange("confirm", e.target.value)
-                      }
-                      className="pr-10 h-12 text-lg"
+                      {...register("confirmPassword")}
+                      className={`pr-10 h-12 text-lg ${errors.confirmPassword ? "border-red-500" : ""}`}
                       autoComplete="new-password"
                     />
                     <Button
@@ -252,7 +212,12 @@ export default function ResetPasswordPage() {
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => togglePasswordVisibility("confirm")}
+                      onClick={() =>
+                        setShowPasswords((prev) => ({
+                          ...prev,
+                          confirm: !prev.confirm,
+                        }))
+                      }
                     >
                       {showPasswords.confirm ? (
                         <EyeOff className="h-4 w-4 text-gray-400" />
@@ -261,12 +226,17 @@ export default function ResetPasswordPage() {
                       )}
                     </Button>
                   </div>
+                  {errors.confirmPassword && (
+                    <p className="text-xs text-red-500">
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* 비밀번호 일치 확인 */}
-                {passwords.new && passwords.confirm && (
+                {watchNew && watchConfirm && !errors.confirmPassword && (
                   <div className="text-sm">
-                    {passwords.new === passwords.confirm ? (
+                    {watchNew === watchConfirm ? (
                       <p className="text-green-600">✓ 비밀번호가 일치합니다.</p>
                     ) : (
                       <p className="text-red-500">
