@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,34 +20,39 @@ import { Eye, EyeOff, User, Mail, Lock, Phone } from "lucide-react";
 import { signup } from "@/lib/api/authentication";
 import type { SignupRequest } from "@/types/authType";
 import {
-  validateSignupForm,
+  signupSchema,
+  SignupFormValues,
   formatPhoneNumber,
   removePhoneNumberFormatting,
-  SignupFormData,
-  Agreements,
-  ValidationErrors,
 } from "@/lib/validation/signup";
 import { handleError } from "@/lib/utils/errorHandler";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<ValidationErrors>({});
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phoneNumber: "",
-    birthDate: "",
-    gender: "",
-  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agreements, setAgreements] = useState<Agreements>({
-    terms: false,
-    privacy: false,
-    marketing: false,
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      phoneNumber: "",
+      birthDate: "",
+      gender: undefined,
+      terms: undefined,
+      privacy: undefined,
+      marketing: false,
+    },
   });
 
   // 생년월일 옵션들
@@ -55,34 +62,19 @@ export default function SignupPage() {
     (_, i) => currentYear - i,
   ).reverse();
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
+
   const [birthYear, setBirthYear] = useState<string>(currentYear.toString());
   const [birthMonth, setBirthMonth] = useState<string>("");
   const [birthDay, setBirthDay] = useState<string>("");
 
-  // 날짜 옵션 계산
   const getDayOptions = () => {
     if (!birthYear || !birthMonth) return [];
-    const year = parseInt(birthYear);
-    const month = parseInt(birthMonth);
-    const daysInMonth = new Date(year, month, 0).getDate();
+    const daysInMonth = new Date(
+      parseInt(birthYear),
+      parseInt(birthMonth),
+      0,
+    ).getDate();
     return Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  };
-
-  const dayOptions = getDayOptions();
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // 필드 수정 시 해당 에러 초기화
-    if (errors[field as keyof ValidationErrors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: undefined,
-      }));
-    }
   };
 
   const handleBirthDateChange = (
@@ -93,125 +85,46 @@ export default function SignupPage() {
       setBirthYear(value);
       setBirthMonth("");
       setBirthDay("");
-      setFormData((prev) => ({ ...prev, birthDate: "" }));
+      setValue("birthDate", "", { shouldValidate: false });
     } else if (type === "month") {
       setBirthMonth(value);
       setBirthDay("");
-      setFormData((prev) => ({ ...prev, birthDate: "" }));
-    } else if (type === "day") {
+      setValue("birthDate", "", { shouldValidate: false });
+    } else {
       setBirthDay(value);
-    }
-
-    // 생년월일 조합
-    if (type === "day" && birthYear && birthMonth && value) {
-      const formattedMonth = birthMonth.padStart(2, "0");
-      const formattedDay = value.padStart(2, "0");
-      const newBirthDate = `${birthYear}-${formattedMonth}-${formattedDay}`;
-      setFormData((prev) => ({ ...prev, birthDate: newBirthDate }));
-    }
-
-    // 생년월일 에러 초기화
-    if (errors.birthDate) {
-      setErrors((prev) => ({
-        ...prev,
-        birthDate: undefined,
-      }));
-    }
-  };
-
-  const handlePhoneChange = (value: string) => {
-    const formatted = formatPhoneNumber(value);
-    setFormData((prev) => ({
-      ...prev,
-      phoneNumber: formatted,
-    }));
-
-    // 휴대폰 번호 에러 초기화
-    if (errors.phoneNumber) {
-      setErrors((prev) => ({
-        ...prev,
-        phoneNumber: undefined,
-      }));
-    }
-  };
-
-  const handleAgreementChange = (field: string, checked: boolean) => {
-    setAgreements((prev) => ({
-      ...prev,
-      [field]: checked,
-    }));
-
-    // 약관 동의 에러 초기화
-    if (errors[field as keyof ValidationErrors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: undefined,
-      }));
-    }
-  };
-
-  const handleSubmit = async () => {
-    // 폼 데이터 조합
-    const signupFormData: SignupFormData = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword,
-      phoneNumber: formData.phoneNumber,
-      birthDate: formData.birthDate,
-      gender: formData.gender,
-    };
-
-    // 유효성 검사
-    const validationErrors = validateSignupForm(signupFormData, agreements);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      // 휴대폰 번호에서 하이픈 제거
-      const phoneNumbersOnly = removePhoneNumberFormatting(
-        formData.phoneNumber,
-      );
-
-      if (formData.gender !== "M" && formData.gender !== "F") {
-        throw new Error("성별 정보가 올바르지 않습니다.");
+      if (birthYear && birthMonth && value) {
+        const formattedDate = `${birthYear}-${birthMonth.padStart(2, "0")}-${value.padStart(2, "0")}`;
+        setValue("birthDate", formattedDate, { shouldValidate: true });
       }
+    }
+  };
 
+  const watchPassword = watch("password");
+  const watchConfirmPassword = watch("confirmPassword");
+  const passwordsMatch =
+    watchPassword && watchConfirmPassword && watchPassword === watchConfirmPassword;
+
+  const onSubmit = async (data: SignupFormValues) => {
+    try {
       const signupData: SignupRequest = {
-        name: formData.name,
-        phoneNumber: phoneNumbersOnly,
-        password: formData.password,
-        email: formData.email,
-        birthDate: formData.birthDate,
-        gender: formData.gender,
+        name: data.name,
+        phoneNumber: removePhoneNumberFormatting(data.phoneNumber),
+        password: data.password,
+        email: data.email,
+        birthDate: data.birthDate,
+        gender: data.gender,
       };
 
       const response = await signup(signupData);
 
-      // 회원번호 추출
       const memberNo = response?.memberNo || "회원번호 없음";
-
-      // localStorage에 회원번호 저장
       localStorage.setItem("signupMemberNo", memberNo);
 
-      // 완료 페이지로 이동
       router.push("/signup/complete");
     } catch (error: unknown) {
       handleError(error, "회원가입에 실패했습니다.");
-    } finally {
-      setIsLoading(false);
     }
   };
-
-  const passwordsMatch =
-    formData.password &&
-    formData.confirmPassword &&
-    formData.password === formData.confirmPassword;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -229,10 +142,7 @@ export default function SignupPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmit();
-                }}
+                onSubmit={handleSubmit(onSubmit)}
                 className="space-y-6"
               >
                 {/* 성명 */}
@@ -249,16 +159,13 @@ export default function SignupPage() {
                       id="name"
                       type="text"
                       placeholder="성명을 입력하세요"
-                      value={formData.name}
-                      onChange={(e) =>
-                        handleInputChange("name", e.target.value)
-                      }
+                      {...register("name")}
                       className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
                       autoComplete="name"
                     />
                   </div>
                   {errors.name && (
-                    <p className="text-xs text-red-500">{errors.name}</p>
+                    <p className="text-xs text-red-500">{errors.name.message}</p>
                   )}
                 </div>
 
@@ -276,16 +183,13 @@ export default function SignupPage() {
                       id="email"
                       type="email"
                       placeholder="이메일 주소를 입력하세요"
-                      value={formData.email}
-                      onChange={(e) =>
-                        handleInputChange("email", e.target.value)
-                      }
+                      {...register("email")}
                       className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
                       autoComplete="email"
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-xs text-red-500">{errors.email}</p>
+                    <p className="text-xs text-red-500">{errors.email.message}</p>
                   )}
                 </div>
 
@@ -303,10 +207,7 @@ export default function SignupPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="비밀번호를 입력하세요"
-                      value={formData.password}
-                      onChange={(e) =>
-                        handleInputChange("password", e.target.value)
-                      }
+                      {...register("password")}
                       className={`pl-10 pr-10 ${errors.password ? "border-red-500" : ""}`}
                       autoComplete="new-password"
                     />
@@ -323,7 +224,7 @@ export default function SignupPage() {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-xs text-red-500">{errors.password}</p>
+                    <p className="text-xs text-red-500">{errors.password.message}</p>
                   )}
                   <p className="text-xs text-gray-500">
                     8자 이상, 영문, 숫자, 특수문자를 포함해주세요.
@@ -344,10 +245,7 @@ export default function SignupPage() {
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="비밀번호를 다시 입력하세요"
-                      value={formData.confirmPassword}
-                      onChange={(e) =>
-                        handleInputChange("confirmPassword", e.target.value)
-                      }
+                      {...register("confirmPassword")}
                       className={`pl-10 pr-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
                       autoComplete="new-password"
                     />
@@ -367,10 +265,10 @@ export default function SignupPage() {
                   </div>
                   {errors.confirmPassword && (
                     <p className="text-xs text-red-500">
-                      {errors.confirmPassword}
+                      {errors.confirmPassword.message}
                     </p>
                   )}
-                  {formData.confirmPassword && !errors.confirmPassword && (
+                  {watchConfirmPassword && !errors.confirmPassword && (
                     <p
                       className={`text-xs ${passwordsMatch ? "text-green-600" : "text-red-500"}`}
                     >
@@ -391,18 +289,26 @@ export default function SignupPage() {
                   </Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="phoneNumber"
-                      type="tel"
-                      placeholder="휴대폰 번호를 입력하세요 (예: 010-1234-5678)"
-                      value={formData.phoneNumber}
-                      onChange={(e) => handlePhoneChange(e.target.value)}
-                      className={`pl-10 ${errors.phoneNumber ? "border-red-500" : ""}`}
-                      autoComplete="tel"
+                    <Controller
+                      name="phoneNumber"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          id="phoneNumber"
+                          type="tel"
+                          placeholder="휴대폰 번호를 입력하세요 (예: 010-1234-5678)"
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(formatPhoneNumber(e.target.value))
+                          }
+                          className={`pl-10 ${errors.phoneNumber ? "border-red-500" : ""}`}
+                          autoComplete="tel"
+                        />
+                      )}
                     />
                   </div>
                   {errors.phoneNumber && (
-                    <p className="text-xs text-red-500">{errors.phoneNumber}</p>
+                    <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>
                   )}
                 </div>
 
@@ -453,7 +359,7 @@ export default function SignupPage() {
                         className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.birthDate ? "border-red-500" : ""}`}
                       >
                         <option value="">일</option>
-                        {dayOptions.map((day) => (
+                        {getDayOptions().map((day) => (
                           <option key={day} value={day.toString()}>
                             {day}일
                           </option>
@@ -462,7 +368,7 @@ export default function SignupPage() {
                     </div>
                   </div>
                   {errors.birthDate && (
-                    <p className="text-xs text-red-500">{errors.birthDate}</p>
+                    <p className="text-xs text-red-500">{errors.birthDate.message}</p>
                   )}
                 </div>
 
@@ -471,44 +377,32 @@ export default function SignupPage() {
                   <Label className="text-sm font-medium text-gray-700">
                     성별 <span className="text-red-500">*</span>
                   </Label>
-                  <div className="flex space-x-4">
-                    <Button
-                      type="button"
-                      variant={formData.gender === "M" ? "default" : "outline"}
-                      onClick={() => {
-                        handleInputChange("gender", "M");
-                        // 성별 에러 초기화
-                        if (errors.gender) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            gender: undefined,
-                          }));
-                        }
-                      }}
-                      className={`flex-1 ${formData.gender === "M" ? "bg-blue-600 text-white" : "border-gray-300"}`}
-                    >
-                      남성
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={formData.gender === "F" ? "default" : "outline"}
-                      onClick={() => {
-                        handleInputChange("gender", "F");
-                        // 성별 에러 초기화
-                        if (errors.gender) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            gender: undefined,
-                          }));
-                        }
-                      }}
-                      className={`flex-1 ${formData.gender === "F" ? "bg-blue-600 text-white" : "border-gray-300"}`}
-                    >
-                      여성
-                    </Button>
-                  </div>
+                  <Controller
+                    name="gender"
+                    control={control}
+                    render={({ field }) => (
+                      <div className="flex space-x-4">
+                        <Button
+                          type="button"
+                          variant={field.value === "M" ? "default" : "outline"}
+                          onClick={() => field.onChange("M")}
+                          className={`flex-1 ${field.value === "M" ? "bg-blue-600 text-white" : "border-gray-300"}`}
+                        >
+                          남성
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={field.value === "F" ? "default" : "outline"}
+                          onClick={() => field.onChange("F")}
+                          className={`flex-1 ${field.value === "F" ? "bg-blue-600 text-white" : "border-gray-300"}`}
+                        >
+                          여성
+                        </Button>
+                      </div>
+                    )}
+                  />
                   {errors.gender && (
-                    <p className="text-xs text-red-500">{errors.gender}</p>
+                    <p className="text-xs text-red-500">{errors.gender.message}</p>
                   )}
                 </div>
 
@@ -520,12 +414,18 @@ export default function SignupPage() {
 
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="terms"
-                        checked={agreements.terms}
-                        onCheckedChange={(checked) =>
-                          handleAgreementChange("terms", checked as boolean)
-                        }
+                      <Controller
+                        name="terms"
+                        control={control}
+                        render={({ field }) => (
+                          <Checkbox
+                            id="terms"
+                            checked={field.value === true}
+                            onCheckedChange={(checked) =>
+                              field.onChange(checked ? true : undefined)
+                            }
+                          />
+                        )}
                       />
                       <Label htmlFor="terms" className="text-sm text-gray-700">
                         <span className="text-red-500">[필수]</span> 이용약관에
@@ -540,17 +440,23 @@ export default function SignupPage() {
                     </div>
                     {errors.terms && (
                       <p className="text-xs text-red-500 ml-6">
-                        {errors.terms}
+                        {errors.terms.message}
                       </p>
                     )}
 
                     <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="privacy"
-                        checked={agreements.privacy}
-                        onCheckedChange={(checked) =>
-                          handleAgreementChange("privacy", checked as boolean)
-                        }
+                      <Controller
+                        name="privacy"
+                        control={control}
+                        render={({ field }) => (
+                          <Checkbox
+                            id="privacy"
+                            checked={field.value === true}
+                            onCheckedChange={(checked) =>
+                              field.onChange(checked ? true : undefined)
+                            }
+                          />
+                        )}
                       />
                       <Label
                         htmlFor="privacy"
@@ -568,17 +474,23 @@ export default function SignupPage() {
                     </div>
                     {errors.privacy && (
                       <p className="text-xs text-red-500 ml-6">
-                        {errors.privacy}
+                        {errors.privacy.message}
                       </p>
                     )}
 
                     <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="marketing"
-                        checked={agreements.marketing}
-                        onCheckedChange={(checked) =>
-                          handleAgreementChange("marketing", checked as boolean)
-                        }
+                      <Controller
+                        name="marketing"
+                        control={control}
+                        render={({ field }) => (
+                          <Checkbox
+                            id="marketing"
+                            checked={field.value}
+                            onCheckedChange={(checked) =>
+                              field.onChange(checked === true)
+                            }
+                          />
+                        )}
                       />
                       <Label
                         htmlFor="marketing"
@@ -593,11 +505,11 @@ export default function SignupPage() {
                 {/* 회원가입 버튼 */}
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 mt-8"
                   size="lg"
                 >
-                  {isLoading ? "회원가입 중..." : "회원가입 완료"}
+                  {isSubmitting ? "회원가입 중..." : "회원가입 완료"}
                 </Button>
 
                 {/* 추가 링크 */}
