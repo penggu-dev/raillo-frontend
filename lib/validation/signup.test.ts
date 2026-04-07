@@ -167,7 +167,7 @@ describe("formatPhoneNumber", () => {
   })
 
   it("문자가 포함되면 숫자만 추출한다", () => {
-    expect(formatPhoneNumber("010-1234-5678")).toBe("010-1234-5678")
+    expect(formatPhoneNumber("010a1234x5678")).toBe("010-1234-5678")
   })
 })
 
