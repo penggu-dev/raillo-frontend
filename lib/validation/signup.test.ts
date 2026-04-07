@@ -110,6 +110,10 @@ describe("signupSchema", () => {
       gender: "X",
     })
     expect(result.success).toBe(false)
+    if (!result.success) {
+      const paths = result.error.issues.map((i) => i.path[0])
+      expect(paths).toContain("gender")
+    }
   })
 
   it("이용약관에 동의하지 않으면 실패한다", () => {
@@ -118,6 +122,10 @@ describe("signupSchema", () => {
       terms: false,
     })
     expect(result.success).toBe(false)
+    if (!result.success) {
+      const messages = result.error.issues.map((i) => i.message)
+      expect(messages).toContain("이용약관에 동의해주세요.")
+    }
   })
 
   it("개인정보 수집에 동의하지 않으면 실패한다", () => {
@@ -126,6 +134,10 @@ describe("signupSchema", () => {
       privacy: false,
     })
     expect(result.success).toBe(false)
+    if (!result.success) {
+      const messages = result.error.issues.map((i) => i.message)
+      expect(messages).toContain("개인정보 수집 및 이용에 동의해주세요.")
+    }
   })
 
   it("마케팅 동의는 false여도 통과한다", () => {
