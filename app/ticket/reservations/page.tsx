@@ -79,9 +79,7 @@ function ReservationsPageContent() {
 
     const initPaymentWidget = async () => {
       try {
-        const clientKey =
-          process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ||
-          "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
         const storedCustomerKey = localStorage.getItem("tossCustomerKey");
         const customerKey =
           storedCustomerKey ??
