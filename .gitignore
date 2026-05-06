@@ -31,5 +31,6 @@ next-env.d.ts
 .idea
 
 # local docs
-REFACTORING.md
+REFACTORING*.md
 CLAUDE.md
+ISSUE_TEMPLATES.md
