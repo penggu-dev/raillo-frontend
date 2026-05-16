@@ -45,6 +45,12 @@ export default function HomePage() {
     veteran: 0,
   });
 
+  type SearchHistoryItem = {
+    departure: string;
+    arrival: string;
+    timestamp: number;
+  };
+
   const handleSearch = async () => {
     if (!departureStation || !arrivalStation || !departureDate) {
       toast({
@@ -65,11 +71,13 @@ export default function HomePage() {
     const existingHistory = localStorage.getItem(
       LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
     );
-    let history = [];
+
+    let history: SearchHistoryItem[] = [];
 
     if (existingHistory) {
       try {
-        history = JSON.parse(existingHistory);
+        const parsed = JSON.parse(existingHistory);
+        history = Array.isArray(parsed) ? parsed : [];
       } catch {
         // 파싱 실패 시 빈 배열로 시작
       }
@@ -77,7 +85,7 @@ export default function HomePage() {
 
     // 중복 제거
     history = history.filter(
-      (item: any) =>
+      (item) =>
         !(
           item.departure === departureStation && item.arrival === arrivalStation
         ),
