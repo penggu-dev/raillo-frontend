@@ -1,3 +1,4 @@
+import { PASSWORD_MIN_LENGTH } from "@/constants/validation";
 import { z } from "zod";
 
 export const signupSchema = z
@@ -10,14 +11,14 @@ export const signupSchema = z
     password: z
       .string()
       .min(1, "비밀번호는 필수입니다.")
-      .min(8, "비밀번호는 8자 이상이어야 합니다."),
+      .min(PASSWORD_MIN_LENGTH, "비밀번호는 8자 이상이어야 합니다."),
     confirmPassword: z.string().min(1, "비밀번호 확인은 필수입니다."),
     phoneNumber: z.string().refine(
       (val) => {
         const digits = val.replace(/[^0-9]/g, "");
         return digits.length === 11;
       },
-      { message: "전화번호는 11자리 숫자여야 합니다." }
+      { message: "전화번호는 11자리 숫자여야 합니다." },
     ),
     birthDate: z
       .string()
@@ -25,7 +26,9 @@ export const signupSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 모두 선택해주세요."),
     gender: z.enum(["M", "F"], { message: "성별을 선택해주세요." }),
     terms: z.literal(true, { message: "이용약관에 동의해주세요." }),
-    privacy: z.literal(true, { message: "개인정보 수집 및 이용에 동의해주세요." }),
+    privacy: z.literal(true, {
+      message: "개인정보 수집 및 이용에 동의해주세요.",
+    }),
     marketing: z.boolean(),
   })
   .refine((data) => data.password === data.confirmPassword, {

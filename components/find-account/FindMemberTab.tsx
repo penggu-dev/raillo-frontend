@@ -10,6 +10,7 @@ import { findMemberNo, verifyMemberNo } from "@/lib/api/authMembers";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
+import { AUTH_CODE_LENGTH } from "@/constants/validation";
 
 export function FindMemberTab() {
   const [memberName, setMemberName] = useState("");
@@ -72,7 +73,7 @@ export function FindMemberTab() {
       return;
     }
 
-    if (!skipLengthCheck && authCode.length !== 6) {
+    if (!skipLengthCheck && authCode.length !== AUTH_CODE_LENGTH) {
       toast({
         title: "입력 오류",
         description: "인증 코드는 6자리여야 합니다.",
@@ -273,14 +274,14 @@ export function FindMemberTab() {
               placeholder="인증 코드 6자리를 입력하세요"
               value={authCode}
               onChange={handleAuthCodeChange}
-              className={`pl-10 ${authCode.length === 6 ? "border-green-500 focus:border-green-500" : ""}`}
-              maxLength={6}
+              className={`pl-10 ${authCode.length === AUTH_CODE_LENGTH ? "border-green-500 focus:border-green-500" : ""}`}
+              maxLength={AUTH_CODE_LENGTH}
               disabled={isLoading}
               autoComplete="one-time-code"
             />
             {authCode.length > 0 && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
-                {authCode.length}/6
+                {authCode.length}/{AUTH_CODE_LENGTH}
               </div>
             )}
           </div>

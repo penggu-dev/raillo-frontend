@@ -15,6 +15,7 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
+import { AUTH_CODE_LENGTH } from "@/constants/validation";
 
 const emailSchema = z.object({
   email: z
@@ -24,7 +25,9 @@ const emailSchema = z.object({
 });
 
 const codeSchema = z.object({
-  authCode: z.string().length(6, "인증코드는 6자리 숫자로 입력해주세요."),
+  authCode: z
+    .string()
+    .length(AUTH_CODE_LENGTH, "인증코드는 6자리 숫자로 입력해주세요."),
 });
 
 type EmailFormValues = z.infer<typeof emailSchema>;
@@ -207,11 +210,11 @@ function EmailChangePageContent() {
                                 field.onChange(
                                   e.target.value
                                     .replace(/[^0-9]/g, "")
-                                    .slice(0, 6),
+                                    .slice(0, AUTH_CODE_LENGTH),
                                 )
                               }
                               placeholder="인증코드 6자리 입력"
-                              maxLength={6}
+                              maxLength={AUTH_CODE_LENGTH}
                               className={`w-full ${codeForm.formState.errors.authCode ? "border-red-500" : ""}`}
                               autoComplete="one-time-code"
                             />

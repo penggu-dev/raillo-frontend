@@ -11,6 +11,7 @@ import { updatePassword } from "@/lib/api/members";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
+import { AUTH_CODE_LENGTH, PASSWORD_MIN_LENGTH } from "@/constants/validation";
 
 export function FindPasswordTab() {
   const [passwordName, setPasswordName] = useState("");
@@ -97,7 +98,7 @@ export function FindPasswordTab() {
       return;
     }
 
-    if (!skipLengthCheck && passwordAuthCode.length !== 6) {
+    if (!skipLengthCheck && passwordAuthCode.length !== AUTH_CODE_LENGTH) {
       toast({
         title: "입력 오류",
         description: "인증 코드는 6자리여야 합니다.",
@@ -152,7 +153,7 @@ export function FindPasswordTab() {
       return;
     }
 
-    if (newPassword.length < 8) {
+    if (newPassword.length < PASSWORD_MIN_LENGTH) {
       toast({
         title: "입력 오류",
         description: "비밀번호는 8자 이상이어야 합니다.",
@@ -377,14 +378,14 @@ export function FindPasswordTab() {
                 placeholder="인증 코드 6자리를 입력하세요"
                 value={passwordAuthCode}
                 onChange={handlePasswordAuthCodeChange}
-                className={`pl-10 ${passwordAuthCode.length === 6 ? "border-green-500 focus:border-green-500" : ""}`}
-                maxLength={6}
+                className={`pl-10 ${passwordAuthCode.length === AUTH_CODE_LENGTH ? "border-green-500 focus:border-green-500" : ""}`}
+                maxLength={AUTH_CODE_LENGTH}
                 disabled={isLoading}
                 autoComplete="one-time-code"
               />
               {passwordAuthCode.length > 0 && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
-                  {passwordAuthCode.length}/6
+                  {passwordAuthCode.length}/{AUTH_CODE_LENGTH}
                 </div>
               )}
             </div>

@@ -15,6 +15,7 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
+import { AUTH_CODE_LENGTH } from "@/constants/validation";
 
 function EmailVerificationPageContent() {
   const router = useRouter();
@@ -69,7 +70,9 @@ function EmailVerificationPageContent() {
 
   const handleAuthCodeChange = (value: string) => {
     // 숫자만 허용, 6자리 제한
-    const numericValue = value.replace(/[^0-9]/g, "").slice(0, 6);
+    const numericValue = value
+      .replace(/[^0-9]/g, "")
+      .slice(0, AUTH_CODE_LENGTH);
     setAuthCode(numericValue);
   };
 
@@ -91,7 +94,7 @@ function EmailVerificationPageContent() {
       return;
     }
 
-    if (authCode.length !== 6) {
+    if (authCode.length !== AUTH_CODE_LENGTH) {
       toast({
         title: "입력 오류",
         description: "인증코드는 6자리 숫자로 입력해주세요.",
@@ -211,7 +214,7 @@ function EmailVerificationPageContent() {
                       value={authCode}
                       onChange={(e) => handleAuthCodeChange(e.target.value)}
                       placeholder="인증코드 6자리 입력"
-                      maxLength={6}
+                      maxLength={AUTH_CODE_LENGTH}
                       className="w-full"
                       autoComplete="one-time-code"
                     />
