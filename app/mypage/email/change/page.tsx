@@ -14,6 +14,7 @@ import { useGetMemberInfo } from "@/hooks/useUser";
 import AuthGuard from "@/components/auth/AuthGuard";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 const emailSchema = z.object({
   email: z
@@ -23,9 +24,7 @@ const emailSchema = z.object({
 });
 
 const codeSchema = z.object({
-  authCode: z
-    .string()
-    .length(6, "인증코드는 6자리 숫자로 입력해주세요."),
+  authCode: z.string().length(6, "인증코드는 6자리 숫자로 입력해주세요."),
 });
 
 type EmailFormValues = z.infer<typeof emailSchema>;
@@ -37,8 +36,12 @@ function EmailChangePageContent() {
   const [showVerification, setShowVerification] = useState(false);
 
   useEffect(() => {
-    const emailVerified = sessionStorage.getItem("emailVerified");
-    const emailVerifiedFor = sessionStorage.getItem("emailVerifiedFor");
+    const emailVerified = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED,
+    );
+    const emailVerifiedFor = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR,
+    );
 
     if (!emailVerified || emailVerifiedFor !== "email_change") {
       router.push("/mypage/verify?purpose=email_change");
@@ -89,8 +92,8 @@ function EmailChangePageContent() {
     try {
       await updateEmail(emailForm.getValues("email"), data.authCode);
       toast({ description: "이메일 변경이 성공적으로 처리되었습니다." });
-      sessionStorage.removeItem("emailVerified");
-      sessionStorage.removeItem("emailVerifiedFor");
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR);
       router.push("/mypage");
     } catch (error: unknown) {
       toast({
@@ -163,10 +166,14 @@ function EmailChangePageContent() {
                     </div>
                     <Button
                       type="submit"
-                      disabled={emailForm.formState.isSubmitting || showVerification}
+                      disabled={
+                        emailForm.formState.isSubmitting || showVerification
+                      }
                       className="mt-7 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
                     >
-                      {emailForm.formState.isSubmitting ? "처리 중..." : "인증코드 발송"}
+                      {emailForm.formState.isSubmitting
+                        ? "처리 중..."
+                        : "인증코드 발송"}
                     </Button>
                   </form>
                 </div>
@@ -198,7 +205,9 @@ function EmailChangePageContent() {
                               value={field.value}
                               onChange={(e) =>
                                 field.onChange(
-                                  e.target.value.replace(/[^0-9]/g, "").slice(0, 6),
+                                  e.target.value
+                                    .replace(/[^0-9]/g, "")
+                                    .slice(0, 6),
                                 )
                               }
                               placeholder="인증코드 6자리 입력"
@@ -219,7 +228,9 @@ function EmailChangePageContent() {
                         disabled={codeForm.formState.isSubmitting}
                         className="mt-7 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
                       >
-                        {codeForm.formState.isSubmitting ? "처리 중..." : "이메일 변경"}
+                        {codeForm.formState.isSubmitting
+                          ? "처리 중..."
+                          : "이메일 변경"}
                       </Button>
                     </form>
                   </div>

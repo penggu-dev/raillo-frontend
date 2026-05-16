@@ -14,6 +14,7 @@ import { useGetMemberInfo } from "@/hooks/useUser";
 import AuthGuard from "@/components/auth/AuthGuard";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 const phoneSchema = z.object({
   phoneNumber: z
@@ -28,8 +29,12 @@ function PhoneChangePageContent() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const emailVerified = sessionStorage.getItem("emailVerified");
-    const emailVerifiedFor = sessionStorage.getItem("emailVerifiedFor");
+    const emailVerified = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED,
+    );
+    const emailVerifiedFor = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR,
+    );
 
     if (!emailVerified || emailVerifiedFor !== "phone_change") {
       router.push("/mypage/verify?purpose=phone_change");
@@ -70,8 +75,8 @@ function PhoneChangePageContent() {
     try {
       await updatePhoneNumber(data.phoneNumber);
       toast({ description: "휴대폰 번호 변경이 성공적으로 처리되었습니다." });
-      sessionStorage.removeItem("emailVerified");
-      sessionStorage.removeItem("emailVerifiedFor");
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR);
       router.push("/mypage");
     } catch (error: unknown) {
       toast({
@@ -129,7 +134,11 @@ function PhoneChangePageContent() {
                           value={phoneNumber1}
                           onChange={(e) => {
                             setPhoneNumber1(e.target.value);
-                            updatePhoneField(e.target.value, phoneNumber2, phoneNumber3);
+                            updatePhoneField(
+                              e.target.value,
+                              phoneNumber2,
+                              phoneNumber3,
+                            );
                           }}
                           placeholder="010"
                           className="w-20 text-center"
@@ -142,7 +151,11 @@ function PhoneChangePageContent() {
                           value={phoneNumber2}
                           onChange={(e) => {
                             setPhoneNumber2(e.target.value);
-                            updatePhoneField(phoneNumber1, e.target.value, phoneNumber3);
+                            updatePhoneField(
+                              phoneNumber1,
+                              e.target.value,
+                              phoneNumber3,
+                            );
                           }}
                           placeholder="0000"
                           className="w-24 text-center"
@@ -155,7 +168,11 @@ function PhoneChangePageContent() {
                           value={phoneNumber3}
                           onChange={(e) => {
                             setPhoneNumber3(e.target.value);
-                            updatePhoneField(phoneNumber1, phoneNumber2, e.target.value);
+                            updatePhoneField(
+                              phoneNumber1,
+                              phoneNumber2,
+                              e.target.value,
+                            );
                           }}
                           placeholder="0000"
                           className="w-24 text-center"

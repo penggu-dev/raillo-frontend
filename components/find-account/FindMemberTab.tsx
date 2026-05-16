@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { findMemberNo, verifyMemberNo } from "@/lib/api/authMembers";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 export function FindMemberTab() {
   const [memberName, setMemberName] = useState("");
@@ -88,7 +89,10 @@ export function FindMemberTab() {
         email: userEmail,
         authCode: authCode,
       });
-      sessionStorage.setItem("foundMemberNo", result.memberNo);
+      sessionStorage.setItem(
+        SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER,
+        result.memberNo,
+      );
       router.push("/find-account/result");
     } catch (error: unknown) {
       toast({

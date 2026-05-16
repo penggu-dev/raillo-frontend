@@ -10,6 +10,7 @@ import { findPassword, verifyPassword } from "@/lib/api/authMembers";
 import { updatePassword } from "@/lib/api/members";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 export function FindPasswordTab() {
   const [passwordName, setPasswordName] = useState("");
@@ -33,8 +34,12 @@ export function FindPasswordTab() {
 
   // sessionStorage에서 비밀번호 찾기 상태 복원
   useEffect(() => {
-    const tempToken = sessionStorage.getItem("tempPasswordToken");
-    const tempEmail = sessionStorage.getItem("tempPasswordEmail");
+    const tempToken = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN,
+    );
+    const tempEmail = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.PASSWORD_RESET_EMAIL,
+    );
 
     if (tempToken && tempEmail) {
       setTemporaryToken(tempToken);
@@ -111,8 +116,11 @@ export function FindPasswordTab() {
       });
       const token = result.temporaryToken;
       setTemporaryToken(token);
-      sessionStorage.setItem("tempPasswordToken", token);
-      sessionStorage.setItem("tempPasswordEmail", passwordUserEmail);
+      sessionStorage.setItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN, token);
+      sessionStorage.setItem(
+        SESSION_STORAGE_KEYS.PASSWORD_RESET_EMAIL,
+        passwordUserEmail,
+      );
       setShowPasswordChange(true);
     } catch (error: unknown) {
       toast({
@@ -158,7 +166,8 @@ export function FindPasswordTab() {
 
     try {
       const token =
-        sessionStorage.getItem("tempPasswordToken") || temporaryToken;
+        sessionStorage.getItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN) ||
+        temporaryToken;
 
       if (!token) {
         toast({
@@ -173,8 +182,8 @@ export function FindPasswordTab() {
       await updatePassword(newPassword, token);
       setShowPasswordSuccess(true);
       setTemporaryToken("");
-      sessionStorage.removeItem("tempPasswordToken");
-      sessionStorage.removeItem("tempPasswordEmail");
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_EMAIL);
 
       loginRedirectTimeoutRef.current = setTimeout(() => {
         router.push("/login");
@@ -186,8 +195,8 @@ export function FindPasswordTab() {
         variant: "destructive",
       });
       setTemporaryToken("");
-      sessionStorage.removeItem("tempPasswordToken");
-      sessionStorage.removeItem("tempPasswordEmail");
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_EMAIL);
     } finally {
       setIsLoading(false);
     }
@@ -209,8 +218,8 @@ export function FindPasswordTab() {
     setTemporaryToken("");
     setNewPassword("");
     setConfirmPassword("");
-    sessionStorage.removeItem("tempPasswordToken");
-    sessionStorage.removeItem("tempPasswordEmail");
+    sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN);
+    sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_EMAIL);
   };
 
   if (

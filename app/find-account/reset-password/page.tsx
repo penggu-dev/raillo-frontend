@@ -14,6 +14,7 @@ import { updatePassword } from "@/lib/api/members";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { passwordSchema, PasswordFormValues } from "@/lib/validation/password";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -38,7 +39,9 @@ export default function ResetPasswordPage() {
   const watchConfirm = watch("confirmPassword");
 
   const onSubmit = async (data: PasswordFormValues) => {
-    const temporaryToken = sessionStorage.getItem("tempPasswordToken");
+    const temporaryToken = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN,
+    );
     if (!temporaryToken) {
       toast({
         title: "오류",
@@ -51,8 +54,8 @@ export default function ResetPasswordPage() {
 
     try {
       await updatePassword(data.newPassword, temporaryToken);
-      sessionStorage.removeItem("tempPasswordToken");
-      sessionStorage.removeItem("tempPasswordEmail");
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_EMAIL);
       toast({ description: "비밀번호가 성공적으로 변경되었습니다." });
       router.push("/login");
     } catch (error: unknown) {

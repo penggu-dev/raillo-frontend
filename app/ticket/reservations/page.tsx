@@ -50,6 +50,7 @@ import { useToast } from "@/hooks/useToast";
 import { preparePayment } from "@/lib/api/payments";
 import { useAuth } from "@/hooks/useAuth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
+import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 
 function ReservationsPageContent() {
   const router = useRouter();
@@ -80,7 +81,9 @@ function ReservationsPageContent() {
     const initPaymentWidget = async () => {
       try {
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
-        const storedCustomerKey = localStorage.getItem("tossCustomerKey");
+        const storedCustomerKey = localStorage.getItem(
+          LOCAL_STORAGE_KEYS.TOSS_CUSTOMER_KEY,
+        );
         const customerKey =
           storedCustomerKey ??
           (typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -88,7 +91,10 @@ function ReservationsPageContent() {
             : `customer-${Math.random().toString(36).slice(2)}`);
 
         if (!storedCustomerKey) {
-          localStorage.setItem("tossCustomerKey", customerKey);
+          localStorage.setItem(
+            LOCAL_STORAGE_KEYS.TOSS_CUSTOMER_KEY,
+            customerKey,
+          );
         }
 
         const paymentWidget = await loadPaymentWidget(clientKey, customerKey);

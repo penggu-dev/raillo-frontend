@@ -1,43 +1,45 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { User, CheckCircle, ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
-import PageLayout from "@/components/layout/PageLayout"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { User, CheckCircle, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import PageLayout from "@/components/layout/PageLayout";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 export default function FindAccountResultPage() {
-  const [memberNo, setMemberNo] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
+  const [memberNo, setMemberNo] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // sessionStorage에서 회원번호 가져오기
-    const memberNoFromStorage = sessionStorage.getItem('foundMemberNo')
-    
+    const memberNoFromStorage = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER,
+    );
+
     if (memberNoFromStorage) {
-      setMemberNo(memberNoFromStorage)
-      setIsLoading(false)
-      sessionStorage.removeItem('foundMemberNo')
+      setMemberNo(memberNoFromStorage);
+      setIsLoading(false);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER);
     } else {
       // sessionStorage에 회원번호가 없으면 이전 페이지로 리다이렉트
-      router.push('/find-account')
+      router.push("/find-account");
     }
-  }, [router])
+  }, [router]);
 
   const handleLogin = () => {
     // 회원번호를 sessionStorage에 저장하여 로그인 페이지에서 사용할 수 있도록 함
-    sessionStorage.setItem('foundMemberNo', memberNo)
-    router.push('/login')
-  }
+    sessionStorage.setItem(SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER, memberNo);
+    router.push("/login");
+  };
 
   const handleFindPassword = () => {
     // 회원번호를 sessionStorage에 저장하여 비밀번호 찾기에서 사용할 수 있도록 함
-    sessionStorage.setItem('foundMemberNo', memberNo)
-    router.push('/find-account')
-  }
+    sessionStorage.setItem(SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER, memberNo);
+    router.push("/find-account");
+  };
 
   if (isLoading) {
     return (
@@ -49,7 +51,7 @@ export default function FindAccountResultPage() {
           </div>
         </div>
       </PageLayout>
-    )
+    );
   }
 
   return (
@@ -60,7 +62,7 @@ export default function FindAccountResultPage() {
           <div className="mb-6">
             <Button
               variant="ghost"
-              onClick={() => router.push('/find-account')}
+              onClick={() => router.push("/find-account")}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -79,14 +81,22 @@ export default function FindAccountResultPage() {
 
               {/* Success Message */}
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">회원번호 찾기 완료</h1>
-                <p className="text-gray-600">회원님의 RAILLO 회원번호를 찾았습니다.</p>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  회원번호 찾기 완료
+                </h1>
+                <p className="text-gray-600">
+                  회원님의 RAILLO 회원번호를 찾았습니다.
+                </p>
               </div>
 
               {/* Member Number */}
               <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">RAILLO 회원번호</h3>
-                <div className="text-2xl font-bold text-blue-600 font-mono">{memberNo}</div>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">
+                  RAILLO 회원번호
+                </h3>
+                <div className="text-2xl font-bold text-blue-600 font-mono">
+                  {memberNo}
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -113,7 +123,9 @@ export default function FindAccountResultPage() {
                 <div className="flex items-start space-x-3">
                   <User className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
                   <div className="text-left">
-                    <h3 className="font-semibold text-gray-900 mb-1">안내사항</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">
+                      안내사항
+                    </h3>
                     <p className="text-sm text-gray-600 leading-relaxed">
                       회원번호를 기억해 두시고, 로그인 시 사용해 주세요.
                       <br />
@@ -127,5 +139,5 @@ export default function FindAccountResultPage() {
         </div>
       </div>
     </PageLayout>
-  )
+  );
 }

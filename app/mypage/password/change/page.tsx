@@ -17,14 +17,19 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { passwordSchema, PasswordFormValues } from "@/lib/validation/password";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 function PasswordChangePageContent() {
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
-    const emailVerified = sessionStorage.getItem("emailVerified");
-    const emailVerifiedFor = sessionStorage.getItem("emailVerifiedFor");
+    const emailVerified = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED,
+    );
+    const emailVerifiedFor = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR,
+    );
 
     if (!emailVerified || emailVerifiedFor !== "password_change") {
       router.push("/mypage/verify?purpose=password_change");
@@ -66,8 +71,8 @@ function PasswordChangePageContent() {
     try {
       await updatePassword(data.newPassword);
       toast({ description: "비밀번호가 성공적으로 변경되었습니다." });
-      sessionStorage.removeItem("emailVerified");
-      sessionStorage.removeItem("emailVerifiedFor");
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR);
       router.push("/mypage");
     } catch (error: unknown) {
       toast({
