@@ -14,6 +14,7 @@ import {
 import AuthGuard from "@/components/auth/AuthGuard";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
+import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 
 function EmailVerificationPageContent() {
   const router = useRouter();
@@ -74,8 +75,8 @@ function EmailVerificationPageContent() {
 
   const handleGoBack = () => {
     // 인증 상태 초기화
-    sessionStorage.removeItem("emailVerified");
-    sessionStorage.removeItem("emailVerifiedFor");
+    sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED);
+    sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR);
     // 마이페이지로 돌아가기
     router.push("/mypage");
   };
@@ -105,8 +106,11 @@ function EmailVerificationPageContent() {
       if (result.isVerified) {
         toast({ description: "이메일 인증이 완료되었습니다." });
         // 인증 성공 시 세션에 인증 상태 저장 (용도별로 구분)
-        sessionStorage.setItem("emailVerified", "true");
-        sessionStorage.setItem("emailVerifiedFor", verificationPurpose);
+        sessionStorage.setItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED, "true");
+        sessionStorage.setItem(
+          SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR,
+          verificationPurpose,
+        );
 
         // 용도에 따라 적절한 페이지로 리다이렉트
         switch (verificationPurpose) {

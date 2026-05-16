@@ -26,6 +26,7 @@ import {
   removePhoneNumberFormatting,
 } from "@/lib/validation/signup";
 import { handleError } from "@/lib/utils/errorHandler";
+import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -102,7 +103,9 @@ export default function SignupPage() {
   const watchPassword = watch("password");
   const watchConfirmPassword = watch("confirmPassword");
   const passwordsMatch =
-    watchPassword && watchConfirmPassword && watchPassword === watchConfirmPassword;
+    watchPassword &&
+    watchConfirmPassword &&
+    watchPassword === watchConfirmPassword;
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
@@ -118,7 +121,7 @@ export default function SignupPage() {
       const response = await signup(signupData);
 
       const memberNo = response?.memberNo || "회원번호 없음";
-      localStorage.setItem("signupMemberNo", memberNo);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER, memberNo);
 
       router.push("/signup/complete");
     } catch (error: unknown) {
@@ -141,10 +144,7 @@ export default function SignupPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="space-y-6"
-              >
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* 성명 */}
                 <div className="space-y-2">
                   <Label
@@ -165,7 +165,9 @@ export default function SignupPage() {
                     />
                   </div>
                   {errors.name && (
-                    <p className="text-xs text-red-500">{errors.name.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
 
@@ -189,7 +191,9 @@ export default function SignupPage() {
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-xs text-red-500">{errors.email.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.email.message}
+                    </p>
                   )}
                 </div>
 
@@ -224,7 +228,9 @@ export default function SignupPage() {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-xs text-red-500">{errors.password.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.password.message}
+                    </p>
                   )}
                   <p className="text-xs text-gray-500">
                     8자 이상, 영문, 숫자, 특수문자를 포함해주세요.
@@ -308,7 +314,9 @@ export default function SignupPage() {
                     />
                   </div>
                   {errors.phoneNumber && (
-                    <p className="text-xs text-red-500">{errors.phoneNumber.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.phoneNumber.message}
+                    </p>
                   )}
                 </div>
 
@@ -368,7 +376,9 @@ export default function SignupPage() {
                     </div>
                   </div>
                   {errors.birthDate && (
-                    <p className="text-xs text-red-500">{errors.birthDate.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.birthDate.message}
+                    </p>
                   )}
                 </div>
 
@@ -402,7 +412,9 @@ export default function SignupPage() {
                     )}
                   />
                   {errors.gender && (
-                    <p className="text-xs text-red-500">{errors.gender.message}</p>
+                    <p className="text-xs text-red-500">
+                      {errors.gender.message}
+                    </p>
                   )}
                 </div>
 

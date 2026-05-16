@@ -1,30 +1,45 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, CheckCircle, CreditCard, Train, User } from "lucide-react"
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  AlertCircle,
+  CheckCircle,
+  CreditCard,
+  Train,
+  User,
+} from "lucide-react";
+import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 
 export default function SignupCompletePage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [memberNo, setMemberNo] = useState<string>('')
-  const [isValidAccess, setIsValidAccess] = useState<boolean | null>(null)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [memberNo, setMemberNo] = useState<string>("");
+  const [isValidAccess, setIsValidAccess] = useState<boolean | null>(null);
 
   useEffect(() => {
     // localStorage에서 회원번호 가져오기
-    const storedMemberNo = localStorage.getItem('signupMemberNo')
+    const storedMemberNo = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER,
+    );
 
     if (!storedMemberNo) {
-      setIsValidAccess(false)
-      return
+      setIsValidAccess(false);
+      return;
     }
 
-    setMemberNo(storedMemberNo)
-    setIsValidAccess(true)
-  }, [])
+    setMemberNo(storedMemberNo);
+    setIsValidAccess(true);
+  }, []);
 
   // 로딩 중이거나 유효성 검사 중일 때
   if (isValidAccess === null) {
@@ -35,7 +50,7 @@ export default function SignupCompletePage() {
           <p className="text-gray-600">페이지를 불러오는 중...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // 유효하지 않은 접근일 때
@@ -66,7 +81,7 @@ export default function SignupCompletePage() {
           </div>
         </div>
       </>
-    )
+    );
   }
 
   return (
@@ -75,8 +90,12 @@ export default function SignupCompletePage() {
         <div className="max-w-2xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">회원가입 완료</h1>
-            <p className="text-gray-600">RAILLO 멤버십에 가입해주셔서 감사합니다</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              회원가입 완료
+            </h1>
+            <p className="text-gray-600">
+              RAILLO 멤버십에 가입해주셔서 감사합니다
+            </p>
           </div>
 
           <Card className="bg-white shadow-lg border-0">
@@ -90,8 +109,12 @@ export default function SignupCompletePage() {
 
               {/* Success Message */}
               <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">🎉 RAILLO 회원가입이 완료되었습니다!</h2>
-                <p className="text-gray-600 text-lg">회원님의 RAILLO 멤버십 회원번호가 발급되었습니다.</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  🎉 RAILLO 회원가입이 완료되었습니다!
+                </h2>
+                <p className="text-gray-600 text-lg">
+                  회원님의 RAILLO 멤버십 회원번호가 발급되었습니다.
+                </p>
               </div>
 
               {/* Divider */}
@@ -99,16 +122,22 @@ export default function SignupCompletePage() {
 
               {/* Member Number */}
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">RAILLO 멤버십 회원번호</h3>
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                  RAILLO 멤버십 회원번호
+                </h3>
                 <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6">
                   <p className="text-3xl font-bold text-red-600">{memberNo}</p>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">회원번호를 기억해 주세요. 로그인 시 필요합니다.</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  회원번호를 기억해 주세요. 로그인 시 필요합니다.
+                </p>
               </div>
 
               {/* Welcome Benefits */}
               <div className="bg-blue-50 rounded-lg p-6 mb-8">
-                <h4 className="text-lg font-semibold text-blue-900 mb-4">🎁 회원 혜택</h4>
+                <h4 className="text-lg font-semibold text-blue-900 mb-4">
+                  🎁 회원 혜택
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
                   <div className="flex items-center space-x-2">
                     <CreditCard className="h-4 w-4" />
@@ -140,7 +169,11 @@ export default function SignupCompletePage() {
                 </Button>
 
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Button asChild variant="outline" className="flex-1 border-blue-600 text-blue-600 hover:bg-blue-50">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="flex-1 border-blue-600 text-blue-600 hover:bg-blue-50"
+                  >
                     <Link href="/">홈으로 이동</Link>
                   </Button>
 
@@ -157,9 +190,13 @@ export default function SignupCompletePage() {
               {/* Additional Info */}
               <div className="mt-8 p-4 bg-gray-50 rounded-lg">
                 <p className="text-sm text-gray-600">
-                  <strong>안내:</strong> 회원번호는 로그인 시 아이디로 사용됩니다. 분실하지 않도록 주의해 주세요.
-                  회원번호를 분실한 경우
-                  <Link href="/find-account" className="text-blue-600 hover:text-blue-700 font-semibold">
+                  <strong>안내:</strong> 회원번호는 로그인 시 아이디로
+                  사용됩니다. 분실하지 않도록 주의해 주세요. 회원번호를 분실한
+                  경우
+                  <Link
+                    href="/find-account"
+                    className="text-blue-600 hover:text-blue-700 font-semibold"
+                  >
                     {" "}
                     회원번호 찾기
                   </Link>
@@ -171,5 +208,5 @@ export default function SignupCompletePage() {
         </div>
       </div>
     </>
-  )
+  );
 }

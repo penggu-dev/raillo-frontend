@@ -1,10 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   ArrowLeftRight,
   CalendarIcon,
@@ -13,21 +19,22 @@ import {
   Train,
   MapPin,
   Clock,
-} from "lucide-react"
-import { StationSelector } from "@/components/ticket/search/station-selector"
-import { DateTimeSelector } from "@/components/ticket/search/date-time-selector"
-import { PassengerSelector } from "@/components/ticket/search/passenger-selector"
-import type { PassengerCounts } from "@/types/passengerType"
-import { useToast } from "@/hooks/useToast"
+} from "lucide-react";
+import { StationSelector } from "@/components/ticket/search/station-selector";
+import { DateTimeSelector } from "@/components/ticket/search/date-time-selector";
+import { PassengerSelector } from "@/components/ticket/search/passenger-selector";
+import type { PassengerCounts } from "@/types/passengerType";
+import { useToast } from "@/hooks/useToast";
+import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 
 export default function HomePage() {
-  const router = useRouter()
-  const { toast } = useToast()
+  const router = useRouter();
+  const { toast } = useToast();
 
   // 예매 폼 상태
-  const [departureStation, setDepartureStation] = useState("")
-  const [arrivalStation, setArrivalStation] = useState("")
-  const [departureDate, setDepartureDate] = useState<Date>(new Date())
+  const [departureStation, setDepartureStation] = useState("");
+  const [arrivalStation, setArrivalStation] = useState("");
+  const [departureDate, setDepartureDate] = useState<Date>(new Date());
   const [passengers, setPassengers] = useState<PassengerCounts>({
     adult: 0,
     child: 0,
@@ -36,103 +43,122 @@ export default function HomePage() {
     severelydisabled: 0,
     mildlydisabled: 0,
     veteran: 0,
-  })
+  });
 
+  type SearchHistoryItem = {
+    departure: string;
+    arrival: string;
+    timestamp: number;
+  };
 
   const handleSearch = async () => {
     if (!departureStation || !arrivalStation || !departureDate) {
-      toast({ title: "입력 오류", description: "모든 항목을 선택해주세요.", variant: "destructive" })
-      return
+      toast({
+        title: "입력 오류",
+        description: "모든 항목을 선택해주세요.",
+        variant: "destructive",
+      });
+      return;
     }
 
     // 검색 기록 저장
     const searchHistory = {
       departure: departureStation,
       arrival: arrivalStation,
-      timestamp: Date.now()
-    }
+      timestamp: Date.now(),
+    };
 
-    const existingHistory = localStorage.getItem('rail-o-search-history')
-    let history = []
+    const existingHistory = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
+    );
+
+    let history: SearchHistoryItem[] = [];
 
     if (existingHistory) {
       try {
-        history = JSON.parse(existingHistory)
+        const parsed = JSON.parse(existingHistory);
+        history = Array.isArray(parsed) ? parsed : [];
       } catch {
         // 파싱 실패 시 빈 배열로 시작
       }
     }
 
     // 중복 제거
-    history = history.filter((item: any) =>
-      !(item.departure === departureStation && item.arrival === arrivalStation)
-    )
+    history = history.filter(
+      (item) =>
+        !(
+          item.departure === departureStation && item.arrival === arrivalStation
+        ),
+    );
 
     // 새 기록을 맨 앞에 추가
-    history.unshift(searchHistory)
+    history.unshift(searchHistory);
 
     // 최대 5개까지만 저장
-    history = history.slice(0, 5)
+    history = history.slice(0, 5);
 
-    localStorage.setItem('rail-o-search-history', JSON.stringify(history))
+    localStorage.setItem(
+      LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
+      JSON.stringify(history),
+    );
 
     const params = new URLSearchParams({
       departure: departureStation,
       arrival: arrivalStation,
-      date: `${departureDate.getFullYear()}-${(departureDate.getMonth() + 1).toString().padStart(2, '0')}-${departureDate.getDate().toString().padStart(2, '0')}`,
-      hour: departureDate.getHours().toString().padStart(2, '0'),
-    })
+      date: `${departureDate.getFullYear()}-${(departureDate.getMonth() + 1).toString().padStart(2, "0")}-${departureDate.getDate().toString().padStart(2, "0")}`,
+      hour: departureDate.getHours().toString().padStart(2, "0"),
+    });
     const passengerEntries: [string, number][] = [
-      ['adult', passengers.adult],
-      ['child', passengers.child],
-      ['infant', passengers.infant],
-      ['senior', passengers.senior],
-      ['severelydisabled', passengers.severelydisabled],
-      ['mildlydisabled', passengers.mildlydisabled],
-      ['veteran', passengers.veteran],
-    ]
+      ["adult", passengers.adult],
+      ["child", passengers.child],
+      ["infant", passengers.infant],
+      ["senior", passengers.senior],
+      ["severelydisabled", passengers.severelydisabled],
+      ["mildlydisabled", passengers.mildlydisabled],
+      ["veteran", passengers.veteran],
+    ];
     passengerEntries.forEach(([key, value]) => {
-      if (value > 0) params.set(key, value.toString())
-    })
+      if (value > 0) params.set(key, value.toString());
+    });
 
-    router.push(`/ticket/search?${params.toString()}`)
-  }
+    router.push(`/ticket/search?${params.toString()}`);
+  };
 
   const swapStations = () => {
-    const temp = departureStation
-    setDepartureStation(arrivalStation)
-    setArrivalStation(temp)
-  }
+    const temp = departureStation;
+    setDepartureStation(arrivalStation);
+    setArrivalStation(temp);
+  };
 
   const handleDepartureStationChange = (station: string) => {
     if (station === arrivalStation) {
       // 출발역과 도착역이 같으면 자동으로 바꾸기
-      setArrivalStation(departureStation)
-      setDepartureStation(station)
+      setArrivalStation(departureStation);
+      setDepartureStation(station);
     } else {
-      setDepartureStation(station)
+      setDepartureStation(station);
     }
-  }
+  };
 
   const handleArrivalStationChange = (station: string) => {
     if (station === departureStation) {
       // 출발역과 도착역이 같으면 자동으로 바꾸기
-      setDepartureStation(arrivalStation)
-      setArrivalStation(station)
+      setDepartureStation(arrivalStation);
+      setArrivalStation(station);
     } else {
-      setArrivalStation(station)
+      setArrivalStation(station);
     }
-  }
+  };
 
   const handleBothStationsChange = (departure: string, arrival: string) => {
-    setDepartureStation(departure)
-    setArrivalStation(arrival)
-  }
+    setDepartureStation(departure);
+    setArrivalStation(arrival);
+  };
 
   return (
     <>
       {/* Main Content */}
-      < div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50" >
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <div className="container mx-auto px-4 py-8">
           {/* Hero Section with reduced spacing */}
           <div className="text-center mb-12">
@@ -157,7 +183,9 @@ export default function HomePage() {
             <CardContent className="p-8">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold mb-2">열차 예매</h2>
-                <p className="text-blue-100">원하는 조건으로 열차를 검색하고 예매하세요</p>
+                <p className="text-blue-100">
+                  원하는 조건으로 열차를 검색하고 예매하세요
+                </p>
               </div>
 
               {/* 한 줄 예매 폼 */}
@@ -204,7 +232,7 @@ export default function HomePage() {
                   <DateTimeSelector
                     value={departureDate}
                     onValueChange={(date) => {
-                      setDepartureDate(date)
+                      setDepartureDate(date);
                     }}
                     placeholder="날짜 선택"
                     label="출발일"
@@ -227,7 +255,12 @@ export default function HomePage() {
                   <Button
                     size="lg"
                     onClick={handleSearch}
-                    disabled={Object.values(passengers).reduce((sum, c) => sum + c, 0) === 0}
+                    disabled={
+                      Object.values(passengers).reduce(
+                        (sum, c) => sum + c,
+                        0,
+                      ) === 0
+                    }
                     className="w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold h-12 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     <Search className="mr-3 h-5 w-5" />
@@ -241,7 +274,9 @@ export default function HomePage() {
           {/* Service Grid with improved spacing and design */}
           <div className="mb-16">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">주요 서비스</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                주요 서비스
+              </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 RAILLO에서 제공하는 다양한 서비스를 이용해보세요
               </p>
@@ -257,13 +292,20 @@ export default function HomePage() {
                         <CreditCard className="h-7 w-7 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">승차권 확인</CardTitle>
-                        <CardDescription className="text-gray-600">예매한 승차권 정보를 확인하세요</CardDescription>
+                        <CardTitle className="text-xl text-gray-900">
+                          승차권 확인
+                        </CardTitle>
+                        <CardDescription className="text-gray-600">
+                          예매한 승차권 정보를 확인하세요
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <Button variant="outline" className="w-full group-hover:bg-green-50 group-hover:border-green-300 group-hover:text-green-700 transition-all duration-200 font-medium">
+                    <Button
+                      variant="outline"
+                      className="w-full group-hover:bg-green-50 group-hover:border-green-300 group-hover:text-green-700 transition-all duration-200 font-medium"
+                    >
                       확인하기
                     </Button>
                   </CardContent>
@@ -279,13 +321,20 @@ export default function HomePage() {
                         <CalendarIcon className="h-7 w-7 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">예약승차권 조회</CardTitle>
-                        <CardDescription className="text-gray-600">예약한 승차권을 조회하고 취소할 수 있습니다</CardDescription>
+                        <CardTitle className="text-xl text-gray-900">
+                          예약승차권 조회
+                        </CardTitle>
+                        <CardDescription className="text-gray-600">
+                          예약한 승차권을 조회하고 취소할 수 있습니다
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <Button variant="outline" className="w-full group-hover:bg-orange-50 group-hover:border-orange-300 group-hover:text-orange-700 transition-all duration-200 font-medium">
+                    <Button
+                      variant="outline"
+                      className="w-full group-hover:bg-orange-50 group-hover:border-orange-300 group-hover:text-orange-700 transition-all duration-200 font-medium"
+                    >
                       조회하기
                     </Button>
                   </CardContent>
@@ -301,13 +350,20 @@ export default function HomePage() {
                         <Search className="h-7 w-7 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">승차권 예매</CardTitle>
-                        <CardDescription className="text-gray-600">원하는 열차를 검색하고 예매하세요</CardDescription>
+                        <CardTitle className="text-xl text-gray-900">
+                          승차권 예매
+                        </CardTitle>
+                        <CardDescription className="text-gray-600">
+                          원하는 열차를 검색하고 예매하세요
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <Button variant="outline" className="w-full group-hover:bg-purple-50 group-hover:border-purple-300 group-hover:text-purple-700 transition-all duration-200 font-medium">
+                    <Button
+                      variant="outline"
+                      className="w-full group-hover:bg-purple-50 group-hover:border-purple-300 group-hover:text-purple-700 transition-all duration-200 font-medium"
+                    >
                       예매하기
                     </Button>
                   </CardContent>
@@ -334,7 +390,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </div >
+      </div>
     </>
-  )
+  );
 }

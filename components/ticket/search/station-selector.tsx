@@ -1,94 +1,99 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useMemo } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { Search, MapPin, X, Clock, ArrowRight } from "lucide-react"
-import { STATIONS, stationUtils } from "@/constants/stations"
-import type { Station } from "@/types/trainType"
+import { useState, useEffect, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Search, MapPin, X, Clock, ArrowRight } from "lucide-react";
+import { STATIONS, stationUtils } from "@/constants/stations";
+import type { Station } from "@/types/trainType";
+import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 
 interface StationSelectorProps {
-  value: string
-  onValueChange: (value: string) => void
-  placeholder: string
-  label: string
-  variant?: "blue" | "white"
-  otherStation?: string // 다른 역 (출발역이면 도착역, 도착역이면 출발역)
-  onBothStationsChange?: (departure: string, arrival: string) => void // 두 역을 동시에 변경할 때
-  disabled?: boolean // 비활성화 여부
-  hideHistory?: boolean // 검색 기록 숨기기
+  value: string;
+  onValueChange: (value: string) => void;
+  placeholder: string;
+  label: string;
+  variant?: "blue" | "white";
+  otherStation?: string; // 다른 역 (출발역이면 도착역, 도착역이면 출발역)
+  onBothStationsChange?: (departure: string, arrival: string) => void; // 두 역을 동시에 변경할 때
+  disabled?: boolean; // 비활성화 여부
+  hideHistory?: boolean; // 검색 기록 숨기기
 }
 
 interface SearchHistory {
-  departure: string
-  arrival: string
-  timestamp: number
+  departure: string;
+  arrival: string;
+  timestamp: number;
 }
+const MAX_HISTORY_ITEMS = 3;
 
-const SEARCH_HISTORY_KEY = "rail-o-search-history"
-const MAX_HISTORY_ITEMS = 3
-
-export function StationSelector({ 
-  value, 
-  onValueChange, 
-  placeholder, 
-  label, 
+export function StationSelector({
+  value,
+  onValueChange,
+  placeholder,
+  label,
   variant = "blue",
   otherStation = "",
   onBothStationsChange,
   disabled,
-  hideHistory = false
+  hideHistory = false,
 }: StationSelectorProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([])
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
 
   // 검색 기록 로드
   useEffect(() => {
-    const savedHistory = localStorage.getItem(SEARCH_HISTORY_KEY)
+    const savedHistory = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
+    );
     if (savedHistory) {
       try {
-        const history = JSON.parse(savedHistory) as SearchHistory[]
-        setSearchHistory(history.slice(0, MAX_HISTORY_ITEMS))
+        const history = JSON.parse(savedHistory) as SearchHistory[];
+        setSearchHistory(history.slice(0, MAX_HISTORY_ITEMS));
       } catch {
         // 파싱 실패 시 검색 기록 없이 시작
       }
     }
-  }, [])
+  }, []);
 
   const filteredStations = useMemo(() => {
-    if (searchTerm.trim() === "") return STATIONS
-    return stationUtils.searchStations(searchTerm)
-  }, [searchTerm])
+    if (searchTerm.trim() === "") return STATIONS;
+    return stationUtils.searchStations(searchTerm);
+  }, [searchTerm]);
 
   const handleStationSelect = (station: Station) => {
-    onValueChange(station.name)
-    setIsOpen(false)
-    setSearchTerm("")
-  }
+    onValueChange(station.name);
+    setIsOpen(false);
+    setSearchTerm("");
+  };
 
   const handleHistorySelect = (history: SearchHistory) => {
     if (onBothStationsChange) {
       // 두 역을 동시에 변경
-      onBothStationsChange(history.departure, history.arrival)
+      onBothStationsChange(history.departure, history.arrival);
     } else {
       // 현재 선택하는 역만 변경
-      onValueChange(label === "출발역" ? history.departure : history.arrival)
+      onValueChange(label === "출발역" ? history.departure : history.arrival);
     }
-    setIsOpen(false)
-    setSearchTerm("")
-  }
+    setIsOpen(false);
+    setSearchTerm("");
+  };
 
   const handleClose = () => {
-    setIsOpen(false)
-    setSearchTerm("")
-  }
+    setIsOpen(false);
+    setSearchTerm("");
+  };
 
   return (
     <>
       <div>
-        <label className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-gray-700"}`}>{label}</label>
+        <label
+          className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-gray-700"}`}
+        >
+          {label}
+        </label>
         <Button
           variant="outline"
           className="w-full justify-start text-left font-normal bg-white text-gray-900 hover:bg-gray-50"
@@ -140,9 +145,13 @@ export function StationSelector({
                       className="w-full text-left p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200"
                     >
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium text-blue-900">{history.departure}</span>
+                        <span className="text-sm font-medium text-blue-900">
+                          {history.departure}
+                        </span>
                         <ArrowRight className="h-3 w-3 text-blue-600" />
-                        <span className="text-sm font-medium text-blue-900">{history.arrival}</span>
+                        <span className="text-sm font-medium text-blue-900">
+                          {history.arrival}
+                        </span>
                       </div>
                     </button>
                   ))}
@@ -175,5 +184,5 @@ export function StationSelector({
         </DialogContent>
       </Dialog>
     </>
-  )
-} 
+  );
+}

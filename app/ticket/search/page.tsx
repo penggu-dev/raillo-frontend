@@ -17,10 +17,15 @@ import { SearchForm } from "@/components/ticket/search/search-form";
 import { TrainList } from "@/components/ticket/search/train-list";
 import { UsageInfo } from "@/components/common/usage-info";
 import { useAuthStore } from "@/stores/auth-store";
-import type { CarInfo, SeatDetail, TrainSchedule, SeatType } from "@/types/trainType";
+import type {
+  CarInfo,
+  SeatDetail,
+  TrainSchedule,
+  SeatType,
+} from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
 import { useToast } from "@/hooks/useToast";
-
+import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 
 function TrainSearchPage() {
   const router = useRouter();
@@ -35,15 +40,18 @@ function TrainSearchPage() {
   const dateStr = urlSearchParams.get("date") ?? "";
   const hour = urlSearchParams.get("hour") ?? "00";
 
-  const passengerCounts: PassengerCounts = useMemo(() => ({
-    adult: Number(urlSearchParams.get("adult")) || 0,
-    child: Number(urlSearchParams.get("child")) || 0,
-    infant: Number(urlSearchParams.get("infant")) || 0,
-    senior: Number(urlSearchParams.get("senior")) || 0,
-    severelydisabled: Number(urlSearchParams.get("severelydisabled")) || 0,
-    mildlydisabled: Number(urlSearchParams.get("mildlydisabled")) || 0,
-    veteran: Number(urlSearchParams.get("veteran")) || 0,
-  }), [urlSearchParams]);
+  const passengerCounts: PassengerCounts = useMemo(
+    () => ({
+      adult: Number(urlSearchParams.get("adult")) || 0,
+      child: Number(urlSearchParams.get("child")) || 0,
+      infant: Number(urlSearchParams.get("infant")) || 0,
+      senior: Number(urlSearchParams.get("senior")) || 0,
+      severelydisabled: Number(urlSearchParams.get("severelydisabled")) || 0,
+      mildlydisabled: Number(urlSearchParams.get("mildlydisabled")) || 0,
+      veteran: Number(urlSearchParams.get("veteran")) || 0,
+    }),
+    [urlSearchParams],
+  );
 
   const date = useMemo(() => {
     if (!dateStr) return new Date();
@@ -59,8 +67,11 @@ function TrainSearchPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
-  const [selectedTrain, setSelectedTrain] = useState<TrainSchedule | null>(null);
-  const [selectedSeatType, setSelectedSeatType] = useState<SeatType>("standardSeat");
+  const [selectedTrain, setSelectedTrain] = useState<TrainSchedule | null>(
+    null,
+  );
+  const [selectedSeatType, setSelectedSeatType] =
+    useState<SeatType>("standardSeat");
   const [showBookingPanel, setShowBookingPanel] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [searchConditionsChanged, setSearchConditionsChanged] = useState(false);
@@ -100,8 +111,14 @@ function TrainSearchPage() {
         timestamp: Date.now(),
       };
 
-      const existingHistory = localStorage.getItem("rail-o-search-history");
-      let historyArray: { departure: string; arrival: string; timestamp: number }[] = [];
+      const existingHistory = localStorage.getItem(
+        LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
+      );
+      let historyArray: {
+        departure: string;
+        arrival: string;
+        timestamp: number;
+      }[] = [];
 
       if (existingHistory) {
         try {
@@ -112,11 +129,18 @@ function TrainSearchPage() {
       }
 
       historyArray = historyArray.filter(
-        (item) => !(item.departure === searchHistory.departure && item.arrival === searchHistory.arrival),
+        (item) =>
+          !(
+            item.departure === searchHistory.departure &&
+            item.arrival === searchHistory.arrival
+          ),
       );
       historyArray.unshift(searchHistory);
       historyArray = historyArray.slice(0, 3);
-      localStorage.setItem("rail-o-search-history", JSON.stringify(historyArray));
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
+        JSON.stringify(historyArray),
+      );
 
       const totalPassengers = Object.values(passengerCounts).reduce(
         (sum: number, count: unknown) => sum + (count as number),
@@ -145,14 +169,20 @@ function TrainSearchPage() {
       };
 
       const result = await searchTrains(searchRequest);
-      const resultArray: TrainSchedule[] = Array.isArray(result.content) ? result.content : [];
+      const resultArray: TrainSchedule[] = Array.isArray(result.content)
+        ? result.content
+        : [];
 
       setAllTrains(resultArray);
       setDisplayedTrains(resultArray);
       setTotalResults(result.totalElements || resultArray.length);
       setHasNext(result.hasNext ?? false);
     } catch (error) {
-      toast({ title: "오류", description: handleError(error, "열차 검색에 실패했습니다."), variant: "destructive" });
+      toast({
+        title: "오류",
+        description: handleError(error, "열차 검색에 실패했습니다."),
+        variant: "destructive",
+      });
       setAllTrains([]);
       setDisplayedTrains([]);
       setTotalResults(0);
@@ -209,7 +239,8 @@ function TrainSearchPage() {
   };
 
   const handlePassengerChange = (newPassengerCounts: PassengerCounts) => {
-    const toParam = (value: number) => value > 0 ? value.toString() : undefined;
+    const toParam = (value: number) =>
+      value > 0 ? value.toString() : undefined;
     updateSearchParams({
       adult: toParam(newPassengerCounts.adult),
       child: toParam(newPassengerCounts.child),
@@ -301,7 +332,9 @@ function TrainSearchPage() {
       };
 
       const result = await searchTrains(searchRequest);
-      const newTrains: TrainSchedule[] = Array.isArray(result.content) ? result.content : [];
+      const newTrains: TrainSchedule[] = Array.isArray(result.content)
+        ? result.content
+        : [];
 
       setAllTrains((prev) => [...prev, ...newTrains]);
       setDisplayedTrains((prev) => [...prev, ...newTrains]);
@@ -311,7 +344,14 @@ function TrainSearchPage() {
         setTotalResults(displayedTrains.length);
       }
     } catch (error) {
-      toast({ title: "오류", description: handleError(error, "열차 목록을 불러오는 데 실패했습니다."), variant: "destructive" });
+      toast({
+        title: "오류",
+        description: handleError(
+          error,
+          "열차 목록을 불러오는 데 실패했습니다.",
+        ),
+        variant: "destructive",
+      });
       setHasNext(false);
     } finally {
       setLoadingMore(false);
@@ -322,13 +362,41 @@ function TrainSearchPage() {
   const getPassengersForReservation = () => {
     const passengers = [];
 
-    if (passengerCounts.adult > 0) passengers.push({ passengerType: "ADULT" as const, count: passengerCounts.adult });
-    if (passengerCounts.child > 0) passengers.push({ passengerType: "CHILD" as const, count: passengerCounts.child });
-    if (passengerCounts.infant > 0) passengers.push({ passengerType: "INFANT" as const, count: passengerCounts.infant });
-    if (passengerCounts.senior > 0) passengers.push({ passengerType: "SENIOR" as const, count: passengerCounts.senior });
-    if (passengerCounts.severelydisabled > 0) passengers.push({ passengerType: "DISABLED_HEAVY" as const, count: passengerCounts.severelydisabled });
-    if (passengerCounts.mildlydisabled > 0) passengers.push({ passengerType: "DISABLED_LIGHT" as const, count: passengerCounts.mildlydisabled });
-    if (passengerCounts.veteran > 0) passengers.push({ passengerType: "VETERAN" as const, count: passengerCounts.veteran });
+    if (passengerCounts.adult > 0)
+      passengers.push({
+        passengerType: "ADULT" as const,
+        count: passengerCounts.adult,
+      });
+    if (passengerCounts.child > 0)
+      passengers.push({
+        passengerType: "CHILD" as const,
+        count: passengerCounts.child,
+      });
+    if (passengerCounts.infant > 0)
+      passengers.push({
+        passengerType: "INFANT" as const,
+        count: passengerCounts.infant,
+      });
+    if (passengerCounts.senior > 0)
+      passengers.push({
+        passengerType: "SENIOR" as const,
+        count: passengerCounts.senior,
+      });
+    if (passengerCounts.severelydisabled > 0)
+      passengers.push({
+        passengerType: "DISABLED_HEAVY" as const,
+        count: passengerCounts.severelydisabled,
+      });
+    if (passengerCounts.mildlydisabled > 0)
+      passengers.push({
+        passengerType: "DISABLED_LIGHT" as const,
+        count: passengerCounts.mildlydisabled,
+      });
+    if (passengerCounts.veteran > 0)
+      passengers.push({
+        passengerType: "VETERAN" as const,
+        count: passengerCounts.veteran,
+      });
 
     return passengers;
   };
@@ -468,7 +536,10 @@ function TrainSearchPage() {
   };
 
   const getTotalPassengers = () => {
-    return Object.values(passengerCounts).reduce((sum, count) => sum + count, 0);
+    return Object.values(passengerCounts).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
   };
 
   // 객차 조회 함수
@@ -494,7 +565,14 @@ function TrainSearchPage() {
       const result = await searchCars(request);
       setCarList(result.carInfos);
     } catch (error) {
-      toast({ title: "오류", description: handleError(error, "객차 정보를 불러오는 데 실패했습니다."), variant: "destructive" });
+      toast({
+        title: "오류",
+        description: handleError(
+          error,
+          "객차 정보를 불러오는 데 실패했습니다.",
+        ),
+        variant: "destructive",
+      });
       setCarList([]);
     } finally {
       setLoadingCars(false);
@@ -524,7 +602,14 @@ function TrainSearchPage() {
       const result = await searchSeats(request);
       setSeatList(result.seatList);
     } catch (error) {
-      toast({ title: "오류", description: handleError(error, "좌석 정보를 불러오는 데 실패했습니다."), variant: "destructive" });
+      toast({
+        title: "오류",
+        description: handleError(
+          error,
+          "좌석 정보를 불러오는 데 실패했습니다.",
+        ),
+        variant: "destructive",
+      });
       setSeatList([]);
     } finally {
       setLoadingSeats(false);

@@ -12,6 +12,7 @@ import { login } from "@/lib/api/authentication";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useAuthStore } from "@/stores/auth-store";
 import { useToast } from "@/hooks/useToast";
+import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 
 const loginSchema = z.object({
   memberNumber: z.string().min(1, "회원번호를 입력해주세요."),
@@ -36,16 +37,21 @@ const LoginField = () => {
   });
 
   useEffect(() => {
-    const storedMemberNo = localStorage.getItem("signupMemberNo");
+    const storedMemberNo = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER,
+    );
     if (storedMemberNo) {
       setValue("memberNumber", storedMemberNo);
-      localStorage.removeItem("signupMemberNo");
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER);
     }
   }, [setValue]);
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const result = await login({ memberNo: data.memberNumber, password: data.password });
+      const result = await login({
+        memberNo: data.memberNumber,
+        password: data.password,
+      });
       const expiresIn = Date.now() + result.accessTokenExpiresIn * 1000;
       setTokens(result.accessToken, expiresIn);
       window.location.href = "/";
