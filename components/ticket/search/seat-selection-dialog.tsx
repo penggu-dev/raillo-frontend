@@ -1,30 +1,45 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X } from "lucide-react"
-import type { CarInfo, SeatDetail, TrainSchedule, SeatType } from "@/types/trainType"
-import { TrainSeatGrid, type SeatGridItem } from "@/components/ticket/search/TrainSeatGrid"
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { X } from "lucide-react";
+import type {
+  CarInfo,
+  SeatDetail,
+  TrainSchedule,
+  SeatType,
+} from "@/types/trainType";
+import {
+  TrainSeatGrid,
+  type SeatGridItem,
+} from "@/components/ticket/search/TrainSeatGrid";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 interface SeatSelectionDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  selectedTrain: TrainSchedule | null
-  selectedSeatType: SeatType
-  selectedSeats: string[]
-  onSeatClick: (seatNumber: string) => void
-  onApply: (selectedSeats: string[], selectedCar: number) => void
-  getSeatTypeName: (seatType: SeatType) => string
-  getTotalPassengers: () => number
+  isOpen: boolean;
+  onClose: () => void;
+  selectedTrain: TrainSchedule | null;
+  selectedSeatType: SeatType;
+  selectedSeats: string[];
+  onSeatClick: (seatNumber: string) => void;
+  onApply: (selectedSeats: string[], selectedCar: number) => void;
+  getSeatTypeName: (seatType: SeatType) => string;
+  getTotalPassengers: () => number;
   // 새로운 props 추가
-  carList: CarInfo[]
-  seatList: SeatDetail[]
-  loadingCars: boolean
-  loadingSeats: boolean
-  onCarSelect: (carId: string) => void
+  carList: CarInfo[];
+  seatList: SeatDetail[];
+  loadingCars: boolean;
+  loadingSeats: boolean;
+  onCarSelect: (carId: string) => void;
   // 좌석 정보 새로고침 함수 추가
-  onRefreshSeats: () => void
+  onRefreshSeats: () => void;
 }
 
 export function SeatSelectionDialog({
@@ -44,165 +59,165 @@ export function SeatSelectionDialog({
   onCarSelect,
   onRefreshSeats,
 }: SeatSelectionDialogProps) {
-  const [selectedCar, setSelectedCar] = useState<CarInfo | null>(null)
-  const [selectionError, setSelectionError] = useState<string | null>(null)
-  const onCarSelectRef = useRef(onCarSelect)
-  
+  const [selectedCar, setSelectedCar] = useState<CarInfo | null>(null);
+  const [selectionError, setSelectionError] = useState<string | null>(null);
+  const onCarSelectRef = useRef(onCarSelect);
+
   // onCarSelect 함수를 ref에 저장
   useEffect(() => {
-    onCarSelectRef.current = onCarSelect
-  }, [onCarSelect])
+    onCarSelectRef.current = onCarSelect;
+  }, [onCarSelect]);
 
   useEffect(() => {
     if (!isOpen) {
-      setSelectionError(null)
+      setSelectionError(null);
     }
-  }, [isOpen])
-  
+  }, [isOpen]);
+
   // 다이얼로그가 열릴 때마다 초기화
   useEffect(() => {
     if (isOpen && carList.length > 0) {
       // 선택된 좌석 타입에 맞는 첫 번째 객차 선택
-      const suitableCar = carList.find(car => {
+      const suitableCar = carList.find((car) => {
         if (selectedSeatType === "firstClassSeat") {
-          return car.carType === "FIRST_CLASS"
+          return car.carType === "FIRST_CLASS";
         } else if (selectedSeatType === "standardSeat") {
-          return car.carType === "STANDARD"
+          return car.carType === "STANDARD";
         }
-        return true
-      })
+        return true;
+      });
 
       // 적절한 객차를 찾지 못한 경우, 좌석 타입에 맞는 객차만 필터링해서 첫 번째 선택
       if (!suitableCar) {
-        const filteredCars = carList.filter(car => {
+        const filteredCars = carList.filter((car) => {
           if (selectedSeatType === "firstClassSeat") {
-            return car.carType === "FIRST_CLASS"
+            return car.carType === "FIRST_CLASS";
           } else if (selectedSeatType === "standardSeat") {
-            return car.carType === "STANDARD"
+            return car.carType === "STANDARD";
           }
-          return true
-        })
+          return true;
+        });
 
         if (filteredCars.length > 0) {
-          setSelectedCar(filteredCars[0])
+          setSelectedCar(filteredCars[0]);
         }
       } else {
-        setSelectedCar(suitableCar)
+        setSelectedCar(suitableCar);
       }
-      
-      // selectedCar가 설정되면 자동으로 onCarSelect가 호출되므로 
+
+      // selectedCar가 설정되면 자동으로 onCarSelect가 호출되므로
       // 여기서는 onRefreshSeats를 호출하지 않음
     }
-  }, [isOpen, carList, selectedSeatType])
+  }, [isOpen, carList, selectedSeatType]);
 
   // selectedCar가 변경될 때만 onCarSelect 호출 (중복 방지)
-  const lastSelectedCarId = useRef<string | null>(null)
-  
+  const lastSelectedCarId = useRef<string | null>(null);
+
   useEffect(() => {
     if (selectedCar && isOpen) {
-      const carId = selectedCar.id.toString()
-      
+      const carId = selectedCar.id.toString();
+
       // 같은 객차가 이미 선택된 경우 중복 호출 방지
       if (lastSelectedCarId.current === carId) {
-        return
+        return;
       }
-      
-      lastSelectedCarId.current = carId
-      onCarSelectRef.current(carId)
+
+      lastSelectedCarId.current = carId;
+      onCarSelectRef.current(carId);
     }
-  }, [selectedCar, isOpen])
-  
+  }, [selectedCar, isOpen]);
+
   // 객차 변경 핸들러
   const handleCarChange = (carId: string) => {
-    const car = carList.find(c => c.id.toString() === carId)
+    const car = carList.find((c) => c.id.toString() === carId);
     if (car) {
-      setSelectedCar(car)
-      setSelectionError(null)
+      setSelectedCar(car);
+      setSelectionError(null);
       // 객차 변경 시 선택된 좌석 초기화
-      selectedSeats.forEach(seat => {
-        onSeatClick(seat)
-      })
+      selectedSeats.forEach((seat) => {
+        onSeatClick(seat);
+      });
     }
-  }
+  };
 
   // 좌석 타입에 따른 객차 필터링
   const getFilteredCars = () => {
-    return carList.filter(car => {
+    return carList.filter((car) => {
       if (selectedSeatType === "firstClassSeat") {
-        return car.carType === "FIRST_CLASS"
+        return car.carType === "FIRST_CLASS";
       } else if (selectedSeatType === "standardSeat") {
-        return car.carType === "STANDARD"
+        return car.carType === "STANDARD";
       }
-      return true
-    })
-  }
+      return true;
+    });
+  };
 
   // 좌석 배열 생성 (API 데이터 기반)
   const generateSeatGrid = (): SeatGridItem[] => {
-    if (!seatList.length) return []
+    if (!seatList.length) return [];
 
-    const seats: SeatGridItem[] = []
+    const seats: SeatGridItem[] = [];
     for (const seat of seatList) {
-      const match = seat.seatNumber.match(/^(\d+)([A-Z])$/)
+      const match = seat.seatNumber.match(/^(\d+)([A-Z])$/);
       if (match) {
-        const [, row, col] = match
+        const [, row, col] = match;
         seats.push({
           ...seat,
           row: parseInt(row),
           column: col,
           isWindow: seat.seatType === "WINDOW",
-        })
+        });
       }
     }
 
     return seats.sort((a, b) => {
-      if (a.row !== b.row) return a.row - b.row
-      return a.column.localeCompare(b.column)
-    })
-  }
+      if (a.row !== b.row) return a.row - b.row;
+      return a.column.localeCompare(b.column);
+    });
+  };
 
-  const seatGrid = generateSeatGrid()
-  const filteredCars = getFilteredCars()
-  const maxSeats = getTotalPassengers()
+  const seatGrid = generateSeatGrid();
+  const filteredCars = getFilteredCars();
+  const maxSeats = getTotalPassengers();
 
   // 좌석 버튼 스타일링 함수
   const getSeatButtonStyle = (seat: any, isSelected: boolean) => {
     if (!seat.isAvailable) {
-      return "bg-gray-400 border-gray-500 text-gray-600 cursor-not-allowed"
+      return "bg-gray-400 border-gray-500 text-gray-600 cursor-not-allowed";
     }
-    
+
     if (isSelected) {
-      return "bg-blue-600 text-white border-blue-700 shadow-lg"
+      return "bg-blue-600 text-white border-blue-700 shadow-lg";
     }
-    
+
     // 방향에 따른 기본 색상
     if (seat.seatDirection === "FORWARD") {
-      return "bg-orange-100 border-orange-300 hover:bg-orange-200 text-gray-800"
+      return "bg-orange-100 border-orange-300 hover:bg-orange-200 text-gray-800";
     } else if (seat.seatDirection === "BACKWARD") {
-      return "bg-purple-100 border-purple-300 hover:bg-purple-200 text-gray-800"
+      return "bg-purple-100 border-purple-300 hover:bg-purple-200 text-gray-800";
     }
-    return "bg-blue-100 border-blue-300 hover:bg-blue-200 text-gray-800"
-  }
+    return "bg-blue-100 border-blue-300 hover:bg-blue-200 text-gray-800";
+  };
 
   const handleSeatSelectionClick = (
     seat: SeatDetail,
     seatNumber: string,
-    isSelected: boolean
+    isSelected: boolean,
   ) => {
-    if (!seat.isAvailable) return
+    if (!seat.isAvailable) return;
 
     if (!isSelected && selectedSeats.length >= maxSeats) {
       setSelectionError(
-        `승객 수는 ${maxSeats}명입니다. 좌석은 최대 ${maxSeats}개까지 선택할 수 있습니다.`
-      )
-      return
+        `승객 수는 ${maxSeats}명입니다. 좌석은 최대 ${maxSeats}개까지 선택할 수 있습니다.`,
+      );
+      return;
     }
 
-    setSelectionError(null)
-    onSeatClick(seatNumber)
-  }
+    setSelectionError(null);
+    onSeatClick(seatNumber);
+  };
 
-  if (!isOpen || !selectedTrain) return null
+  if (!isOpen || !selectedTrain) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
@@ -216,7 +231,8 @@ export function SeatSelectionDialog({
             </h2>
             {selectedCar && (
               <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                {selectedCar.carNumber}호차 ({selectedCar.carType === "FIRST_CLASS" ? "특실" : "일반실"})
+                {selectedCar.carNumber}호차 (
+                {selectedCar.carType === "FIRST_CLASS" ? "특실" : "일반실"})
               </span>
             )}
           </div>
@@ -229,11 +245,15 @@ export function SeatSelectionDialog({
         <div className="p-4 border-b bg-gray-50">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-3">
-              <span className="text-sm font-medium text-gray-700">호차 선택:</span>
+              <span className="text-sm font-medium text-gray-700">
+                호차 선택:
+              </span>
               {loadingCars ? (
                 <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  <span className="text-sm text-gray-600">객차 정보 로딩 중...</span>
+                  <LoadingSpinner size="sm" />
+                  <span className="text-sm text-gray-600">
+                    객차 정보 로딩 중...
+                  </span>
                 </div>
               ) : (
                 <Select
@@ -245,11 +265,9 @@ export function SeatSelectionDialog({
                   </SelectTrigger>
                   <SelectContent className="z-[100]">
                     {filteredCars.map((car) => (
-                      <SelectItem 
-                        key={car.id} 
-                        value={car.id.toString()}
-                      >
-                        {car.carNumber}호차 ({car.remainingSeats}/{car.totalSeats}석) 
+                      <SelectItem key={car.id} value={car.id.toString()}>
+                        {car.carNumber}호차 ({car.remainingSeats}/
+                        {car.totalSeats}석)
                         {car.carType === "FIRST_CLASS" ? " 특실" : " 일반실"}
                       </SelectItem>
                     ))}
@@ -295,7 +313,7 @@ export function SeatSelectionDialog({
           {loadingSeats ? (
             <div className="flex items-center justify-center h-64">
               <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <LoadingSpinner size="md" />
                 <span className="text-gray-600">좌석 정보 로딩 중...</span>
               </div>
             </div>
@@ -329,10 +347,16 @@ export function SeatSelectionDialog({
           )}
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              선택된 좌석: {selectedSeats.length > 0 ? selectedSeats.join(", ") : "없음"}
+              선택된 좌석:{" "}
+              {selectedSeats.length > 0 ? selectedSeats.join(", ") : "없음"}
             </div>
             <Button
-              onClick={() => onApply(selectedSeats, selectedCar ? parseInt(selectedCar.carNumber) : 1)}
+              onClick={() =>
+                onApply(
+                  selectedSeats,
+                  selectedCar ? parseInt(selectedCar.carNumber) : 1,
+                )
+              }
               disabled={selectedSeats.length !== maxSeats}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded-lg font-medium"
             >
@@ -342,5 +366,5 @@ export function SeatSelectionDialog({
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

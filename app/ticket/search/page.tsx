@@ -26,6 +26,7 @@ import type {
 import type { PassengerCounts } from "@/types/passengerType";
 import { useToast } from "@/hooks/useToast";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 function TrainSearchPage() {
   const router = useRouter();
@@ -631,7 +632,7 @@ function TrainSearchPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <LoadingSpinner className="mx-auto mb-4" />
         <p className="text-gray-600">열차 정보를 검색하고 있습니다...</p>
       </div>
     );
@@ -744,7 +745,7 @@ export default function TrainSearchPageWrapper() {
     <Suspense
       fallback={
         <div className="container mx-auto px-4 py-16 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-gray-600">열차 정보를 검색하고 있습니다...</p>
         </div>
       }

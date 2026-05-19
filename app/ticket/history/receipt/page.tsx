@@ -1,70 +1,84 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useMemo } from "react"
-import { useSearchParams } from "next/navigation"
-import { useAuth } from "@/hooks/useAuth"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, ArrowRight, Receipt } from "lucide-react"
-import { format } from "date-fns"
-import { ko } from "date-fns/locale"
-import type { TicketReceiptResponse } from "@/types/bookingType"
-import { useGetTicketReceipt } from "@/hooks/useBooking"
-import { formatDate, formatTime, formatPrice } from "@/lib/utils/format"
-import { getCarTypeName, getPassengerTypeName, getPaymentMethodName } from "@/lib/utils/ticketUtils"
+import Link from "next/link";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, MapPin, ArrowRight, Receipt } from "lucide-react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import type { TicketReceiptResponse } from "@/types/bookingType";
+import { useGetTicketReceipt } from "@/hooks/useBooking";
+import { formatDate, formatTime, formatPrice } from "@/lib/utils/format";
+import {
+  getCarTypeName,
+  getPassengerTypeName,
+  getPaymentMethodName,
+} from "@/lib/utils/ticketUtils";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-type TicketReceiptDetail = TicketReceiptResponse["result"]
+type TicketReceiptDetail = TicketReceiptResponse["result"];
 
 export default function TicketReceiptDetailPage() {
-  const searchParams = useSearchParams()
-  const { isAuthenticated, isChecking } = useAuth({ redirectPath: "/ticket/history" })
+  const searchParams = useSearchParams();
+  const { isAuthenticated, isChecking } = useAuth({
+    redirectPath: "/ticket/history",
+  });
 
   const ticketId = useMemo(() => {
-    const raw = searchParams.get("ticketId")
-    if (!raw) return null
-    const parsed = Number(raw)
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : null
-  }, [searchParams])
+    const raw = searchParams.get("ticketId");
+    if (!raw) return null;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }, [searchParams]);
 
-  const { data: receipt = null, isLoading: loading, isError, error } = useGetTicketReceipt(ticketId)
+  const {
+    data: receipt = null,
+    isLoading: loading,
+    isError,
+    error,
+  } = useGetTicketReceipt(ticketId);
 
   const formatDateTime = (dateTimeString: string) => {
-    const date = new Date(dateTimeString)
-    return format(date, "yyyy년 MM월 dd일 HH:mm:ss", { locale: ko })
-  }
+    const date = new Date(dateTimeString);
+    return format(date, "yyyy년 MM월 dd일 HH:mm:ss", { locale: ko });
+  };
 
   if (isChecking || !isAuthenticated) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <LoadingSpinner className="mx-auto mb-4" />
         <p className="text-gray-600">인증을 확인하고 있습니다...</p>
       </div>
-    )
+    );
   }
 
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <LoadingSpinner className="mx-auto mb-4" />
         <p className="text-gray-600">영수증 상세를 불러오고 있습니다...</p>
       </div>
-    )
+    );
   }
 
   if (isError || !receipt) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="text-red-600 mb-4">
-          <p className="text-lg font-semibold">영수증 정보를 불러올 수 없습니다</p>
+          <p className="text-lg font-semibold">
+            영수증 정보를 불러올 수 없습니다
+          </p>
           <p className="text-sm">{error?.message ?? "데이터가 없습니다."}</p>
         </div>
         <Link href="/ticket/history">
           <Button variant="outline">내역으로 돌아가기</Button>
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -72,8 +86,12 @@ export default function TicketReceiptDetailPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">영수증 상세</h2>
-            <p className="text-gray-600">승차권 영수증 정보를 확인할 수 있습니다</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              영수증 상세
+            </h2>
+            <p className="text-gray-600">
+              승차권 영수증 정보를 확인할 수 있습니다
+            </p>
           </div>
 
           <Card>
@@ -86,7 +104,9 @@ export default function TicketReceiptDetailPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">승차권 번호</span>
-                <span className="font-mono font-medium">{receipt.ticketNumber}</span>
+                <span className="font-mono font-medium">
+                  {receipt.ticketNumber}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">열차</span>
@@ -95,12 +115,15 @@ export default function TicketReceiptDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">좌석</span>
                 <span className="font-medium">
-                  {receipt.carNumber}호차 {receipt.seatNumber} ({getCarTypeName(receipt.carType)})
+                  {receipt.carNumber}호차 {receipt.seatNumber} (
+                  {getCarTypeName(receipt.carType)})
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">승객</span>
-                <span className="font-medium">{getPassengerTypeName(receipt.passengerType)}</span>
+                <span className="font-medium">
+                  {getPassengerTypeName(receipt.passengerType)}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -115,17 +138,24 @@ export default function TicketReceiptDetailPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">운행일</span>
-                <span className="font-medium">{formatDate(receipt.operationDate)}</span>
+                <span className="font-medium">
+                  {formatDate(receipt.operationDate)}
+                </span>
               </div>
               <div className="flex items-center justify-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <span className="font-semibold">{receipt.departureStationName}</span>
+                <span className="font-semibold">
+                  {receipt.departureStationName}
+                </span>
                 <ArrowRight className="h-4 w-4 text-gray-400" />
-                <span className="font-semibold">{receipt.arrivalStationName}</span>
+                <span className="font-semibold">
+                  {receipt.arrivalStationName}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">출발/도착</span>
                 <span className="font-medium">
-                  {formatTime(receipt.departureTime)} ~ {formatTime(receipt.arrivalTime)}
+                  {formatTime(receipt.departureTime)} ~{" "}
+                  {formatTime(receipt.arrivalTime)}
                 </span>
               </div>
             </CardContent>
@@ -141,19 +171,27 @@ export default function TicketReceiptDetailPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">결제수단</span>
-                <span className="font-medium">{getPaymentMethodName(receipt.paymentMethod)}</span>
+                <span className="font-medium">
+                  {getPaymentMethodName(receipt.paymentMethod)}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">결제금액</span>
-                <span className="text-lg font-bold text-blue-600">{formatPrice(receipt.amount)}</span>
+                <span className="text-lg font-bold text-blue-600">
+                  {formatPrice(receipt.amount)}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">결제일시</span>
-                <span className="font-medium">{formatDateTime(receipt.paidAt)}</span>
+                <span className="font-medium">
+                  {formatDateTime(receipt.paidAt)}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">발권일시</span>
-                <span className="font-medium">{formatDateTime(receipt.ticketCreatedAt)}</span>
+                <span className="font-medium">
+                  {formatDateTime(receipt.ticketCreatedAt)}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -168,5 +206,5 @@ export default function TicketReceiptDetailPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

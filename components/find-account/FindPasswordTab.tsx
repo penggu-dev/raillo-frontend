@@ -12,6 +12,7 @@ import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import { AUTH_CODE_LENGTH, PASSWORD_MIN_LENGTH } from "@/constants/validation";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 export function FindPasswordTab() {
   const [passwordName, setPasswordName] = useState("");
@@ -300,7 +301,7 @@ export function FindPasswordTab() {
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <LoadingSpinner size="sm" color="white" className="mr-2" />
                   처리 중...
                 </div>
               ) : (
@@ -400,7 +401,7 @@ export function FindPasswordTab() {
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <LoadingSpinner size="sm" color="white" className="mr-2" />
                   인증 중...
                 </div>
               ) : (
@@ -514,7 +515,7 @@ export function FindPasswordTab() {
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <LoadingSpinner size="sm" color="white" className="mr-2" />
                   비밀번호 변경 중...
                 </div>
               ) : (

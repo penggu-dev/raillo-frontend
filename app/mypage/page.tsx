@@ -1,36 +1,33 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import {Button} from "@/components/ui/button"
-import {Card, CardContent} from "@/components/ui/card"
-import {
-  Lock,
-  Mail,
-  Smartphone,
-} from "lucide-react"
-import { useGetMemberInfo } from "@/hooks/useUser"
-import MyPageSidebar from "@/components/layout/MyPageSidebar"
-import AuthGuard from "@/components/auth/AuthGuard"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Lock, Mail, Smartphone } from "lucide-react";
+import { useGetMemberInfo } from "@/hooks/useUser";
+import MyPageSidebar from "@/components/layout/MyPageSidebar";
+import AuthGuard from "@/components/auth/AuthGuard";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 function MyPageContent() {
-  const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo()
+  const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo();
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-16 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-gray-600">페이지를 불러오는 중...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // 회원 정보가 없을 때 기본값 사용
-  const displayName = memberInfo?.name || "회원"
-  const displayMemberId = memberInfo?.memberId || "로딩 중..."
-  const displayEmail = memberInfo?.email || "인증 필요"
-  const displayPhone = memberInfo?.phoneNumber || "인증 필요"
+  const displayName = memberInfo?.name || "회원";
+  const displayMemberId = memberInfo?.memberId || "로딩 중...";
+  const displayEmail = memberInfo?.email || "인증 필요";
+  const displayPhone = memberInfo?.phoneNumber || "인증 필요";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,7 +39,9 @@ function MyPageContent() {
           {/* Main Content */}
           <div className="flex-1">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">나의 기본정보</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                나의 기본정보
+              </h1>
             </div>
 
             <Card>
@@ -69,7 +68,11 @@ function MyPageContent() {
                     <div className="font-medium text-gray-700">비밀번호</div>
                     <div className="md:col-span-2">
                       <Link href="/mypage/password/change">
-                        <Button variant="outline" size="sm" className="h-8 px-4 text-sm rounded-full">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-sm rounded-full"
+                        >
                           <Lock className="h-4 w-4 mr-2" />
                           비밀번호 변경
                         </Button>
@@ -82,7 +85,11 @@ function MyPageContent() {
                     <div className="font-medium text-gray-700">이메일</div>
                     <div className="md:col-span-2">
                       <Link href="/mypage/email/change">
-                        <Button variant="outline" size="sm" className="h-8 px-4 text-sm rounded-full">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-sm rounded-full"
+                        >
                           <Mail className="h-4 w-4 mr-2" />
                           이메일 변경
                         </Button>
@@ -95,7 +102,11 @@ function MyPageContent() {
                     <div className="font-medium text-gray-700">휴대폰 번호</div>
                     <div className="md:col-span-2">
                       <Link href="/mypage/phone/change">
-                        <Button variant="outline" size="sm" className="h-8 px-4 text-sm rounded-full">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-4 text-sm rounded-full"
+                        >
                           <Smartphone className="h-4 w-4 mr-2" />
                           휴대폰 번호 변경
                         </Button>
@@ -109,7 +120,7 @@ function MyPageContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function MyPage() {
@@ -117,5 +128,5 @@ export default function MyPage() {
     <AuthGuard>
       <MyPageContent />
     </AuthGuard>
-  )
+  );
 }

@@ -51,6 +51,7 @@ import { preparePayment } from "@/lib/api/payments";
 import { useAuth } from "@/hooks/useAuth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 function ReservationsPageContent() {
   const router = useRouter();
@@ -279,7 +280,7 @@ function ReservationsPageContent() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <LoadingSpinner className="mx-auto mb-4" />
         <p className="text-gray-600">예약 목록을 불러오고 있습니다...</p>
       </div>
     );
@@ -523,7 +524,7 @@ function ReservationsPageContent() {
               className="bg-blue-600 hover:bg-blue-700"
             >
               {paymentLoading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                <LoadingSpinner size="sm" color="white" className="mr-2" />
               ) : (
                 <CreditCard className="h-4 w-4 mr-2" />
               )}

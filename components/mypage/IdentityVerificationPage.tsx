@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Monitor, Smartphone, ChevronUp } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import MyPageSidebar from "@/components/layout/MyPageSidebar";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 interface IdentityVerificationPageProps {
   redirectPath: string;
@@ -25,7 +26,7 @@ export default function IdentityVerificationPage({
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-16 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-gray-600">페이지를 불러오는 중...</p>
         </div>
       </div>
@@ -108,10 +109,11 @@ export default function IdentityVerificationPage({
                       <span className="font-medium text-blue-600">
                         • 아이핀(i-PIN)이란?
                       </span>{" "}
-                      인터넷상에서 고객님의 주민번호를 대신하여 본인임을 확인 받을 수
-                      있는 사이버 신원 확인 수단입니다. 아이핀 발급기관에서 아이핀을
-                      발급 후 아이핀 아이디와 패스워드를 이용하시면 주민번호를
-                      이용하지 않아도 회원가입 및 기타 서비스의 이용이 가능합니다.
+                      인터넷상에서 고객님의 주민번호를 대신하여 본인임을 확인
+                      받을 수 있는 사이버 신원 확인 수단입니다. 아이핀
+                      발급기관에서 아이핀을 발급 후 아이핀 아이디와 패스워드를
+                      이용하시면 주민번호를 이용하지 않아도 회원가입 및 기타
+                      서비스의 이용이 가능합니다.
                       <br />
                       <span className="text-gray-500">
                         (관련법령 : 개인정보보호법 제24조)
