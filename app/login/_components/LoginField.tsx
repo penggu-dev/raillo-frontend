@@ -13,6 +13,7 @@ import { handleError } from "@/lib/utils/errorHandler";
 import { useAuthStore } from "@/stores/auth-store";
 import { useToast } from "@/hooks/useToast";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const loginSchema = z.object({
   memberNumber: z.string().min(1, "회원번호를 입력해주세요."),
@@ -124,7 +125,7 @@ const LoginField = () => {
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+            <LoadingSpinner size="sm" color="white" className="mr-2" />
             로그인 중...
           </div>
         ) : (

@@ -7,6 +7,7 @@ import { User, CheckCircle, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import PageLayout from "@/components/layout/PageLayout";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function FindAccountResultPage() {
   const [memberNo, setMemberNo] = useState("");
@@ -46,7 +47,7 @@ export default function FindAccountResultPage() {
       <PageLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <LoadingSpinner className="mx-auto mb-4" />
             <p className="text-gray-600">결과를 불러오는 중...</p>
           </div>
         </div>

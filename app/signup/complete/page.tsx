@@ -19,6 +19,7 @@ import {
   User,
 } from "lucide-react";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function SignupCompletePage() {
   const router = useRouter();
@@ -46,7 +47,7 @@ export default function SignupCompletePage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-gray-600">페이지를 불러오는 중...</p>
         </div>
       </div>

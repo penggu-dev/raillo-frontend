@@ -1,23 +1,24 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Train, Plus } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { TrainCard } from "./train-card"
-import type { TrainSchedule, SeatType } from "@/types/trainType"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Train, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { TrainCard } from "./train-card";
+import type { TrainSchedule, SeatType } from "@/types/trainType";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 interface TrainListProps {
-  displayedTrains: TrainSchedule[]
-  totalResults: number
-  selectedTrain: TrainSchedule | null
-  loadingMore: boolean
-  hasMoreTrains: boolean
-  onSeatSelection: (train: TrainSchedule, seatType: SeatType) => void
-  onLoadMore: () => void
-  getTrainTypeColor: (trainType: string) => string
-  formatPrice: (price: number) => string
-  getSeatTypeName: (seatType: SeatType) => string
+  displayedTrains: TrainSchedule[];
+  totalResults: number;
+  selectedTrain: TrainSchedule | null;
+  loadingMore: boolean;
+  hasMoreTrains: boolean;
+  onSeatSelection: (train: TrainSchedule, seatType: SeatType) => void;
+  onLoadMore: () => void;
+  getTrainTypeColor: (trainType: string) => string;
+  formatPrice: (price: number) => string;
+  getSeatTypeName: (seatType: SeatType) => string;
 }
 
 export function TrainList({
@@ -32,21 +33,25 @@ export function TrainList({
   formatPrice,
   getSeatTypeName,
 }: TrainListProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   if (displayedTrains.length === 0) {
     return (
       <Card>
         <CardContent className="p-12 text-center">
           <Train className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">검색 결과가 없습니다</h3>
-          <p className="text-gray-600 mb-4">선택하신 조건에 맞는 열차가 없습니다.</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            검색 결과가 없습니다
+          </h3>
+          <p className="text-gray-600 mb-4">
+            선택하신 조건에 맞는 열차가 없습니다.
+          </p>
           <Button onClick={() => router.push("/")} variant="outline">
             다시 검색하기
           </Button>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -75,7 +80,7 @@ export function TrainList({
           >
             {loadingMore ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                <LoadingSpinner size="sm" className="mr-2" />
                 로딩 중...
               </>
             ) : (
@@ -88,5 +93,5 @@ export function TrainList({
         </div>
       )}
     </div>
-  )
+  );
 }

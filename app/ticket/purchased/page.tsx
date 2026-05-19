@@ -9,6 +9,7 @@ import { useGetTickets } from "@/hooks/useBooking";
 import { differenceInMinutes, parse } from "date-fns";
 import { formatDate, formatTime } from "@/lib/utils/format";
 import { getTrainTypeColor, getCarTypeName } from "@/lib/utils/ticketUtils";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 interface Ticket {
   bookingId: number;
@@ -55,7 +56,7 @@ function PurchasedTicketsPageContent() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <LoadingSpinner className="mx-auto mb-4" />
         <p className="text-gray-600">승차권을 불러오고 있습니다...</p>
       </div>
     );
