@@ -7,11 +7,10 @@ import { Label } from "@/components/ui/label";
 import { FileText, User, Mail, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { findMemberNo, verifyMemberNo } from "@/lib/api/authMembers";
-import { handleError } from "@/lib/utils/errorHandler";
-import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import { AUTH_CODE_LENGTH } from "@/constants/validation";
 import LoadingSpinner from "../common/LoadingSpinner";
+import useErrorToast from "@/hooks/useErrorToast";
 
 export function FindMemberTab() {
   const [memberName, setMemberName] = useState("");
@@ -22,24 +21,16 @@ export function FindMemberTab() {
   const [authCode, setAuthCode] = useState("");
 
   const router = useRouter();
-  const { toast } = useToast();
+  const { showErrorToast } = useErrorToast();
 
   const handleFindMember = async () => {
     if (!memberName || !memberPhone) {
-      toast({
-        title: "입력 오류",
-        description: "이름과 휴대폰번호를 모두 입력해주세요.",
-        variant: "destructive",
-      });
+      showErrorToast("이름과 휴대폰번호를 모두 입력해주세요.", "입력 오류");
       return;
     }
 
     if (memberPhone.length !== 11) {
-      toast({
-        title: "입력 오류",
-        description: "휴대폰번호는 11자리여야 합니다.",
-        variant: "destructive",
-      });
+      showErrorToast("휴대폰 번호는 11자리여야 합니다.", "입력 오류");
       return;
     }
 
@@ -54,11 +45,7 @@ export function FindMemberTab() {
       setUserEmail(result.email);
       setShowVerification(true);
     } catch (error: unknown) {
-      toast({
-        title: "오류",
-        description: handleError(error, "회원번호 찾기에 실패했습니다."),
-        variant: "destructive",
-      });
+      showErrorToast(error, "회원번호 찾기에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -66,20 +53,12 @@ export function FindMemberTab() {
 
   const handleVerifyAuthCode = async (skipLengthCheck = false) => {
     if (!authCode) {
-      toast({
-        title: "입력 오류",
-        description: "인증 코드를 입력해주세요.",
-        variant: "destructive",
-      });
+      showErrorToast("인증 코드를 입력해주세요.", "입력 오류");
       return;
     }
 
     if (!skipLengthCheck && authCode.length !== AUTH_CODE_LENGTH) {
-      toast({
-        title: "입력 오류",
-        description: "인증 코드는 6자리여야 합니다.",
-        variant: "destructive",
-      });
+      showErrorToast("인증 코드는 6자리여야 합니다.", "입력 오류");
       return;
     }
 
@@ -97,11 +76,7 @@ export function FindMemberTab() {
       );
       router.push("/find-account/result");
     } catch (error: unknown) {
-      toast({
-        title: "오류",
-        description: handleError(error, "인증 코드 검증에 실패했습니다."),
-        variant: "destructive",
-      });
+      showErrorToast(error, "인증 코드 검증에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
