@@ -9,10 +9,10 @@ import { useRouter } from "next/navigation";
 import { findPassword, verifyPassword } from "@/lib/api/authMembers";
 import { updatePassword } from "@/lib/api/members";
 import { handleError } from "@/lib/utils/errorHandler";
-import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import { AUTH_CODE_LENGTH, PASSWORD_MIN_LENGTH } from "@/constants/validation";
 import LoadingSpinner from "../common/LoadingSpinner";
+import useErrorToast from "@/hooks/useErrorToast";
 
 export function FindPasswordTab() {
   const [passwordName, setPasswordName] = useState("");
@@ -32,7 +32,7 @@ export function FindPasswordTab() {
   );
 
   const router = useRouter();
-  const { toast } = useToast();
+  const { showErrorToast } = useErrorToast();
 
   // sessionStorage에서 비밀번호 찾기 상태 복원
   useEffect(() => {
@@ -60,11 +60,7 @@ export function FindPasswordTab() {
 
   const handleFindPassword = async () => {
     if (!passwordName || !passwordMemberNumber) {
-      toast({
-        title: "입력 오류",
-        description: "이름과 회원번호를 모두 입력해주세요.",
-        variant: "destructive",
-      });
+      showErrorToast("이름과 회원 번호를 모두 입력해주세요.", "입력 오류");
       return;
     }
 
@@ -79,11 +75,7 @@ export function FindPasswordTab() {
       setPasswordUserEmail(result.email);
       setShowPasswordVerification(true);
     } catch (error: unknown) {
-      toast({
-        title: "오류",
-        description: handleError(error, "비밀번호 찾기에 실패했습니다."),
-        variant: "destructive",
-      });
+      showErrorToast(error, "비밀번호 찾기에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -91,20 +83,12 @@ export function FindPasswordTab() {
 
   const handleVerifyPasswordAuthCode = async (skipLengthCheck = false) => {
     if (!passwordAuthCode) {
-      toast({
-        title: "입력 오류",
-        description: "인증 코드를 입력해주세요.",
-        variant: "destructive",
-      });
+      showErrorToast("인증 코드를 입력해주세요.", "입력 오류");
       return;
     }
 
     if (!skipLengthCheck && passwordAuthCode.length !== AUTH_CODE_LENGTH) {
-      toast({
-        title: "입력 오류",
-        description: "인증 코드는 6자리여야 합니다.",
-        variant: "destructive",
-      });
+      showErrorToast("인증 코드는 6자리여야 합니다.", "입력 오류");
       return;
     }
 
@@ -125,11 +109,7 @@ export function FindPasswordTab() {
       );
       setShowPasswordChange(true);
     } catch (error: unknown) {
-      toast({
-        title: "오류",
-        description: handleError(error, "인증 코드 검증에 실패했습니다."),
-        variant: "destructive",
-      });
+      showErrorToast(error, "인증 코드 검증에 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -137,29 +117,23 @@ export function FindPasswordTab() {
 
   const handleChangePassword = async () => {
     if (!newPassword || !confirmPassword) {
-      toast({
-        title: "입력 오류",
-        description: "새 비밀번호와 확인 비밀번호를 모두 입력해주세요.",
-        variant: "destructive",
-      });
+      showErrorToast(
+        "새 비밀번호와 확인 비밀번호를 모두 입력해주세요.",
+        "입력 오류",
+      );
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast({
-        title: "입력 오류",
-        description: "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.",
-        variant: "destructive",
-      });
+      showErrorToast(
+        "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.",
+        "입력 오류",
+      );
       return;
     }
 
     if (newPassword.length < PASSWORD_MIN_LENGTH) {
-      toast({
-        title: "입력 오류",
-        description: "비밀번호는 8자 이상이어야 합니다.",
-        variant: "destructive",
-      });
+      showErrorToast("비밀번호는 8자 이상이어야 합니다.", "입력 오류");
       return;
     }
 
@@ -172,11 +146,7 @@ export function FindPasswordTab() {
         temporaryToken;
 
       if (!token) {
-        toast({
-          title: "오류",
-          description: "임시 토큰이 만료되었습니다. 다시 인증해주세요.",
-          variant: "destructive",
-        });
+        showErrorToast("임시 토큰이 만료되었습니다. 다시 인증해주세요.");
         handleBackToPasswordFind();
         return;
       }
@@ -191,11 +161,7 @@ export function FindPasswordTab() {
         router.push("/login");
       }, 3000);
     } catch (error: unknown) {
-      toast({
-        title: "오류",
-        description: handleError(error, "비밀번호 변경에 실패했습니다."),
-        variant: "destructive",
-      });
+      showErrorToast(error, "비밀번호 변경에 실패했습니다.");
       setTemporaryToken("");
       sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_TOKEN);
       sessionStorage.removeItem(SESSION_STORAGE_KEYS.PASSWORD_RESET_EMAIL);
