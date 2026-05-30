@@ -30,7 +30,7 @@ export const saveSearchHistory = (departure: string, arrival: string): void => {
   );
 
   history.unshift({ departure, arrival, timestamp: Date.now() });
-  history.slice(0, SEARCH_HISTORY_MAX);
+  history = history.slice(0, SEARCH_HISTORY_MAX);
 
   localStorage.setItem(
     LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
