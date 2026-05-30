@@ -25,7 +25,7 @@ import { DateTimeSelector } from "@/components/ticket/search/date-time-selector"
 import { PassengerSelector } from "@/components/ticket/search/passenger-selector";
 import type { PassengerCounts } from "@/types/passengerType";
 import { useToast } from "@/hooks/useToast";
-import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import { saveSearchHistory } from "@/lib/utils/searchHistory";
 
 export default function HomePage() {
   const router = useRouter();
@@ -45,12 +45,6 @@ export default function HomePage() {
     veteran: 0,
   });
 
-  type SearchHistoryItem = {
-    departure: string;
-    arrival: string;
-    timestamp: number;
-  };
-
   const handleSearch = async () => {
     if (!departureStation || !arrivalStation || !departureDate) {
       toast({
@@ -62,45 +56,7 @@ export default function HomePage() {
     }
 
     // 검색 기록 저장
-    const searchHistory = {
-      departure: departureStation,
-      arrival: arrivalStation,
-      timestamp: Date.now(),
-    };
-
-    const existingHistory = localStorage.getItem(
-      LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
-    );
-
-    let history: SearchHistoryItem[] = [];
-
-    if (existingHistory) {
-      try {
-        const parsed = JSON.parse(existingHistory);
-        history = Array.isArray(parsed) ? parsed : [];
-      } catch {
-        // 파싱 실패 시 빈 배열로 시작
-      }
-    }
-
-    // 중복 제거
-    history = history.filter(
-      (item) =>
-        !(
-          item.departure === departureStation && item.arrival === arrivalStation
-        ),
-    );
-
-    // 새 기록을 맨 앞에 추가
-    history.unshift(searchHistory);
-
-    // 최대 5개까지만 저장
-    history = history.slice(0, 5);
-
-    localStorage.setItem(
-      LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
-      JSON.stringify(history),
-    );
+    saveSearchHistory(departureStation, arrivalStation);
 
     const params = new URLSearchParams({
       departure: departureStation,

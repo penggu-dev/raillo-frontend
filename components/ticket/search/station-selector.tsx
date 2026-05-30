@@ -8,6 +8,7 @@ import { Search, MapPin, X, Clock, ArrowRight } from "lucide-react";
 import { STATIONS, stationUtils } from "@/constants/stations";
 import type { Station } from "@/types/trainType";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import { getSearchHistory, SearchHistoryItem } from "@/lib/utils/searchHistory";
 
 interface StationSelectorProps {
   value: string;
@@ -21,41 +22,23 @@ interface StationSelectorProps {
   hideHistory?: boolean; // 검색 기록 숨기기
 }
 
-interface SearchHistory {
-  departure: string;
-  arrival: string;
-  timestamp: number;
-}
-const MAX_HISTORY_ITEMS = 3;
-
 export function StationSelector({
   value,
   onValueChange,
   placeholder,
   label,
   variant = "blue",
-  otherStation = "",
   onBothStationsChange,
   disabled,
   hideHistory = false,
 }: StationSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
 
   // 검색 기록 로드
   useEffect(() => {
-    const savedHistory = localStorage.getItem(
-      LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
-    );
-    if (savedHistory) {
-      try {
-        const history = JSON.parse(savedHistory) as SearchHistory[];
-        setSearchHistory(history.slice(0, MAX_HISTORY_ITEMS));
-      } catch {
-        // 파싱 실패 시 검색 기록 없이 시작
-      }
-    }
+    setSearchHistory(getSearchHistory());
   }, []);
 
   const filteredStations = useMemo(() => {
@@ -69,7 +52,7 @@ export function StationSelector({
     setSearchTerm("");
   };
 
-  const handleHistorySelect = (history: SearchHistory) => {
+  const handleHistorySelect = (history: SearchHistoryItem) => {
     if (onBothStationsChange) {
       // 두 역을 동시에 변경
       onBothStationsChange(history.departure, history.arrival);
