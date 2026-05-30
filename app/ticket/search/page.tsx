@@ -25,8 +25,8 @@ import type {
 } from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
 import { useToast } from "@/hooks/useToast";
-import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { saveSearchHistory } from "@/lib/utils/searchHistory";
 
 function TrainSearchPage() {
   const router = useRouter();
@@ -61,8 +61,6 @@ function TrainSearchPage() {
     d.setHours(Number(hour), 0, 0, 0);
     return d;
   }, [dateStr, hour]);
-
-  const [allTrains, setAllTrains] = useState<TrainSchedule[]>([]);
   const [displayedTrains, setDisplayedTrains] = useState<TrainSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -104,45 +102,10 @@ function TrainSearchPage() {
   const fetchTrainsFromAPI = async () => {
     setLoading(true);
 
+    // 검색 기록 저장
+    saveSearchHistory(departureStation, arrivalStation);
+
     try {
-      // 검색 기록 저장
-      const searchHistory = {
-        departure: departureStation,
-        arrival: arrivalStation,
-        timestamp: Date.now(),
-      };
-
-      const existingHistory = localStorage.getItem(
-        LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
-      );
-      let historyArray: {
-        departure: string;
-        arrival: string;
-        timestamp: number;
-      }[] = [];
-
-      if (existingHistory) {
-        try {
-          historyArray = JSON.parse(existingHistory);
-        } catch {
-          // 파싱 실패 시 빈 배열로 시작
-        }
-      }
-
-      historyArray = historyArray.filter(
-        (item) =>
-          !(
-            item.departure === searchHistory.departure &&
-            item.arrival === searchHistory.arrival
-          ),
-      );
-      historyArray.unshift(searchHistory);
-      historyArray = historyArray.slice(0, 3);
-      localStorage.setItem(
-        LOCAL_STORAGE_KEYS.SEARCH_HISTORY,
-        JSON.stringify(historyArray),
-      );
-
       const totalPassengers = Object.values(passengerCounts).reduce(
         (sum: number, count: unknown) => sum + (count as number),
         0,
@@ -174,7 +137,6 @@ function TrainSearchPage() {
         ? result.content
         : [];
 
-      setAllTrains(resultArray);
       setDisplayedTrains(resultArray);
       setTotalResults(result.totalElements || resultArray.length);
       setHasNext(result.hasNext ?? false);
@@ -184,7 +146,6 @@ function TrainSearchPage() {
         description: handleError(error, "열차 검색에 실패했습니다."),
         variant: "destructive",
       });
-      setAllTrains([]);
       setDisplayedTrains([]);
       setTotalResults(0);
       setHasNext(false);
@@ -337,7 +298,6 @@ function TrainSearchPage() {
         ? result.content
         : [];
 
-      setAllTrains((prev) => [...prev, ...newTrains]);
       setDisplayedTrains((prev) => [...prev, ...newTrains]);
       setCurrentPage(nextPage);
       setHasNext(result.hasNext ?? false);
