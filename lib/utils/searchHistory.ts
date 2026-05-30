@@ -7,6 +7,10 @@ export type SearchHistoryItem = {
   timestamp: number;
 };
 
+// 검색 기록 저장 함수
+// 출발점과 도착점을 파라미터로 받아
+// 중복된 사항이 있는지 확인 및 제거한 후
+// 기존에 있던 항목 앞에 새 검색 항목을 추가
 export const saveSearchHistory = (departure: string, arrival: string): void => {
   const existing = localStorage.getItem(LOCAL_STORAGE_KEYS.SEARCH_HISTORY);
 
@@ -34,6 +38,7 @@ export const saveSearchHistory = (departure: string, arrival: string): void => {
   );
 };
 
+// 로컬스토리지에서 검색 항목을 불러옴
 export const getSearchHistory = (): SearchHistoryItem[] => {
   const existing = localStorage.getItem(LOCAL_STORAGE_KEYS.SEARCH_HISTORY);
 
