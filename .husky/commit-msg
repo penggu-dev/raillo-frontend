@@ -12,9 +12,9 @@ if [ -z "$ISSUE_NUMBER" ]; then
   exit 0
 fi
 
-# 이미 (#n) 형태가 붙어있으면 스킵
+# 이미 (#숫자) 형태가 어떤 번호든 붙어있으면 스킵
 case "$COMMIT_MSG" in
-  *"(#$ISSUE_NUMBER)") exit 0 ;;
+  *"(#"*")"*) exit 0 ;;
 esac
 
 # 커밋 메시지 끝에 (#n) 추가
