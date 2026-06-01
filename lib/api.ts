@@ -53,15 +53,6 @@ export class ApiError extends Error {
 
 export const UNAUTHORIZED_ERROR_CODE = "UNAUTHORIZED";
 
-const hasValidAccessToken = (): boolean => {
-  const { accessToken, tokenExpiresIn } = useAuthStore.getState();
-  return (
-    Boolean(accessToken) &&
-    Boolean(tokenExpiresIn) &&
-    Date.now() < (tokenExpiresIn ?? 0)
-  );
-};
-
 // 기본 헤더 설정 (토큰 자동 포함)
 const getDefaultHeaders = async (): Promise<Record<string, string>> => {
   const headers: Record<string, string> = {
@@ -69,11 +60,9 @@ const getDefaultHeaders = async (): Promise<Record<string, string>> => {
   };
 
   // 토큰이 있고 유효하면 Authorization 헤더 추가
-  if (hasValidAccessToken()) {
-    const token = useAuthStore.getState().getToken();
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
+  const authState = useAuthStore.getState();
+  if (authState.hasValidToken()) {
+    headers.Authorization = `Bearer ${authState.getToken()}`;
   }
 
   return headers;
