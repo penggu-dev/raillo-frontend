@@ -10,14 +10,9 @@ interface UseAuthOptions {
 
 export function useAuth(options: UseAuthOptions = {}) {
   const { redirectTo = "/login", requireAuth = true, redirectPath } = options;
-  const { accessToken, tokenExpiresIn, isInitialized, initialize } =
-    useAuthStore();
+  const { isInitialized, initialize, isAuthenticated } = useAuthStore();
   const router = useRouter();
 
-  const isAuthenticated =
-    Boolean(accessToken) &&
-    Boolean(tokenExpiresIn) &&
-    Date.now() < (tokenExpiresIn ?? 0);
   const isLoading = !isInitialized;
 
   const checkAuth = useCallback(() => {

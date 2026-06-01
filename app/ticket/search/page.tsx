@@ -372,23 +372,14 @@ function TrainSearchPage() {
       .filter((id) => id > 0);
   };
 
-  const hasValidAccessToken = () => {
-    const { accessToken, tokenExpiresIn } = useAuthStore.getState();
-    return (
-      Boolean(accessToken) &&
-      Boolean(tokenExpiresIn) &&
-      Date.now() < (tokenExpiresIn ?? 0)
-    );
-  };
-
   const handleBooking = async () => {
     if (!selectedTrain) return;
 
-    if (!hasValidAccessToken()) {
+    if (!useAuthStore.getState().hasValidToken()) {
       await initializeAuth();
     }
 
-    if (!hasValidAccessToken()) {
+    if (!useAuthStore.getState().hasValidToken()) {
       const currentPath =
         typeof window !== "undefined"
           ? window.location.pathname + window.location.search
