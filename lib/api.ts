@@ -60,9 +60,9 @@ const getDefaultHeaders = async (): Promise<Record<string, string>> => {
   };
 
   // 토큰이 있고 유효하면 Authorization 헤더 추가
-  const token = useAuthStore.getState().getToken();
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+  const authState = useAuthStore.getState();
+  if (authState.hasValidToken()) {
+    headers.Authorization = `Bearer ${authState.getToken()}`;
   }
 
   return headers;
