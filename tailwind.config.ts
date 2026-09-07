@@ -90,6 +90,11 @@ const config: Config = {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+  		boxShadow: {
+  			'elev-sm': 'var(--shadow-sm)',
+  			'elev-md': 'var(--shadow-md)',
+  			'elev-lg': 'var(--shadow-lg)'
+  		},
   		keyframes: {
   			'accordion-down': {
   				from: {
