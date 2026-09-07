@@ -6,6 +6,7 @@ const STORAGE_KEY = "raillo-theme";
 
 interface ThemeState {
   theme: Theme;
+  initialized: boolean;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   initializeTheme: () => void;
@@ -28,6 +29,7 @@ const readStoredTheme = (): Theme => {
 
 export const useThemeStore = create<ThemeState>((set, get) => ({
   theme: "light",
+  initialized: false,
   setTheme: (theme) => {
     try {
       window.localStorage.setItem(STORAGE_KEY, theme);
@@ -44,6 +46,6 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
   initializeTheme: () => {
     const theme = readStoredTheme();
     applyTheme(theme);
-    set({ theme });
+    set({ theme, initialized: true });
   },
 }));
