@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import HeaderAuthBtn from "./HeaderAuthBtn";
 import MyPageBtn from "./MyPageBtn";
 import SidebarTrigger from "./SidebarTrigger";
+import ThemeToggle from "./ThemeToggle";
 
 const HeaderActions = () => {
   return (
@@ -22,6 +23,7 @@ const HeaderActions = () => {
         <MyPageBtn />
         <SidebarTrigger />
       </nav>
+      <ThemeToggle />
     </div>
   );
 };
