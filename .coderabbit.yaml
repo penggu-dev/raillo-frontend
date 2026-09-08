@@ -1,3 +1,48 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-# CodeRabbit 설정 — 리뷰/요약/채팅을 한국어로
+# CodeRabbit 설정
 language: "ko-KR"
+tone_instructions: "간결하고 핵심 위주로 리뷰하세요. 확신 있는 실제 문제(버그·타입 안정성·회귀 위험)를 우선하고, 사소한 스타일 지적은 최소화합니다. 한국어로 명확히 설명하세요."
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  collapse_walkthrough: false
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+
+  pre_merge_checks:
+    title:
+      mode: "warning"
+    description:
+      mode: "warning"
+    issue_assessment:
+      mode: "warning"
+    docstrings:
+      mode: "off"
+
+  tools:
+    gitleaks:
+      enabled: true
+
+  path_instructions:
+    - path: "**/*.{ts,tsx}"
+      instructions: >-
+        명시적 타입을 사용하고 any를 지양합니다. 기존 공개 인터페이스(props·함수 시그니처·API 반환 타입)를
+        유지하고, 새 코드는 저장소의 기존 패턴과 네이밍을 따르세요.
+    - path: "{app,components,hooks}/**/*.{ts,tsx}"
+      instructions: >-
+        GET 기반 서버 상태 조회는 @tanstack/react-query(useQuery/useInfiniteQuery)로 처리합니다.
+        useEffect + useState 수동 fetch 패턴을 새로 도입하지 마세요.
+    - path: "{app,components}/**/*.{ts,tsx}"
+      instructions: >-
+        새로 추가하거나 수정하는 색상은 하드코딩 팔레트 클래스(예: bg-blue-600, text-gray-900) 대신
+        시맨틱 토큰(예: bg-primary, text-foreground, text-muted-foreground)을 사용하고 dark: 대응을
+        확인하세요. 단, 이번 변경과 무관한 기존 하드코딩 색은 지적하지 마세요(점진적 마이그레이션 진행 중).
+
+chat:
+  auto_reply: true
