@@ -24,7 +24,7 @@ const SIDEBAR_NAV_ITEM_CONFIG: Record<SidebarNavItemType, SidebarNavItemConfig> 
   "ticket-booking": {
     href: "/",
     icon: Ticket,
-    iconColor: "text-blue-600",
+    iconColor: "text-primary",
     label: "승차권 예매",
   },
   "ticket-reservations": {
@@ -47,10 +47,10 @@ const SidebarNavItem = ({ type }: SidebarNavItemProps) => {
     <DrawerClose asChild>
       <Link
         href={config.href}
-        className="flex items-center gap-3 rounded-lg hover:bg-muted transition-colors bg-white px-4 py-2"
+        className="flex items-center gap-3 rounded-lg hover:bg-muted transition-colors bg-card px-4 py-2"
       >
         <Icon className={`h-5 w-5 ${config.iconColor}`} />
-        <span className="text-gray-700">{config.label}</span>
+        <span className="text-foreground">{config.label}</span>
       </Link>
     </DrawerClose>
   );

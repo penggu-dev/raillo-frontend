@@ -50,23 +50,23 @@ const Breadcrumb = () => {
   return (
     <>
       {breadcrumbs.length > 1 && (
-        <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
+        <div className="hidden md:flex items-center space-x-2 text-sm text-muted-foreground">
           {breadcrumbs.map((breadcrumb, index) => (
             <div key={breadcrumb.path} className="flex items-center space-x-2">
               {index > 0 && <ChevronRight className="h-4 w-4" />}
               {index === 0 ? (
                 // 홈만 클릭 가능
-                <Link href={breadcrumb.path} className="hover:text-blue-600">
+                <Link href={breadcrumb.path} className="hover:text-primary">
                   {breadcrumb.name}
                 </Link>
               ) : index === breadcrumbs.length - 1 ? (
                 // 마지막 경로는 현재 페이지 표시
-                <span className="text-blue-600 font-medium">
+                <span className="text-primary font-medium">
                   {breadcrumb.name}
                 </span>
               ) : (
                 // 중간 경로들은 클릭 불가능
-                <span className="text-gray-500">{breadcrumb.name}</span>
+                <span className="text-muted-foreground">{breadcrumb.name}</span>
               )}
             </div>
           ))}

@@ -9,7 +9,7 @@ const SidebarHeader = () => {
       <DrawerClose asChild>
         <Button
           size="icon"
-          className="text-white hover:bg-blue-700 [&_svg]:size-6"
+          className="text-primary-foreground hover:bg-primary-active [&_svg]:size-6"
         >
           <XIcon />
         </Button>
