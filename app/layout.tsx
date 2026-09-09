@@ -27,7 +27,7 @@ export default function RootLayout({
         />
         <ThemeProvider>
           <QueryProvider>
-            <div className='min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col' >
+            <div className='min-h-screen bg-background flex flex-col' >
               <Header />
               <main className='flex-1'>{children}</main>
               <Footer />
