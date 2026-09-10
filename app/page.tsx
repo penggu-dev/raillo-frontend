@@ -123,13 +123,13 @@ export default function HomePage() {
                 <Train className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
               안전하고 편리한
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
                 철도여행
               </span>
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               RAILLO와 함께하는 스마트한 기차여행을 시작하세요
             </p>
           </div>
@@ -230,10 +230,10 @@ export default function HomePage() {
           {/* Service Grid with improved spacing and design */}
           <div className="mb-16">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
                 주요 서비스
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 RAILLO에서 제공하는 다양한 서비스를 이용해보세요
               </p>
             </div>
@@ -248,10 +248,10 @@ export default function HomePage() {
                         <CreditCard className="h-7 w-7 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">
+                        <CardTitle className="text-xl text-foreground">
                           승차권 확인
                         </CardTitle>
-                        <CardDescription className="text-gray-600">
+                        <CardDescription className="text-muted-foreground">
                           예매한 승차권 정보를 확인하세요
                         </CardDescription>
                       </div>
@@ -277,10 +277,10 @@ export default function HomePage() {
                         <CalendarIcon className="h-7 w-7 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">
+                        <CardTitle className="text-xl text-foreground">
                           예약승차권 조회
                         </CardTitle>
-                        <CardDescription className="text-gray-600">
+                        <CardDescription className="text-muted-foreground">
                           예약한 승차권을 조회하고 취소할 수 있습니다
                         </CardDescription>
                       </div>
@@ -306,10 +306,10 @@ export default function HomePage() {
                         <Search className="h-7 w-7 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">
+                        <CardTitle className="text-xl text-foreground">
                           승차권 예매
                         </CardTitle>
-                        <CardDescription className="text-gray-600">
+                        <CardDescription className="text-muted-foreground">
                           원하는 열차를 검색하고 예매하세요
                         </CardDescription>
                       </div>
@@ -330,7 +330,7 @@ export default function HomePage() {
 
           {/* Additional Features Section */}
           <div className="text-center">
-            <div className="inline-flex items-center space-x-8 text-gray-400">
+            <div className="inline-flex items-center space-x-8 text-muted-foreground">
               <div className="flex items-center space-x-2">
                 <Clock className="h-5 w-5" />
                 <span className="text-sm">24시간 운영</span>
