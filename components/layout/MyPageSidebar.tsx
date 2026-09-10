@@ -36,12 +36,12 @@ export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
   return (
     <div className="lg:w-80">
       {/* Profile Header */}
-      <Card className="mb-6 bg-blue-600 text-white">
+      <Card className="mb-6 bg-primary text-primary-foreground">
         <CardContent className="p-6 text-center">
           <div className="mb-4">
-            <Train className="h-16 w-16 mx-auto mb-2 text-white" />
+            <Train className="h-16 w-16 mx-auto mb-2 text-primary-foreground" />
             <h2 className="text-xl font-bold">마이페이지</h2>
-            <p className="text-blue-100">마이페이지</p>
+            <p className="text-primary-foreground/80">마이페이지</p>
           </div>
         </CardContent>
       </Card>
@@ -60,41 +60,41 @@ export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
             {/* 마이페이지 */}
             <Link
               href="/mypage"
-              className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+              className="flex items-center space-x-3 px-4 py-3 hover:bg-muted transition-colors"
             >
-              <User className="h-5 w-5 text-gray-600" />
+              <User className="h-5 w-5 text-muted-foreground" />
               <span>마이페이지</span>
             </Link>
 
             {/* 승차권 정보 */}
             <Collapsible open={openSections.ticketInfo} onOpenChange={() => toggleSection("ticketInfo")}>
-              <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-50 transition-colors">
+              <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-muted transition-colors">
                 <div className="flex items-center space-x-3">
-                  <Ticket className="h-5 w-5 text-gray-600" />
+                  <Ticket className="h-5 w-5 text-muted-foreground" />
                   <span>승차권 정보</span>
                 </div>
                 <ChevronDown
-                  className={`h-4 w-4 text-gray-400 transition-transform ${
+                  className={`h-4 w-4 text-muted-foreground transition-transform ${
                     openSections.ticketInfo ? "rotate-180" : ""
                   }`}
                 />
               </CollapsibleTrigger>
-              <CollapsibleContent className="bg-gray-50">
+              <CollapsibleContent className="bg-muted">
                 <Link
                   href="/ticket/purchased"
-                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-muted-foreground hover:text-primary"
                 >
                   <span>승차권 확인</span>
                 </Link>
                 <Link
                   href="/ticket/reservations"
-                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-muted-foreground hover:text-primary"
                 >
                   <span>예약승차권 조회/취소</span>
                 </Link>
                 <Link
                   href="/ticket/history"
-                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-muted-foreground hover:text-primary"
                 >
                   <span>승차권 구입이력</span>
                 </Link>
@@ -106,39 +106,39 @@ export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
               open={openSections.memberInfoManagement}
               onOpenChange={() => toggleSection("memberInfoManagement")}
             >
-              <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-50 transition-colors">
+              <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-muted transition-colors">
                 <div className="flex items-center space-x-3">
-                  <Settings className="h-5 w-5 text-gray-600" />
+                  <Settings className="h-5 w-5 text-muted-foreground" />
                   <span>회원정보관리</span>
                 </div>
                 <ChevronDown
-                  className={`h-4 w-4 text-gray-400 transition-transform ${
+                  className={`h-4 w-4 text-muted-foreground transition-transform ${
                     openSections.memberInfoManagement ? "rotate-180" : ""
                   }`}
                 />
               </CollapsibleTrigger>
-              <CollapsibleContent className="bg-gray-50">
+              <CollapsibleContent className="bg-muted">
                 <Link
                   href="/mypage/password/change"
-                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-muted-foreground hover:text-primary"
                 >
                   <span>비밀번호 변경</span>
                 </Link>
                 <Link
                   href="/mypage/email/change"
-                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-muted-foreground hover:text-primary"
                 >
                   <span>이메일 변경</span>
                 </Link>
                 <Link
                   href="/mypage/phone/change"
-                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-muted-foreground hover:text-primary"
                 >
                   <span>휴대폰 번호 변경</span>
                 </Link>
                 <Link
                   href="/mypage/withdraw"
-                  className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
+                  className="flex items-center space-x-3 px-8 py-2 text-sm text-muted-foreground hover:text-primary"
                 >
                   <span>회원탈퇴</span>
                 </Link>
@@ -149,4 +149,4 @@ export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
       </Card>
     </div>
   )
-} 
+}
