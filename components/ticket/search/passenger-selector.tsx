@@ -84,7 +84,7 @@ export function PassengerSelector({ value, onValueChange, placeholder, label, si
   return (
     <>
       <div>
-        <label className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-gray-700"}`}>{label}</label>
+        <label className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-foreground"}`}>{label}</label>
         <Button
           variant="outline"
           className="w-full justify-start text-left font-normal bg-white text-gray-900 hover:bg-gray-50"
