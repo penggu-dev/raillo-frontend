@@ -181,7 +181,10 @@ export function SeatSelectionDialog({
   const maxSeats = getTotalPassengers();
 
   // 좌석 버튼 스타일링 함수
-  const getSeatButtonStyle = (seat: any, isSelected: boolean) => {
+  const getSeatButtonStyle = (
+    seat: SeatDetail & { isWindow: boolean },
+    isSelected: boolean,
+  ): string => {
     if (!seat.isAvailable) {
       return "bg-gray-400 border-gray-500 text-gray-600 dark:bg-zinc-700 dark:border-zinc-600 dark:text-zinc-400 cursor-not-allowed";
     }
