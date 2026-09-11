@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default function FindAccountLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen">
       {/* Page Header Skeleton */}
       <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4">
@@ -24,7 +24,7 @@ export default function FindAccountLoading() {
       {/* Main Content Skeleton */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <Card className="shadow-lg">
+          <Card className="shadow-elev-md">
             <CardContent className="p-8">
               {/* Tabs Skeleton */}
               <div className="grid grid-cols-2 gap-2 mb-8">

@@ -15,7 +15,7 @@ export default function FindPasswordVerifyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen">
       {/* Page Header */}
       <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4">
@@ -50,7 +50,7 @@ export default function FindPasswordVerifyPage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <Card className="shadow-lg">
+          <Card className="shadow-elev-md">
             <CardContent className="p-8">
               <div className="mb-8">
                 <h1 className="text-2xl font-bold text-foreground mb-4">본인 인증하여 찾기</h1>
