@@ -4,7 +4,7 @@ import { Home, Printer } from "lucide-react"
 
 export default function SignupCompleteLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen">
       {/* Page Header */}
       <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4">
@@ -33,7 +33,7 @@ export default function SignupCompleteLoading() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto">
-          <Card className="shadow-lg border-0">
+          <Card className="shadow-elev-md border-0">
             <CardContent className="p-12 text-center">
               {/* Success Icon */}
               <div className="mb-8">

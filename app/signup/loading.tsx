@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SignupLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen">
       {/* Page Header Skeleton */}
       <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4">
@@ -24,7 +24,7 @@ export default function SignupLoading() {
       {/* Main Content Skeleton */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="shadow-lg">
+          <Card className="shadow-elev-md">
             <CardHeader className="text-center">
               <Skeleton className="h-8 w-48 mx-auto mb-2" />
               <Skeleton className="h-4 w-64 mx-auto" />

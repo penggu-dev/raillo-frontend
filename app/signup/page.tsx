@@ -130,11 +130,11 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen">
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="shadow-lg">
+          <Card className="shadow-elev-md">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl font-bold text-foreground">
                 회원가입

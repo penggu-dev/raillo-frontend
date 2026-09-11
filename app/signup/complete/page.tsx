@@ -45,7 +45,7 @@ export default function SignupCompletePage() {
   // 로딩 중이거나 유효성 검사 중일 때
   if (isValidAccess === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-muted-foreground">페이지를 불러오는 중...</p>
@@ -99,7 +99,7 @@ export default function SignupCompletePage() {
             </p>
           </div>
 
-          <Card className="shadow-lg border-0">
+          <Card className="shadow-elev-md border-0">
             <CardContent className="p-12 text-center">
               {/* Success Icon */}
               <div className="mb-8">

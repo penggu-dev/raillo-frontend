@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   return (
     <div className="py-10 flex justify-center items-center w-full">
-      <Card className="shadow-lg w-full max-w-md">
+      <Card className="shadow-elev-md w-full max-w-md">
         <LoginHeader />
         <CardContent>
           {/* 회원번호 로그인 */}

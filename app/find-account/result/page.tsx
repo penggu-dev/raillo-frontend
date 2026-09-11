@@ -71,7 +71,7 @@ export default function FindAccountResultPage() {
             </Button>
           </div>
 
-          <Card className="shadow-lg">
+          <Card className="shadow-elev-md">
             <CardContent className="p-8 text-center">
               {/* Success Icon */}
               <div className="mb-6">

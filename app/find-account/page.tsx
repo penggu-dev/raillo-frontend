@@ -32,7 +32,7 @@ export default function FindAccountPage() {
             </p>
           </div>
 
-          <Card className="shadow-lg">
+          <Card className="shadow-elev-md">
             <CardContent className="p-8">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8 h-14">
