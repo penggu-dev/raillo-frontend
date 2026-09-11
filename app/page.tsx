@@ -114,32 +114,30 @@ export default function HomePage() {
   return (
     <>
       {/* Main Content */}
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <div className="bg-gradient-to-b from-secondary to-background">
         <div className="container mx-auto px-4 py-8">
           {/* Hero Section with reduced spacing */}
           <div className="text-center mb-12">
             <div className="mb-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-4 shadow-lg">
-                <Train className="h-8 w-8 text-white" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-4 shadow-elev-md">
+                <Train className="h-8 w-8 text-primary-foreground" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-4 leading-tight">
               안전하고 편리한
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-                철도여행
-              </span>
+              <span className="block text-primary">철도여행</span>
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               RAILLO와 함께하는 스마트한 기차여행을 시작하세요
             </p>
           </div>
 
           {/* Ticket Booking Form with enhanced design */}
-          <Card className="mb-16 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white shadow-2xl border-0">
+          <Card className="mb-16 shadow-elev-lg">
             <CardContent className="p-8">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold mb-2">열차 예매</h2>
-                <p className="text-blue-100">
+                <h2 className="text-2xl font-bold tracking-tight mb-2">열차 예매</h2>
+                <p className="text-muted-foreground">
                   원하는 조건으로 열차를 검색하고 예매하세요
                 </p>
               </div>
@@ -153,6 +151,7 @@ export default function HomePage() {
                     onValueChange={handleDepartureStationChange}
                     placeholder="출발역 선택"
                     label="출발역"
+                    variant="white"
                     otherStation={arrivalStation}
                     onBothStationsChange={handleBothStationsChange}
                   />
@@ -162,10 +161,10 @@ export default function HomePage() {
                 <div className="lg:col-span-1 flex justify-center">
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="secondary"
                     size="sm"
                     onClick={swapStations}
-                    className="text-white hover:bg-white hover:bg-opacity-20 p-3 h-12 w-12 rounded-full transition-all duration-200"
+                    className="p-3 h-12 w-12 rounded-full transition-all duration-200"
                   >
                     <ArrowLeftRight className="h-5 w-5" />
                   </Button>
@@ -178,6 +177,7 @@ export default function HomePage() {
                     onValueChange={handleArrivalStationChange}
                     placeholder="도착역 선택"
                     label="도착역"
+                    variant="white"
                     otherStation={departureStation}
                     onBothStationsChange={handleBothStationsChange}
                   />
@@ -192,6 +192,7 @@ export default function HomePage() {
                     }}
                     placeholder="날짜 선택"
                     label="출발일"
+                    variant="white"
                   />
                 </div>
 
@@ -202,6 +203,7 @@ export default function HomePage() {
                     onValueChange={setPassengers}
                     placeholder="인원 선택"
                     label="인원"
+                    variant="white"
                     simple={false}
                   />
                 </div>
@@ -217,7 +219,7 @@ export default function HomePage() {
                         0,
                       ) === 0
                     }
-                    className="w-full bg-white text-blue-600 hover:bg-blue-50 font-semibold h-12 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="w-full font-semibold h-12 text-lg shadow-elev-sm hover:shadow-elev-md transition-all duration-200"
                   >
                     <Search className="mr-3 h-5 w-5" />
                     열차 조회하기
@@ -230,10 +232,10 @@ export default function HomePage() {
           {/* Service Grid with improved spacing and design */}
           <div className="mb-16">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
                 주요 서비스
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 RAILLO에서 제공하는 다양한 서비스를 이용해보세요
               </p>
             </div>
@@ -241,17 +243,17 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* 승차권 확인 */}
               <Link href="/ticket/purchased">
-                <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-green-200 bg-white/80 backdrop-blur-sm">
+                <Card className="group h-full cursor-pointer transition-all duration-200 hover:shadow-elev-md hover:-translate-y-0.5">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl group-hover:scale-110 transition-transform duration-200">
-                        <CreditCard className="h-7 w-7 text-white" />
+                      <div className="p-3 rounded-xl bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400 transition-transform duration-200 group-hover:scale-105">
+                        <CreditCard className="h-7 w-7" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">
+                        <CardTitle className="text-xl text-foreground">
                           승차권 확인
                         </CardTitle>
-                        <CardDescription className="text-gray-600">
+                        <CardDescription className="text-muted-foreground">
                           예매한 승차권 정보를 확인하세요
                         </CardDescription>
                       </div>
@@ -260,7 +262,7 @@ export default function HomePage() {
                   <CardContent className="pt-0">
                     <Button
                       variant="outline"
-                      className="w-full group-hover:bg-green-50 group-hover:border-green-300 group-hover:text-green-700 transition-all duration-200 font-medium"
+                      className="w-full transition-all duration-200 font-medium"
                     >
                       확인하기
                     </Button>
@@ -270,17 +272,17 @@ export default function HomePage() {
 
               {/* 예약 승차권 조회 및 취소 */}
               <Link href="/ticket/reservations">
-                <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-orange-200 bg-white/80 backdrop-blur-sm">
+                <Card className="group h-full cursor-pointer transition-all duration-200 hover:shadow-elev-md hover:-translate-y-0.5">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl group-hover:scale-110 transition-transform duration-200">
-                        <CalendarIcon className="h-7 w-7 text-white" />
+                      <div className="p-3 rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400 transition-transform duration-200 group-hover:scale-105">
+                        <CalendarIcon className="h-7 w-7" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">
+                        <CardTitle className="text-xl text-foreground">
                           예약승차권 조회
                         </CardTitle>
-                        <CardDescription className="text-gray-600">
+                        <CardDescription className="text-muted-foreground">
                           예약한 승차권을 조회하고 취소할 수 있습니다
                         </CardDescription>
                       </div>
@@ -289,7 +291,7 @@ export default function HomePage() {
                   <CardContent className="pt-0">
                     <Button
                       variant="outline"
-                      className="w-full group-hover:bg-orange-50 group-hover:border-orange-300 group-hover:text-orange-700 transition-all duration-200 font-medium"
+                      className="w-full transition-all duration-200 font-medium"
                     >
                       조회하기
                     </Button>
@@ -299,17 +301,17 @@ export default function HomePage() {
 
               {/* 열차 조회 */}
               <Link href="/">
-                <Card className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-purple-200 bg-white/80 backdrop-blur-sm">
+                <Card className="group h-full cursor-pointer transition-all duration-200 hover:shadow-elev-md hover:-translate-y-0.5">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl group-hover:scale-110 transition-transform duration-200">
-                        <Search className="h-7 w-7 text-white" />
+                      <div className="p-3 rounded-xl bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400 transition-transform duration-200 group-hover:scale-105">
+                        <Search className="h-7 w-7" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-gray-900">
+                        <CardTitle className="text-xl text-foreground">
                           승차권 예매
                         </CardTitle>
-                        <CardDescription className="text-gray-600">
+                        <CardDescription className="text-muted-foreground">
                           원하는 열차를 검색하고 예매하세요
                         </CardDescription>
                       </div>
@@ -318,7 +320,7 @@ export default function HomePage() {
                   <CardContent className="pt-0">
                     <Button
                       variant="outline"
-                      className="w-full group-hover:bg-purple-50 group-hover:border-purple-300 group-hover:text-purple-700 transition-all duration-200 font-medium"
+                      className="w-full transition-all duration-200 font-medium"
                     >
                       예매하기
                     </Button>
@@ -330,7 +332,7 @@ export default function HomePage() {
 
           {/* Additional Features Section */}
           <div className="text-center">
-            <div className="inline-flex items-center space-x-8 text-gray-400">
+            <div className="inline-flex items-center space-x-8 text-muted-foreground">
               <div className="flex items-center space-x-2">
                 <Clock className="h-5 w-5" />
                 <span className="text-sm">24시간 운영</span>

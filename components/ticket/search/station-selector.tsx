@@ -73,7 +73,7 @@ export function StationSelector({
     <>
       <div>
         <label
-          className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-gray-700"}`}
+          className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-foreground"}`}
         >
           {label}
         </label>

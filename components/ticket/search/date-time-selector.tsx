@@ -173,7 +173,7 @@ export function DateTimeSelector({
       <div>
         <label
           className={`block text-sm font-medium mb-2 ${
-            variant === "blue" ? "text-white" : "text-gray-700"
+            variant === "blue" ? "text-white" : "text-foreground"
           }`}
         >
           {label}
