@@ -224,7 +224,7 @@ export function SeatSelectionDialog({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-card rounded-lg shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden">
+      <div className="bg-card rounded-2xl border shadow-elev-lg w-full max-w-7xl max-h-[95vh] overflow-hidden">
         {/* Dialog Header */}
         <div className="flex items-center justify-between p-6 border-b bg-card">
           <div className="flex items-center space-x-3">
@@ -297,13 +297,13 @@ export function SeatSelectionDialog({
               <span className="text-foreground">매진</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-orange-100 border-orange-300 dark:bg-orange-500/15 dark:border-orange-400/40 rounded flex items-center justify-center">
+              <div className="w-5 h-5 border bg-orange-100 border-orange-300 dark:bg-orange-500/15 dark:border-orange-400/40 rounded flex items-center justify-center">
                 <span className="text-xs text-orange-600 dark:text-orange-300">→</span>
               </div>
               <span className="text-foreground">순방향</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-purple-100 border-purple-300 dark:bg-purple-500/15 dark:border-purple-400/40 rounded flex items-center justify-center">
+              <div className="w-5 h-5 border bg-purple-100 border-purple-300 dark:bg-purple-500/15 dark:border-purple-400/40 rounded flex items-center justify-center">
                 <span className="text-xs text-purple-600 dark:text-purple-300">←</span>
               </div>
               <span className="text-foreground">역방향</span>

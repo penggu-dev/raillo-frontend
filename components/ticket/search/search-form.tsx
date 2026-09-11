@@ -37,7 +37,7 @@ export function SearchForm({
   onBothStationsChange,
 }: SearchFormProps) {
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 shadow-elev-md">
       <CardContent className="p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">

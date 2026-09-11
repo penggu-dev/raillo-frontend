@@ -207,11 +207,11 @@ export function DateTimeSelector({
 
           <div className="p-4 max-h-[calc(90vh-140px)] overflow-y-auto">
             {/* 선택된 날짜/시간 표시 */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-4 text-center border border-blue-100">
+            <div className="bg-secondary rounded-lg p-4 mb-4 text-center">
               <div className="text-lg font-semibold text-foreground mb-2">
                 {format(tempDate, "yyyy년 MM월 dd일(E)", { locale: ko })}
               </div>
-              <div className="inline-flex items-center px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm font-medium">
+              <div className="inline-flex items-center px-3 py-1 bg-card text-secondary-foreground shadow-elev-sm rounded-full text-sm font-medium">
                 <Clock className="h-3 w-3 mr-1" />
                 {selectedHour} 출발
               </div>
