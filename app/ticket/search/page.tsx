@@ -584,7 +584,7 @@ function TrainSearchPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-gray-600">열차 정보를 검색하고 있습니다...</p>
+        <p className="text-muted-foreground">열차 정보를 검색하고 있습니다...</p>
       </div>
     );
   }
@@ -613,8 +613,8 @@ function TrainSearchPage() {
         {/* Train List */}
         <div className="space-y-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">검색 결과</h2>
-            <div className="text-sm text-gray-600">
+            <h2 className="text-xl font-bold text-foreground">검색 결과</h2>
+            <div className="text-sm text-muted-foreground">
               * 요금은 어른 기준이며,
               어린이(40%)·유아(75%)·경로(30%)·장애인(30~50%)·국가유공자(50%)
               할인이 적용됩니다.
@@ -697,7 +697,7 @@ export default function TrainSearchPageWrapper() {
       fallback={
         <div className="container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-gray-600">열차 정보를 검색하고 있습니다...</p>
+          <p className="text-muted-foreground">열차 정보를 검색하고 있습니다...</p>
         </div>
       }
     >

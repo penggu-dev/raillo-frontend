@@ -56,7 +56,7 @@ export function SearchForm({
               />
             </div>
 
-            <ArrowRight className="h-4 w-4 text-gray-400" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
 
             {/* 도착역 선택 */}
             <div className="flex items-center">
@@ -103,7 +103,6 @@ export function SearchForm({
             onClick={onSearch}
             disabled={Object.values(passengerCounts).reduce((sum, c) => sum + c, 0) === 0}
             variant={searchConditionsChanged ? "default" : "outline"}
-            className={searchConditionsChanged ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}
           >
             {searchConditionsChanged ? "검색 조건 적용" : "검색하기"}
           </Button>
