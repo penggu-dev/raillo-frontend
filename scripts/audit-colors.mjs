@@ -14,6 +14,7 @@
  *   - 팔레트 shade(bg-blue-600), white/black(bg-white, bg-black/80), 임의 HEX(bg-[#fff])를 variant 포함해 감지
  *   - dark: 변형 자체와, 같은 줄에 dark: 짝(같은 variant·유틸리티)이 있는 라이트 색은 테마 대응으로 보고 제외
  *   - EXCEPTIONS에 사유와 함께 등록된 예외는 제외하고 따로 표시
+ *   - 테스트 코드(*.test.ts(x), *.spec.ts(x), __tests__/ 하위)는 집계하지 않음
  */
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -43,7 +44,8 @@ import { join, sep } from "node:path";
 
 const SCAN_DIRS = ["app", "components", "constants", "hooks", "lib", "stores"];
 const SOURCE_FILE = /\.tsx?$/;
-const TEST_FILE = /\.test\.tsx?$/;
+const TEST_FILE = /\.(test|spec)\.tsx?$/;
+const TEST_DIR = "__tests__";
 
 /** @type {Kind[]} */
 const KINDS = ["palette", "mono", "hex"];
@@ -105,7 +107,7 @@ function collectFiles(dir) {
   if (!existsSync(dir)) return [];
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
-    if (entry.isDirectory()) return collectFiles(path);
+    if (entry.isDirectory()) return entry.name === TEST_DIR ? [] : collectFiles(path);
     return SOURCE_FILE.test(entry.name) && !TEST_FILE.test(entry.name) ? [toPosix(path)] : [];
   });
 }
@@ -243,7 +245,7 @@ function main() {
   const unresolvedTotal = rows.reduce((sum, [, counts]) => sum + totalOf(counts), 0);
   const allowedTotal = allowed.reduce((sum, hit) => sum + hit.count, 0);
 
-  console.log(`하드코딩 색상 감사 — ${(scopes.length > 0 ? scopes : SCAN_DIRS).join(", ")} (테스트 파일 제외)\n`);
+  console.log(`하드코딩 색상 감사 — ${(scopes.length > 0 ? scopes : SCAN_DIRS).join(", ")} (테스트 코드 제외)\n`);
 
   if (rows.length === 0) console.log("미해결 하드코딩 색상 없음");
   else printTable(byFile ? "파일" : "영역", rows);
