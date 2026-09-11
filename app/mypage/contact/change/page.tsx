@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -8,27 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  Train,
-  ChevronDown,
-  User,
-  CreditCard,
-  Ticket,
-  ShoppingCart,
-  Settings,
-  Star,
-} from "lucide-react";
 import { sendEmailVerificationCode } from "@/lib/api/authMembers";
 import { updatePhoneNumber } from "@/lib/api/members";
 import { useToast } from "@/hooks/useToast";
 import AuthGuard from "@/components/auth/AuthGuard";
+import MyPageSidebar from "@/components/layout/MyPageSidebar";
+import { useGetMemberInfo } from "@/hooks/useUser";
 
 const emailSchema = z.object({
   email: z
@@ -49,20 +34,11 @@ type PhoneFormValues = z.infer<typeof phoneSchema>;
 function ContactChangePageContent() {
   const router = useRouter();
   const { toast } = useToast();
-
-  const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
-    ticketInfo: false,
-    membershipPerformance: false,
-    paymentManagement: false,
-  });
+  const { data: memberInfo = null } = useGetMemberInfo();
 
   const [phoneNumber1, setPhoneNumber1] = useState("");
   const [phoneNumber2, setPhoneNumber2] = useState("");
   const [phoneNumber3, setPhoneNumber3] = useState("");
-
-  const toggleSection = (section: string) => {
-    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
@@ -113,126 +89,7 @@ function ContactChangePageContent() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar */}
-          <div className="lg:w-80">
-            {/* Profile Header */}
-            <Card className="mb-6 bg-blue-600 text-white">
-              <CardContent className="p-6 text-center">
-                <div className="mb-4">
-                  <Train className="h-16 w-16 mx-auto mb-2 text-white" />
-                  <h2 className="text-xl font-bold">RAILLO</h2>
-                  <p className="text-blue-100">마이페이지</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* User Info Card */}
-            <Card className="mb-6">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Badge variant="outline" className="text-xs">
-                    비즈니스
-                  </Badge>
-                </div>
-                <h3 className="font-bold text-lg">김구름 회원님</h3>
-                <p className="text-sm text-gray-600">마일리지: 0P</p>
-              </CardContent>
-            </Card>
-
-            {/* Navigation Menu */}
-            <Card>
-              <CardContent className="p-0">
-                <nav className="space-y-1">
-                  <Link
-                    href="/mypage"
-                    className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                  >
-                    <User className="h-5 w-5 text-gray-600" />
-                    <span>마이 RAILLO</span>
-                  </Link>
-
-                  <Collapsible
-                    open={openSections.ticketInfo}
-                    onOpenChange={() => toggleSection("ticketInfo")}
-                  >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <Ticket className="h-5 w-5 text-gray-600" />
-                        <span>승차권 정보</span>
-                      </div>
-                      <ChevronDown
-                        className={`h-4 w-4 text-gray-400 transition-transform ${
-                          openSections.ticketInfo ? "rotate-180" : ""
-                        }`}
-                      />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="bg-gray-50">
-                      <Link
-                        href="/ticket/purchased"
-                        className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
-                      >
-                        <span>승차권 확인</span>
-                      </Link>
-                      <Link
-                        href="/ticket/reservations"
-                        className="flex items-center space-x-3 px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
-                      >
-                        <span>예약승차권 조회/취소</span>
-                      </Link>
-                    </CollapsibleContent>
-                  </Collapsible>
-
-                  <Collapsible
-                    open={openSections.membershipPerformance}
-                    onOpenChange={() => toggleSection("membershipPerformance")}
-                  >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <Star className="h-5 w-5 text-gray-600" />
-                        <span>기차여행정보</span>
-                      </div>
-                      <ChevronDown
-                        className={`h-4 w-4 text-gray-400 transition-transform ${
-                          openSections.membershipPerformance ? "rotate-180" : ""
-                        }`}
-                      />
-                    </CollapsibleTrigger>
-                  </Collapsible>
-
-                  <Collapsible
-                    open={openSections.paymentManagement}
-                    onOpenChange={() => toggleSection("paymentManagement")}
-                  >
-                    <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <CreditCard className="h-5 w-5 text-gray-600" />
-                        <span>멤버십 실적 조회</span>
-                      </div>
-                      <ChevronDown
-                        className={`h-4 w-4 text-gray-400 transition-transform ${
-                          openSections.paymentManagement ? "rotate-180" : ""
-                        }`}
-                      />
-                    </CollapsibleTrigger>
-                  </Collapsible>
-
-                  <div className="px-4 py-3 text-blue-600 bg-blue-50 border-r-2 border-blue-600">
-                    <div className="flex items-center space-x-3">
-                      <Settings className="h-5 w-5" />
-                      <span className="font-medium">회원정보관리</span>
-                    </div>
-                  </div>
-
-                  <Link
-                    href="/cart"
-                    className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                  >
-                    <ShoppingCart className="h-5 w-5 text-gray-600" />
-                    <span>장바구니</span>
-                  </Link>
-                </nav>
-              </CardContent>
-            </Card>
-          </div>
+          <MyPageSidebar memberInfo={memberInfo || undefined} />
 
           {/* Main Content */}
           <div className="flex-1">
