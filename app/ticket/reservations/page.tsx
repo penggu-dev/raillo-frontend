@@ -281,7 +281,7 @@ function ReservationsPageContent() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-gray-600">예약 목록을 불러오고 있습니다...</p>
+        <p className="text-muted-foreground">예약 목록을 불러오고 있습니다...</p>
       </div>
     );
   }
@@ -289,7 +289,7 @@ function ReservationsPageContent() {
   if (isError) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <div className="text-red-600 mb-4">
+        <div className="text-red-600 dark:text-red-400 mb-4">
           <p className="text-lg font-semibold">
             예약 목록을 불러올 수 없습니다
           </p>
@@ -308,18 +308,18 @@ function ReservationsPageContent() {
         <div className="max-w-4xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-foreground mb-2">
               예약승차권 조회
             </h2>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               예약한 승차권을 확인하고 결제하거나 취소할 수 있습니다
             </p>
           </div>
 
           {/* Notice */}
-          <Card className="mb-8 bg-blue-50 border-blue-200">
+          <Card className="mb-8 bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30">
             <CardContent className="p-4">
-              <div className="flex items-center space-x-2 text-blue-700">
+              <div className="flex items-center space-x-2 text-blue-700 dark:text-blue-300">
                 <Info className="h-5 w-5" />
                 <span className="font-medium">
                   결제 기한이 지난 목록은 자동 삭제됩니다
@@ -331,15 +331,15 @@ function ReservationsPageContent() {
           {/* Reservation List */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-gray-900">예약 내역</h3>
+              <h3 className="text-xl font-bold text-foreground">예약 내역</h3>
               {validReservations.length > 0 && (
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     checked={allSelected}
                     onCheckedChange={toggleAllSelection}
-                    className="data-[state=checked]:bg-blue-600"
+                    className="data-[state=checked]:bg-primary"
                   />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     전체선택 ({selectedItems.length}/{validReservations.length})
                   </span>
                 </div>
@@ -349,15 +349,15 @@ function ReservationsPageContent() {
             {reservations.length === 0 ? (
               <Card>
                 <CardContent className="p-12 text-center">
-                  <Clock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <Clock className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-foreground mb-2">
                     예약 내역이 없습니다
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-muted-foreground mb-6">
                     새로운 예약을 진행하세요.
                   </p>
                   <Link href="/">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Button>
                       승차권 예매하기
                     </Button>
                   </Link>
@@ -366,15 +366,15 @@ function ReservationsPageContent() {
             ) : validReservations.length === 0 ? (
               <Card>
                 <CardContent className="p-12 text-center">
-                  <Clock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <Clock className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-foreground mb-2">
                     유효한 예약이 없습니다
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-muted-foreground mb-6">
                     결제 기한이 지난 예약은 자동으로 삭제됩니다.
                   </p>
                   <Link href="/">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Button>
                       승차권 예매하기
                     </Button>
                   </Link>
@@ -393,7 +393,7 @@ function ReservationsPageContent() {
                         onCheckedChange={() =>
                           toggleItemSelection(reservation.pendingBookingId)
                         }
-                        className="mt-1 data-[state=checked]:bg-blue-600"
+                        className="mt-1 data-[state=checked]:bg-primary"
                       />
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-4">
@@ -406,15 +406,15 @@ function ReservationsPageContent() {
                             <span className="text-lg font-bold">
                               {reservation.trainNumber}
                             </span>
-                            <span className="text-gray-600">
+                            <span className="text-muted-foreground">
                               {formatDate(reservation.operationDate)}
                             </span>
                           </div>
                           <div className="text-right">
-                            <div className="text-xl font-bold text-blue-600">
+                            <div className="text-xl font-bold text-primary">
                               {formatPrice(getTotalPrice(reservation))}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-muted-foreground">
                               예약번호: {reservation.pendingBookingId}
                             </div>
                           </div>
@@ -422,7 +422,7 @@ function ReservationsPageContent() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                           <div>
-                            <h4 className="font-medium text-gray-900 mb-2 flex items-center">
+                            <h4 className="font-medium text-foreground mb-2 flex items-center">
                               <MapPin className="h-4 w-4 mr-1" />
                               운행 정보
                             </h4>
@@ -431,12 +431,12 @@ function ReservationsPageContent() {
                                 <span className="font-medium">
                                   {reservation.departureStationName}
                                 </span>
-                                <ArrowRight className="h-3 w-3 text-gray-400" />
+                                <ArrowRight className="h-3 w-3 text-muted-foreground" />
                                 <span className="font-medium">
                                   {reservation.arrivalStationName}
                                 </span>
                               </div>
-                              <div className="text-sm text-gray-600">
+                              <div className="text-sm text-muted-foreground">
                                 {formatTime(reservation.departureTime)} ~{" "}
                                 {formatTime(reservation.arrivalTime)}
                               </div>
@@ -444,7 +444,7 @@ function ReservationsPageContent() {
                           </div>
 
                           <div>
-                            <h4 className="font-medium text-gray-900 mb-2">
+                            <h4 className="font-medium text-foreground mb-2">
                               좌석 정보
                             </h4>
                             <div className="text-sm font-medium">
@@ -453,7 +453,7 @@ function ReservationsPageContent() {
                           </div>
 
                           <div>
-                            <h4 className="font-medium text-gray-900 mb-2 flex items-center">
+                            <h4 className="font-medium text-foreground mb-2 flex items-center">
                               <Clock className="h-4 w-4 mr-1" />
                               결제 기한
                             </h4>
@@ -469,7 +469,7 @@ function ReservationsPageContent() {
                                 reservation.pendingBookingId,
                               )
                             }
-                            className="text-red-600 border-red-600 hover:bg-red-50"
+                            className="text-red-600 border-red-600 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-500/10"
                           >
                             <X className="h-4 w-4 mr-1" />
                             예약취소
@@ -484,11 +484,11 @@ function ReservationsPageContent() {
           </div>
 
           {/* Notice */}
-          <Card className="mt-8 bg-yellow-50 border-yellow-200">
+          <Card className="mt-8 bg-yellow-50 border-yellow-200 dark:bg-yellow-500/10 dark:border-yellow-500/30">
             <CardContent className="p-6">
               <div className="flex items-start space-x-3">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                <div className="space-y-2 text-sm text-yellow-800">
+                <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                <div className="space-y-2 text-sm text-yellow-800 dark:text-yellow-200">
                   <h3 className="font-semibold">예약승차권 조회 안내</h3>
                   <ul className="space-y-1 list-disc list-inside">
                     <li>
@@ -507,21 +507,20 @@ function ReservationsPageContent() {
 
       {/* Bottom Payment Bar */}
       {selectedItems.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg p-4 z-50">
           <div className="container mx-auto max-w-4xl flex items-center justify-between">
             <div>
               <span className="font-semibold">
                 {selectedItems.length}개 선택
               </span>
-              <span className="text-gray-400 mx-2">·</span>
-              <span className="text-lg font-bold text-blue-600">
+              <span className="text-muted-foreground mx-2">·</span>
+              <span className="text-lg font-bold text-primary">
                 {formatPrice(totalPrice)}
               </span>
             </div>
             <Button
               onClick={handlePaymentClick}
               disabled={paymentLoading}
-              className="bg-blue-600 hover:bg-blue-700"
             >
               {paymentLoading ? (
                 <LoadingSpinner size="sm" color="white" className="mr-2" />
@@ -569,7 +568,7 @@ function ReservationsPageContent() {
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmCancelReservation}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
             >
               확인
             </AlertDialogAction>
