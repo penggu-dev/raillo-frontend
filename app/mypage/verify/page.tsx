@@ -159,7 +159,7 @@ function EmailVerificationPageContent() {
             <Button
               onClick={handleGoBack}
               variant="ghost"
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>뒤로가기</span>
@@ -169,10 +169,10 @@ function EmailVerificationPageContent() {
           <Card>
             <CardContent className="p-8">
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">
+                <h1 className="text-2xl font-bold text-foreground mb-6">
                   이메일 인증
                 </h1>
-                <div className="space-y-3 text-gray-700">
+                <div className="space-y-3 text-foreground">
                   <p>• 회원정보 변경을 위해 이메일 인증이 필요합니다.</p>
                   <p>• 등록된 이메일로 인증코드가 발송됩니다.</p>
                 </div>
@@ -181,13 +181,13 @@ function EmailVerificationPageContent() {
               {!showVerification ? (
                 <div className="space-y-6">
                   <div className="text-center">
-                    <p className="text-gray-600 mb-4">
+                    <p className="text-muted-foreground mb-4">
                       인증코드를 발송하시겠습니까?
                     </p>
                     <Button
                       onClick={handleSendVerificationCode}
                       disabled={isSubmitting}
-                      className="px-8 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
+                      className="px-8 py-2 rounded-full disabled:opacity-50"
                     >
                       {isSubmitting ? "처리 중..." : "인증코드 발송"}
                     </Button>
@@ -204,9 +204,9 @@ function EmailVerificationPageContent() {
                   <div className="space-y-2">
                     <Label
                       htmlFor="auth-code"
-                      className="text-sm font-medium text-gray-700"
+                      className="text-sm font-medium text-foreground"
                     >
-                      인증코드 <span className="text-red-500">*</span>
+                      인증코드 <span className="text-red-600 dark:text-red-400">*</span>
                     </Label>
                     <Input
                       id="auth-code"
@@ -218,7 +218,7 @@ function EmailVerificationPageContent() {
                       className="w-full"
                       autoComplete="one-time-code"
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {email}로 발송된 6자리 인증코드를 입력해주세요.
                     </p>
                   </div>
@@ -227,7 +227,7 @@ function EmailVerificationPageContent() {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
+                      className="flex-1 px-6 py-2 rounded-full disabled:opacity-50"
                     >
                       {isSubmitting ? "처리 중..." : "인증 확인"}
                     </Button>
@@ -236,7 +236,7 @@ function EmailVerificationPageContent() {
                       onClick={handleSendVerificationCode}
                       disabled={isSubmitting}
                       variant="outline"
-                      className="px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                      className="px-6 py-2 border-input text-foreground hover:bg-muted disabled:opacity-50"
                     >
                       재발송
                     </Button>

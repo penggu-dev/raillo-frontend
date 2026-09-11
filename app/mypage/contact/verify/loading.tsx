@@ -53,7 +53,7 @@ export default function ContactVerifyLoading() {
                   ))}
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-6">
+                <div className="bg-muted rounded-lg p-6">
                   <Skeleton className="h-6 w-16 mb-4" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
