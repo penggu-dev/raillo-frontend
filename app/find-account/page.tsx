@@ -24,27 +24,27 @@ export default function FindAccountPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               회원번호/비밀번호 찾기
             </h1>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               본인확인을 통해 회원정보를 찾으실 수 있습니다
             </p>
           </div>
 
-          <Card className="bg-white shadow-lg">
+          <Card className="shadow-lg">
             <CardContent className="p-8">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-8 h-14">
                   <TabsTrigger
                     value="member"
-                    className="text-base font-medium py-4 px-6 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+                    className="text-base font-medium py-4 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
                   >
                     회원번호 찾기
                   </TabsTrigger>
                   <TabsTrigger
                     value="password"
-                    className="text-base font-medium py-4 px-6 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md"
+                    className="text-base font-medium py-4 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
                   >
                     비밀번호 찾기
                   </TabsTrigger>
@@ -59,13 +59,13 @@ export default function FindAccountPage() {
                 </TabsContent>
               </Tabs>
 
-              <div className="mt-8 pt-6 border-t border-gray-200">
+              <div className="mt-8 pt-6 border-t border-border">
                 <div className="flex justify-center space-x-6 text-sm">
-                  <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+                  <Link href="/login" className="text-primary hover:text-primary-active font-semibold">
                     로그인하기
                   </Link>
-                  <span className="text-gray-300">|</span>
-                  <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold">
+                  <span className="text-muted-foreground opacity-40">|</span>
+                  <Link href="/signup" className="text-primary hover:text-primary-active font-semibold">
                     회원가입하기
                   </Link>
                 </div>

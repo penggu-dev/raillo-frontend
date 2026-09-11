@@ -5,14 +5,14 @@ export default function SignupVerifyLoading() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Page Header Skeleton */}
-      <div className="bg-blue-500 text-white py-6">
+      <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4">
-          <Skeleton className="h-8 w-48 mx-auto bg-blue-400" />
+          <Skeleton className="h-8 w-48 mx-auto bg-primary-light" />
         </div>
       </div>
 
       {/* Breadcrumb Skeleton */}
-      <div className="bg-white border-b">
+      <div className="bg-card border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Skeleton className="h-4 w-64" />
@@ -24,7 +24,7 @@ export default function SignupVerifyLoading() {
       {/* Main Content Skeleton */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <Card className="bg-white shadow-lg">
+          <Card className="shadow-lg">
             <CardContent className="p-8">
               <div className="mb-8">
                 <Skeleton className="h-8 w-64 mb-4" />
@@ -45,7 +45,7 @@ export default function SignupVerifyLoading() {
                 ))}
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-6">
+              <div className="bg-muted rounded-lg p-6">
                 <Skeleton className="h-6 w-16 mb-4" />
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-full" />

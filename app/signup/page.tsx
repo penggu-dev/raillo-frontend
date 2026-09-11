@@ -134,12 +134,12 @@ export default function SignupPage() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="bg-white shadow-lg">
+          <Card className="shadow-lg">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-gray-900">
+              <CardTitle className="text-2xl font-bold text-foreground">
                 회원가입
               </CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardDescription className="text-muted-foreground">
                 RAILLO 회원이 되어 더 많은 혜택을 누리세요
               </CardDescription>
             </CardHeader>
@@ -149,23 +149,23 @@ export default function SignupPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="name"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-foreground"
                   >
-                    성명 <span className="text-red-500">*</span>
+                    성명 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="name"
                       type="text"
                       placeholder="성명을 입력하세요"
                       {...register("name")}
-                      className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
+                      className={`pl-10 ${errors.name ? "border-red-500 dark:border-red-400" : ""}`}
                       autoComplete="name"
                     />
                   </div>
                   {errors.name && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.name.message}
                     </p>
                   )}
@@ -175,23 +175,23 @@ export default function SignupPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="email"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-foreground"
                   >
-                    이메일 주소 <span className="text-red-500">*</span>
+                    이메일 주소 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
                       placeholder="이메일 주소를 입력하세요"
                       {...register("email")}
-                      className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
+                      className={`pl-10 ${errors.email ? "border-red-500 dark:border-red-400" : ""}`}
                       autoComplete="email"
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.email.message}
                     </p>
                   )}
@@ -201,24 +201,24 @@ export default function SignupPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="password"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-foreground"
                   >
-                    비밀번호 <span className="text-red-500">*</span>
+                    비밀번호 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="비밀번호를 입력하세요"
                       {...register("password")}
-                      className={`pl-10 pr-10 ${errors.password ? "border-red-500" : ""}`}
+                      className={`pl-10 pr-10 ${errors.password ? "border-red-500 dark:border-red-400" : ""}`}
                       autoComplete="new-password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -228,11 +228,11 @@ export default function SignupPage() {
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.password.message}
                     </p>
                   )}
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     8자 이상, 영문, 숫자, 특수문자를 포함해주세요.
                   </p>
                 </div>
@@ -241,18 +241,18 @@ export default function SignupPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="confirmPassword"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-foreground"
                   >
-                    비밀번호 확인 <span className="text-red-500">*</span>
+                    비밀번호 확인 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="비밀번호를 다시 입력하세요"
                       {...register("confirmPassword")}
-                      className={`pl-10 pr-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
+                      className={`pl-10 pr-10 ${errors.confirmPassword ? "border-red-500 dark:border-red-400" : ""}`}
                       autoComplete="new-password"
                     />
                     <button
@@ -260,7 +260,7 @@ export default function SignupPage() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -270,13 +270,13 @@ export default function SignupPage() {
                     </button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.confirmPassword.message}
                     </p>
                   )}
                   {watchConfirmPassword && !errors.confirmPassword && (
                     <p
-                      className={`text-xs ${passwordsMatch ? "text-green-600" : "text-red-500"}`}
+                      className={`text-xs ${passwordsMatch ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                     >
                       {passwordsMatch
                         ? "비밀번호가 일치합니다."
@@ -289,12 +289,12 @@ export default function SignupPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="phoneNumber"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-foreground"
                   >
-                    휴대폰 번호 <span className="text-red-500">*</span>
+                    휴대폰 번호 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Controller
                       name="phoneNumber"
                       control={control}
@@ -307,14 +307,14 @@ export default function SignupPage() {
                           onChange={(e) =>
                             field.onChange(formatPhoneNumber(e.target.value))
                           }
-                          className={`pl-10 ${errors.phoneNumber ? "border-red-500" : ""}`}
+                          className={`pl-10 ${errors.phoneNumber ? "border-red-500 dark:border-red-400" : ""}`}
                           autoComplete="tel"
                         />
                       )}
                     />
                   </div>
                   {errors.phoneNumber && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.phoneNumber.message}
                     </p>
                   )}
@@ -322,8 +322,8 @@ export default function SignupPage() {
 
                 {/* 생년월일 */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    생년월일 <span className="text-red-500">*</span>
+                  <Label className="text-sm font-medium text-foreground">
+                    생년월일 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="flex space-x-2">
                     <div className="flex-1">
@@ -332,7 +332,7 @@ export default function SignupPage() {
                         onChange={(e) =>
                           handleBirthDateChange("year", e.target.value)
                         }
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.birthDate ? "border-red-500" : ""}`}
+                        className={`w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ${errors.birthDate ? "border-red-500 dark:border-red-400" : ""}`}
                       >
                         <option value="">년도</option>
                         {yearOptions.map((year) => (
@@ -348,7 +348,7 @@ export default function SignupPage() {
                         onChange={(e) =>
                           handleBirthDateChange("month", e.target.value)
                         }
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.birthDate ? "border-red-500" : ""}`}
+                        className={`w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ${errors.birthDate ? "border-red-500 dark:border-red-400" : ""}`}
                       >
                         <option value="">월</option>
                         {monthOptions.map((month) => (
@@ -364,7 +364,7 @@ export default function SignupPage() {
                         onChange={(e) =>
                           handleBirthDateChange("day", e.target.value)
                         }
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.birthDate ? "border-red-500" : ""}`}
+                        className={`w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ${errors.birthDate ? "border-red-500 dark:border-red-400" : ""}`}
                       >
                         <option value="">일</option>
                         {getDayOptions().map((day) => (
@@ -376,7 +376,7 @@ export default function SignupPage() {
                     </div>
                   </div>
                   {errors.birthDate && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.birthDate.message}
                     </p>
                   )}
@@ -384,8 +384,8 @@ export default function SignupPage() {
 
                 {/* 성별 */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">
-                    성별 <span className="text-red-500">*</span>
+                  <Label className="text-sm font-medium text-foreground">
+                    성별 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <Controller
                     name="gender"
@@ -396,7 +396,7 @@ export default function SignupPage() {
                           type="button"
                           variant={field.value === "M" ? "default" : "outline"}
                           onClick={() => field.onChange("M")}
-                          className={`flex-1 ${field.value === "M" ? "bg-blue-600 text-white" : "border-gray-300"}`}
+                          className="flex-1"
                         >
                           남성
                         </Button>
@@ -404,7 +404,7 @@ export default function SignupPage() {
                           type="button"
                           variant={field.value === "F" ? "default" : "outline"}
                           onClick={() => field.onChange("F")}
-                          className={`flex-1 ${field.value === "F" ? "bg-blue-600 text-white" : "border-gray-300"}`}
+                          className="flex-1"
                         >
                           여성
                         </Button>
@@ -412,15 +412,15 @@ export default function SignupPage() {
                     )}
                   />
                   {errors.gender && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.gender.message}
                     </p>
                   )}
                 </div>
 
                 {/* 약관 동의 */}
-                <div className="space-y-4 pt-6 border-t border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                <div className="space-y-4 pt-6 border-t border-border">
+                  <h3 className="text-lg font-semibold text-foreground">
                     약관 동의
                   </h3>
 
@@ -439,19 +439,19 @@ export default function SignupPage() {
                           />
                         )}
                       />
-                      <Label htmlFor="terms" className="text-sm text-gray-700">
-                        <span className="text-red-500">[필수]</span> 이용약관에
+                      <Label htmlFor="terms" className="text-sm text-foreground">
+                        <span className="text-red-600 dark:text-red-400">[필수]</span> 이용약관에
                         동의합니다.
                       </Label>
                       <Link
                         href="#"
-                        className="text-blue-600 hover:text-blue-700 text-sm"
+                        className="text-primary hover:text-primary-active text-sm"
                       >
                         보기
                       </Link>
                     </div>
                     {errors.terms && (
-                      <p className="text-xs text-red-500 ml-6">
+                      <p className="text-xs text-red-600 dark:text-red-400 ml-6">
                         {errors.terms.message}
                       </p>
                     )}
@@ -472,20 +472,20 @@ export default function SignupPage() {
                       />
                       <Label
                         htmlFor="privacy"
-                        className="text-sm text-gray-700"
+                        className="text-sm text-foreground"
                       >
-                        <span className="text-red-500">[필수]</span> 개인정보
+                        <span className="text-red-600 dark:text-red-400">[필수]</span> 개인정보
                         수집 및 이용에 동의합니다.
                       </Label>
                       <Link
                         href="#"
-                        className="text-blue-600 hover:text-blue-700 text-sm"
+                        className="text-primary hover:text-primary-active text-sm"
                       >
                         보기
                       </Link>
                     </div>
                     {errors.privacy && (
-                      <p className="text-xs text-red-500 ml-6">
+                      <p className="text-xs text-red-600 dark:text-red-400 ml-6">
                         {errors.privacy.message}
                       </p>
                     )}
@@ -506,7 +506,7 @@ export default function SignupPage() {
                       />
                       <Label
                         htmlFor="marketing"
-                        className="text-sm text-gray-700"
+                        className="text-sm text-foreground"
                       >
                         [선택] 마케팅 정보 수신에 동의합니다.
                       </Label>
@@ -518,7 +518,7 @@ export default function SignupPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 mt-8"
+                  className="w-full font-semibold py-3 mt-8"
                   size="lg"
                 >
                   {isSubmitting ? "회원가입 중..." : "회원가입 완료"}
@@ -526,11 +526,11 @@ export default function SignupPage() {
 
                 {/* 추가 링크 */}
                 <div className="text-center pt-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     이미 RAILLO 회원이신가요?{" "}
                     <Link
                       href="/login"
-                      className="text-blue-600 hover:text-blue-700 font-semibold"
+                      className="text-primary hover:text-primary-active font-semibold"
                     >
                       로그인하기
                     </Link>

@@ -5,14 +5,14 @@ export default function SignupLoading() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Page Header Skeleton */}
-      <div className="bg-blue-500 text-white py-6">
+      <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4">
-          <Skeleton className="h-8 w-32 mx-auto bg-blue-400" />
+          <Skeleton className="h-8 w-32 mx-auto bg-primary-light" />
         </div>
       </div>
 
       {/* Breadcrumb Skeleton */}
-      <div className="bg-white border-b">
+      <div className="bg-card border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Skeleton className="h-4 w-48" />
@@ -24,7 +24,7 @@ export default function SignupLoading() {
       {/* Main Content Skeleton */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="bg-white shadow-lg">
+          <Card className="shadow-lg">
             <CardHeader className="text-center">
               <Skeleton className="h-8 w-48 mx-auto mb-2" />
               <Skeleton className="h-4 w-64 mx-auto" />
@@ -39,7 +39,7 @@ export default function SignupLoading() {
               ))}
 
               {/* 약관 동의 스켈레톤 */}
-              <div className="space-y-4 pt-6 border-t border-gray-200">
+              <div className="space-y-4 pt-6 border-t border-border">
                 <Skeleton className="h-6 w-24" />
                 <div className="space-y-3">
                   {[1, 2, 3].map((i) => (
