@@ -151,7 +151,7 @@ function EmailVerificationPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
           {/* 뒤로가기 버튼 */}

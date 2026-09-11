@@ -24,7 +24,7 @@ export default function IdentityVerificationPage({
 
   if (isChecking) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-muted-foreground">페이지를 불러오는 중...</p>
@@ -38,7 +38,7 @@ export default function IdentityVerificationPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <MyPageSidebar />

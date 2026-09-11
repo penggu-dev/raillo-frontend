@@ -59,7 +59,7 @@ function PasswordChangePageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-muted-foreground">페이지를 불러오는 중...</p>
@@ -88,7 +88,7 @@ function PasswordChangePageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar */}
