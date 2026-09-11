@@ -125,14 +125,14 @@ export function StationSelector({
                     <button
                       key={history.timestamp}
                       onClick={() => handleHistorySelect(history)}
-                      className="w-full text-left p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200"
+                      className="w-full text-left p-3 rounded-lg bg-secondary border border-transparent hover:border-primary-light transition-colors"
                     >
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-foreground">
                           {history.departure}
                         </span>
                         <ArrowRight className="h-3 w-3 text-primary" />
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-foreground">
                           {history.arrival}
                         </span>
                       </div>

@@ -56,7 +56,7 @@ export function BookingPanel({
       />
 
       {/* Bottom Panel */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card shadow-2xl z-50 transform transition-transform duration-300 ease-in-out">
+      <div className="fixed bottom-0 left-0 right-0 bg-card rounded-t-2xl border-t shadow-elev-lg z-50 transform transition-transform duration-300 ease-in-out">
         <div className="container mx-auto px-4 py-6 max-w-6xl">
           {/* Panel Header */}
           <div className="flex items-center justify-between mb-6">
@@ -232,7 +232,7 @@ export function BookingPanel({
               <Button
                 onClick={onBooking}
                 disabled={selectedSeats.length === 0}
-                className="px-8 py-3 text-base font-semibold shadow-lg disabled:cursor-not-allowed"
+                className="px-8 py-3 text-base font-semibold shadow-elev-sm hover:shadow-elev-md transition-all duration-200 disabled:cursor-not-allowed"
               >
                 예매하기
               </Button>
