@@ -50,7 +50,7 @@ export default function PaymentHistoryPage() {
 
   if (isChecking || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <div className="flex-1 container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-muted-foreground">인증을 확인하고 있습니다...</p>
@@ -61,7 +61,7 @@ export default function PaymentHistoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <div className="flex-1 container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
           <p className="text-muted-foreground">예매 내역을 불러오고 있습니다...</p>
@@ -71,7 +71,7 @@ export default function PaymentHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">

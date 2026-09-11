@@ -303,7 +303,7 @@ function ReservationsPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pb-24">
+    <div className="min-h-screen pb-24">
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Page Title */}
@@ -384,7 +384,7 @@ function ReservationsPageContent() {
               validReservations.map((reservation) => (
                 <Card
                   key={reservation.pendingBookingId}
-                  className={`border-blue-200 ${selectedIds.has(reservation.pendingBookingId) ? "ring-2 ring-blue-500" : ""}`}
+                  className={`shadow-elev-sm transition-all duration-200 hover:shadow-elev-md ${selectedIds.has(reservation.pendingBookingId) ? "border-primary ring-[3px] ring-blue-500/20 dark:ring-blue-400/30" : ""}`}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-3">
@@ -469,7 +469,7 @@ function ReservationsPageContent() {
                                 reservation.pendingBookingId,
                               )
                             }
-                            className="text-red-600 border-red-600 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-500/10"
+                            className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-700 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300 dark:hover:border-red-300"
                           >
                             <X className="h-4 w-4 mr-1" />
                             예약취소
@@ -507,7 +507,7 @@ function ReservationsPageContent() {
 
       {/* Bottom Payment Bar */}
       {selectedItems.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg p-4 z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-elev-lg p-4 z-50">
           <div className="container mx-auto max-w-4xl flex items-center justify-between">
             <div>
               <span className="font-semibold">

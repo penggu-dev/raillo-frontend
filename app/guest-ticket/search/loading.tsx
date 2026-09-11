@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default function GuestTicketSearchLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header Skeleton */}
       <div className="bg-primary py-6">
         <div className="container mx-auto px-4">

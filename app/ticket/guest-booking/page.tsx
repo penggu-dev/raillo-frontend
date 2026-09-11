@@ -106,7 +106,7 @@ export default function GuestBookingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Blue Header Section */}
       <div className="bg-primary text-primary-foreground py-12">
         <div className="container mx-auto px-4 text-center">
