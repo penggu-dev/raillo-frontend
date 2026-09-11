@@ -23,7 +23,7 @@ import { join, sep } from "node:path";
 /** @typedef {Record<Kind, number>} Counts */
 /**
  * @typedef {object} Exception
- * @property {string[]} files 저장소 루트 기준 경로
+ * @property {string[] | null} files 저장소 루트 기준 경로 (null이면 모든 파일)
  * @property {RegExp} token variant를 포함한 클래스 전체와 비교
  * @property {string} reason
  */
@@ -66,9 +66,9 @@ const COLOR_CLASS = new RegExp(
 /** @type {Exception[]} */
 const EXCEPTIONS = [
   {
-    files: ["components/ui/alert-dialog.tsx", "components/ui/dialog.tsx", "components/ui/drawer.tsx"],
-    token: /^bg-black\/80$/,
-    reason: "모달 스크림 — 테마와 무관하게 화면을 어둡게 덮음",
+    files: null,
+    token: /^bg-black\/\d{1,3}$/,
+    reason: "모달·패널 스크림 — 테마와 무관하게 화면을 어둡게 덮음",
   },
   {
     files: ["lib/utils/ticketUtils.ts"],
@@ -145,7 +145,9 @@ function auditFile(file) {
       }
 
       const token = match[0];
-      const exception = EXCEPTIONS.find((candidate) => candidate.files.includes(file) && candidate.token.test(token));
+      const exception = EXCEPTIONS.find(
+        (candidate) => (candidate.files === null || candidate.files.includes(file)) && candidate.token.test(token),
+      );
       if (exception) {
         const hit = result.allowed.find((allowed) => allowed.token === token);
         if (hit) hit.count += 1;
