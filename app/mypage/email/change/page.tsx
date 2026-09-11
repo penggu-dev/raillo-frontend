@@ -69,7 +69,7 @@ function EmailChangePageContent() {
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-gray-600">페이지를 불러오는 중...</p>
+          <p className="text-muted-foreground">페이지를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -124,10 +124,10 @@ function EmailChangePageContent() {
               <CardContent className="p-8">
                 {/* 서비스 안내 */}
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl font-bold text-foreground mb-4">
                     이메일 변경
                   </h2>
-                  <div className="space-y-2 text-gray-700">
+                  <div className="space-y-2 text-foreground">
                     <p>• 로그인에 사용할 이메일 계정을 변경합니다.</p>
                     <p>
                       • 변경된 이메일 주소로 회원정보의 이메일주소가 자동
@@ -138,10 +138,10 @@ function EmailChangePageContent() {
 
                 {/* 이메일 변경 폼 */}
                 <div className="mb-8">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  <h3 className="text-lg font-bold text-foreground mb-4">
                     새 이메일 주소 입력
                   </h3>
-                  <div className="space-y-3 text-sm text-gray-700 mb-6">
+                  <div className="space-y-3 text-sm text-foreground mb-6">
                     <p>• 변경할 이메일 주소를 입력해주세요.</p>
                     <p>• 입력하신 이메일로 인증 메일이 발송됩니다.</p>
                   </div>
@@ -151,19 +151,19 @@ function EmailChangePageContent() {
                     className="flex items-start space-x-4"
                   >
                     <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         새 이메일 주소
                       </label>
                       <Input
                         type="email"
                         placeholder="새 이메일 주소를 입력하세요"
                         {...emailForm.register("email")}
-                        className={`w-full ${emailForm.formState.errors.email ? "border-red-500" : ""}`}
+                        className={`w-full ${emailForm.formState.errors.email ? "border-red-500 dark:border-red-400" : ""}`}
                         disabled={showVerification}
                         autoComplete="email"
                       />
                       {emailForm.formState.errors.email && (
-                        <p className="text-xs text-red-500 mt-1">
+                        <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                           {emailForm.formState.errors.email.message}
                         </p>
                       )}
@@ -173,7 +173,7 @@ function EmailChangePageContent() {
                       disabled={
                         emailForm.formState.isSubmitting || showVerification
                       }
-                      className="mt-7 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
+                      className="mt-7 px-6 py-2 rounded-full disabled:opacity-50"
                     >
                       {emailForm.formState.isSubmitting
                         ? "처리 중..."
@@ -185,10 +185,10 @@ function EmailChangePageContent() {
                 {/* 인증코드 입력 */}
                 {showVerification && (
                   <div className="mb-8">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    <h3 className="text-lg font-bold text-foreground mb-4">
                       인증코드 확인
                     </h3>
-                    <div className="space-y-3 text-sm text-gray-700 mb-6">
+                    <div className="space-y-3 text-sm text-foreground mb-6">
                       <p>• 입력하신 이메일로 발송된 인증코드를 입력해주세요.</p>
                     </div>
 
@@ -197,7 +197,7 @@ function EmailChangePageContent() {
                       className="flex items-start space-x-4"
                     >
                       <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-foreground mb-2">
                           인증코드
                         </label>
                         <Controller
@@ -216,13 +216,13 @@ function EmailChangePageContent() {
                               }
                               placeholder="인증코드 6자리 입력"
                               maxLength={AUTH_CODE_LENGTH}
-                              className={`w-full ${codeForm.formState.errors.authCode ? "border-red-500" : ""}`}
+                              className={`w-full ${codeForm.formState.errors.authCode ? "border-red-500 dark:border-red-400" : ""}`}
                               autoComplete="one-time-code"
                             />
                           )}
                         />
                         {codeForm.formState.errors.authCode && (
-                          <p className="text-xs text-red-500 mt-1">
+                          <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                             {codeForm.formState.errors.authCode.message}
                           </p>
                         )}
@@ -230,7 +230,7 @@ function EmailChangePageContent() {
                       <Button
                         type="submit"
                         disabled={codeForm.formState.isSubmitting}
-                        className="mt-7 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
+                        className="mt-7 px-6 py-2 rounded-full disabled:opacity-50"
                       >
                         {codeForm.formState.isSubmitting
                           ? "처리 중..."
@@ -241,9 +241,9 @@ function EmailChangePageContent() {
                 )}
 
                 {/* 주의사항 */}
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h4 className="font-medium text-yellow-800 mb-2">주의사항</h4>
-                  <ul className="text-sm text-yellow-700 space-y-1">
+                <div className="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-lg p-4">
+                  <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-2">주의사항</h4>
+                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
                     <li>
                       • 이메일 변경 후 기존 이메일로는 로그인할 수 없습니다.
                     </li>

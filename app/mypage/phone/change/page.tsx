@@ -66,7 +66,7 @@ function PhoneChangePageContent() {
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-gray-600">페이지를 불러오는 중...</p>
+          <p className="text-muted-foreground">페이지를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -103,10 +103,10 @@ function PhoneChangePageContent() {
             <Card>
               <CardContent className="p-8">
                 <div className="mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl font-bold text-foreground mb-4">
                     휴대폰 번호 변경
                   </h2>
-                  <div className="space-y-2 text-gray-700">
+                  <div className="space-y-2 text-foreground">
                     <p>• 로그인에 사용할 휴대폰 번호를 변경합니다.</p>
                     <p>
                       • 변경된 휴대폰 번호로 회원정보의 휴대폰 번호가 자동
@@ -116,17 +116,17 @@ function PhoneChangePageContent() {
                 </div>
 
                 <div className="mb-8">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                  <h3 className="text-lg font-bold text-foreground mb-4">
                     새 휴대폰 번호 입력
                   </h3>
-                  <div className="space-y-3 text-sm text-gray-700 mb-6">
+                  <div className="space-y-3 text-sm text-foreground mb-6">
                     <p>• 변경할 휴대폰 번호를 입력해주세요.</p>
                     <p>• 입력하신 휴대폰 번호로 인증 SMS가 발송됩니다.</p>
                   </div>
 
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         새 휴대폰 번호
                       </label>
                       <div className="flex items-center space-x-2">
@@ -146,7 +146,7 @@ function PhoneChangePageContent() {
                           maxLength={3}
                           autoComplete="tel-area-code"
                         />
-                        <span className="text-gray-500">-</span>
+                        <span className="text-muted-foreground">-</span>
                         <Input
                           type="text"
                           value={phoneNumber2}
@@ -163,7 +163,7 @@ function PhoneChangePageContent() {
                           maxLength={4}
                           autoComplete="tel-local-prefix"
                         />
-                        <span className="text-gray-500">-</span>
+                        <span className="text-muted-foreground">-</span>
                         <Input
                           type="text"
                           value={phoneNumber3}
@@ -182,7 +182,7 @@ function PhoneChangePageContent() {
                         />
                       </div>
                       {errors.phoneNumber && (
-                        <p className="text-xs text-red-500 mt-1">
+                        <p className="text-xs text-red-600 dark:text-red-400 mt-1">
                           {errors.phoneNumber.message}
                         </p>
                       )}
@@ -191,16 +191,16 @@ function PhoneChangePageContent() {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full disabled:opacity-50"
+                      className="px-6 py-2 rounded-full disabled:opacity-50"
                     >
                       {isSubmitting ? "처리 중..." : "휴대폰 번호 변경"}
                     </Button>
                   </form>
                 </div>
 
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h4 className="font-medium text-yellow-800 mb-2">주의사항</h4>
-                  <ul className="text-sm text-yellow-700 space-y-1">
+                <div className="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-lg p-4">
+                  <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-2">주의사항</h4>
+                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
                     <li>
                       • 휴대폰 번호 변경 후 기존 휴대폰 번호로는 로그인할 수
                       없습니다.
