@@ -1,26 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Train, Home, Printer } from "lucide-react"
+import { Home, Printer } from "lucide-react"
 
 export default function SignupCompleteLoading() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Train className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-blue-600">RAILLO</h1>
-            </div>
-            <nav className="hidden md:flex items-center space-x-6">
-              <Skeleton className="h-4 w-12" />
-              <Skeleton className="h-4 w-12" />
-            </nav>
-          </div>
-        </div>
-      </header>
-
       {/* Page Header */}
       <div className="bg-blue-500 text-white py-6">
         <div className="container mx-auto px-4">
@@ -47,7 +31,7 @@ export default function SignupCompleteLoading() {
       </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto">
           <Card className="bg-white shadow-lg border-0">
             <CardContent className="p-12 text-center">
@@ -100,7 +84,7 @@ export default function SignupCompleteLoading() {
             </CardContent>
           </Card>
         </div>
-      </main>
+      </div>
     </div>
   )
 }
