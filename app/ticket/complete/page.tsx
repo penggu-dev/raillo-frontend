@@ -36,7 +36,7 @@ export default function PaymentCompletePage() {
 
   if (isChecking) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen py-12">
         <div className="max-w-2xl mx-auto px-4 text-center text-muted-foreground">
           로그인 상태를 확인하고 있습니다...
         </div>
@@ -49,7 +49,7 @@ export default function PaymentCompletePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-2xl mx-auto px-4">
         {/* 결제 완료 헤더 */}
         <div className="text-center mb-8">

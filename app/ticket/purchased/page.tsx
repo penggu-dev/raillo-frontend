@@ -63,7 +63,7 @@ function PurchasedTicketsPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
@@ -139,7 +139,7 @@ function PurchasedTicketsPageContent() {
                   return (
                     <Card
                       key={ticket.bookingId}
-                      className="border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-white shadow-lg"
+                      className="border-2 border-blue-300 dark:border-blue-500/40 shadow-elev-md"
                     >
                       <CardContent className="p-6">
                         {/* 승차권 헤더 */}

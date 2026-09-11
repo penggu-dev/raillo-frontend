@@ -63,7 +63,7 @@ export default function GuestTicketSearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Breadcrumb */}
       <div className="bg-card border-b py-3">
         <div className="container mx-auto px-4 flex items-center justify-between">

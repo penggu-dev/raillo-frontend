@@ -82,7 +82,7 @@ export default function GuestTicketsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Breadcrumb */}
       <div className="bg-card border-b py-3">
         <div className="container mx-auto px-4 flex items-center justify-between">
@@ -114,15 +114,15 @@ export default function GuestTicketsPage() {
           <div className="space-y-6">
             {tickets.map((ticket) => (
               <Card key={ticket.id} className="overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 pb-4">
+                <CardHeader className="bg-secondary pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <Train className="h-6 w-6 text-primary" />
                       <div>
-                        <CardTitle className="text-xl font-bold text-blue-900">
+                        <CardTitle className="text-xl font-bold text-foreground">
                           {ticket.trainType} {ticket.trainNumber}호
                         </CardTitle>
-                        <p className="text-sm text-blue-700">예매번호: {ticket.id}</p>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">예매번호: {ticket.id}</p>
                       </div>
                     </div>
                     <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
