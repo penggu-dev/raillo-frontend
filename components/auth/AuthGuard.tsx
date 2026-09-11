@@ -20,7 +20,7 @@ export default function AuthGuard({ children, redirectPath }: AuthGuardProps) {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner size="md" className="mb-4" />
-          <p className="text-gray-600">로딩 중...</p>
+          <p className="text-muted-foreground">로딩 중...</p>
         </div>
       </div>
     );

@@ -48,7 +48,7 @@ export default function FindAccountResultPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto text-center">
             <LoadingSpinner className="mx-auto mb-4" />
-            <p className="text-gray-600">결과를 불러오는 중...</p>
+            <p className="text-muted-foreground">결과를 불러오는 중...</p>
           </div>
         </div>
       </PageLayout>
@@ -64,38 +64,38 @@ export default function FindAccountResultPage() {
             <Button
               variant="ghost"
               onClick={() => router.push("/find-account")}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>뒤로가기</span>
             </Button>
           </div>
 
-          <Card className="bg-white shadow-lg">
+          <Card className="shadow-lg">
             <CardContent className="p-8 text-center">
               {/* Success Icon */}
               <div className="mb-6">
-                <div className="w-20 h-20 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-10 w-10 text-green-600" />
+                <div className="w-20 h-20 mx-auto mb-4 bg-green-100 dark:bg-green-500/15 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-10 w-10 text-green-600 dark:text-green-400" />
                 </div>
               </div>
 
               {/* Success Message */}
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                <h1 className="text-2xl font-bold text-foreground mb-2">
                   회원번호 찾기 완료
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   회원님의 RAILLO 회원번호를 찾았습니다.
                 </p>
               </div>
 
               {/* Member Number */}
-              <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">
+              <div className="mb-8 p-6 bg-muted rounded-lg">
+                <h3 className="text-sm font-medium text-foreground mb-3">
                   RAILLO 회원번호
                 </h3>
-                <div className="text-2xl font-bold text-blue-600 font-mono">
+                <div className="text-2xl font-bold text-primary font-mono">
                   {memberNo}
                 </div>
               </div>
@@ -104,7 +104,7 @@ export default function FindAccountResultPage() {
               <div className="space-y-3">
                 <Button
                   onClick={handleLogin}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3"
+                  className="w-full font-semibold py-3"
                   size="lg"
                 >
                   로그인하기
@@ -112,7 +112,7 @@ export default function FindAccountResultPage() {
                 <Button
                   onClick={handleFindPassword}
                   variant="outline"
-                  className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 font-semibold py-3"
+                  className="w-full border-primary text-primary hover:bg-secondary font-semibold py-3"
                   size="lg"
                 >
                   비밀번호 찾기
@@ -120,14 +120,14 @@ export default function FindAccountResultPage() {
               </div>
 
               {/* Additional Info */}
-              <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+              <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-500/10 rounded-lg">
                 <div className="flex items-start space-x-3">
-                  <User className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                  <User className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                   <div className="text-left">
-                    <h3 className="font-semibold text-gray-900 mb-1">
+                    <h3 className="font-semibold text-foreground mb-1">
                       안내사항
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       회원번호를 기억해 두시고, 로그인 시 사용해 주세요.
                       <br />
                       비밀번호를 잊으셨다면 비밀번호 찾기를 이용해 주세요.
