@@ -183,20 +183,20 @@ export function SeatSelectionDialog({
   // 좌석 버튼 스타일링 함수
   const getSeatButtonStyle = (seat: any, isSelected: boolean) => {
     if (!seat.isAvailable) {
-      return "bg-gray-400 border-gray-500 text-gray-600 cursor-not-allowed";
+      return "bg-gray-400 border-gray-500 text-gray-600 dark:bg-zinc-700 dark:border-zinc-600 dark:text-zinc-400 cursor-not-allowed";
     }
 
     if (isSelected) {
-      return "bg-blue-600 text-white border-blue-700 shadow-lg";
+      return "bg-primary text-primary-foreground border-primary-active shadow-lg";
     }
 
     // 방향에 따른 기본 색상
     if (seat.seatDirection === "FORWARD") {
-      return "bg-orange-100 border-orange-300 hover:bg-orange-200 text-gray-800";
+      return "bg-orange-100 border-orange-300 hover:bg-orange-200 text-foreground dark:bg-orange-500/15 dark:border-orange-400/40 dark:hover:bg-orange-500/25";
     } else if (seat.seatDirection === "BACKWARD") {
-      return "bg-purple-100 border-purple-300 hover:bg-purple-200 text-gray-800";
+      return "bg-purple-100 border-purple-300 hover:bg-purple-200 text-foreground dark:bg-purple-500/15 dark:border-purple-400/40 dark:hover:bg-purple-500/25";
     }
-    return "bg-blue-100 border-blue-300 hover:bg-blue-200 text-gray-800";
+    return "bg-blue-100 border-blue-300 hover:bg-blue-200 text-foreground dark:bg-blue-500/15 dark:border-blue-400/40 dark:hover:bg-blue-500/25";
   };
 
   const handleSeatSelectionClick = (
@@ -220,17 +220,17 @@ export function SeatSelectionDialog({
   if (!isOpen || !selectedTrain) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+      <div className="bg-card rounded-lg shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden">
         {/* Dialog Header */}
-        <div className="flex items-center justify-between p-6 border-b bg-white">
+        <div className="flex items-center justify-between p-6 border-b bg-card">
           <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <h2 className="text-xl font-bold text-gray-800">
+            <div className="w-3 h-3 bg-primary rounded-full"></div>
+            <h2 className="text-xl font-bold text-foreground">
               좌석선택 - {selectedTrain.trainName} {selectedTrain.trainNumber}
             </h2>
             {selectedCar && (
-              <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+              <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
                 {selectedCar.carNumber}호차 (
                 {selectedCar.carType === "FIRST_CLASS" ? "특실" : "일반실"})
               </span>
@@ -242,16 +242,16 @@ export function SeatSelectionDialog({
         </div>
 
         {/* Car Selection */}
-        <div className="p-4 border-b bg-gray-50">
+        <div className="p-4 border-b bg-muted">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-3">
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-foreground">
                 호차 선택:
               </span>
               {loadingCars ? (
                 <div className="flex items-center space-x-2">
                   <LoadingSpinner size="sm" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     객차 정보 로딩 중...
                   </span>
                 </div>
@@ -260,7 +260,7 @@ export function SeatSelectionDialog({
                   value={selectedCar?.id.toString() || ""}
                   onValueChange={handleCarChange}
                 >
-                  <SelectTrigger className="w-64 bg-white border-gray-300">
+                  <SelectTrigger className="w-64">
                     <SelectValue placeholder="객차를 선택하세요" />
                   </SelectTrigger>
                   <SelectContent className="z-[100]">
@@ -279,31 +279,31 @@ export function SeatSelectionDialog({
         </div>
 
         {/* Seat Legend */}
-        <div className="p-4 border-b bg-white">
+        <div className="p-4 border-b bg-card">
           <div className="flex items-center justify-center space-x-8 text-sm">
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-blue-100 border border-blue-300 rounded"></div>
-              <span className="text-gray-700">선택 가능</span>
+              <div className="w-5 h-5 bg-blue-100 border border-blue-300 dark:bg-blue-500/15 dark:border-blue-400/40 rounded"></div>
+              <span className="text-foreground">선택 가능</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-blue-600 border border-blue-700 rounded"></div>
-              <span className="text-gray-700">선택됨</span>
+              <div className="w-5 h-5 bg-primary border border-primary-active rounded"></div>
+              <span className="text-foreground">선택됨</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-gray-400 border border-gray-500 rounded"></div>
-              <span className="text-gray-700">매진</span>
+              <div className="w-5 h-5 bg-gray-400 border border-gray-500 dark:bg-zinc-700 dark:border-zinc-600 rounded"></div>
+              <span className="text-foreground">매진</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-orange-100 border-orange-300 rounded flex items-center justify-center">
-                <span className="text-xs text-orange-600">→</span>
+              <div className="w-5 h-5 bg-orange-100 border-orange-300 dark:bg-orange-500/15 dark:border-orange-400/40 rounded flex items-center justify-center">
+                <span className="text-xs text-orange-600 dark:text-orange-300">→</span>
               </div>
-              <span className="text-gray-700">순방향</span>
+              <span className="text-foreground">순방향</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-purple-100 border-purple-300 rounded flex items-center justify-center">
-                <span className="text-xs text-purple-600">←</span>
+              <div className="w-5 h-5 bg-purple-100 border-purple-300 dark:bg-purple-500/15 dark:border-purple-400/40 rounded flex items-center justify-center">
+                <span className="text-xs text-purple-600 dark:text-purple-300">←</span>
               </div>
-              <span className="text-gray-700">역방향</span>
+              <span className="text-foreground">역방향</span>
             </div>
           </div>
         </div>
@@ -314,7 +314,7 @@ export function SeatSelectionDialog({
             <div className="flex items-center justify-center h-64">
               <div className="flex items-center space-x-2">
                 <LoadingSpinner size="md" />
-                <span className="text-gray-600">좌석 정보 로딩 중...</span>
+                <span className="text-muted-foreground">좌석 정보 로딩 중...</span>
               </div>
             </div>
           ) : seatGrid.length > 0 ? (
@@ -330,23 +330,23 @@ export function SeatSelectionDialog({
           ) : (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
-                <div className="text-gray-400 text-6xl mb-4">🚂</div>
-                <p className="text-gray-600">좌석 정보를 불러올 수 없습니다.</p>
-                <p className="text-sm text-gray-500">객차를 선택해주세요.</p>
+                <div className="text-muted-foreground text-6xl mb-4">🚂</div>
+                <p className="text-muted-foreground">좌석 정보를 불러올 수 없습니다.</p>
+                <p className="text-sm text-muted-foreground">객차를 선택해주세요.</p>
               </div>
             </div>
           )}
         </div>
 
         {/* Dialog Footer */}
-        <div className="p-6 border-t bg-gray-50">
+        <div className="p-6 border-t bg-muted">
           {selectionError && (
-            <p role="alert" className="mb-3 text-sm font-medium text-red-600">
+            <p role="alert" className="mb-3 text-sm font-medium text-red-600 dark:text-red-400">
               {selectionError}
             </p>
           )}
           <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               선택된 좌석:{" "}
               {selectedSeats.length > 0 ? selectedSeats.join(", ") : "없음"}
             </div>
@@ -358,7 +358,7 @@ export function SeatSelectionDialog({
                 )
               }
               disabled={selectedSeats.length !== maxSeats}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded-lg font-medium"
+              className="px-8 py-2 rounded-lg font-medium"
             >
               선택적용 ({selectedSeats.length}명 좌석 선택/총 {maxSeats}명)
             </Button>

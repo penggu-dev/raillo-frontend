@@ -180,7 +180,7 @@ export function DateTimeSelector({
         </label>
         <Button
           variant="outline"
-          className="w-full justify-start text-left font-normal bg-white text-gray-900 hover:bg-gray-50"
+          className="w-full justify-start text-left font-normal bg-background text-foreground hover:bg-muted"
           onClick={() => setIsOpen(true)}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
@@ -197,7 +197,7 @@ export function DateTimeSelector({
                 variant="ghost"
                 size="sm"
                 onClick={handleClose}
-                className="h-10 w-10 p-0 hover:bg-gray-100"
+                className="h-10 w-10 p-0 hover:bg-muted"
                 aria-label="날짜 선택 닫기"
               >
                 <X className="h-5 w-5" />
@@ -208,10 +208,10 @@ export function DateTimeSelector({
           <div className="p-4 max-h-[calc(90vh-140px)] overflow-y-auto">
             {/* 선택된 날짜/시간 표시 */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-4 text-center border border-blue-100">
-              <div className="text-lg font-semibold text-gray-800 mb-2">
+              <div className="text-lg font-semibold text-foreground mb-2">
                 {format(tempDate, "yyyy년 MM월 dd일(E)", { locale: ko })}
               </div>
-              <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+              <div className="inline-flex items-center px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm font-medium">
                 <Clock className="h-3 w-3 mr-1" />
                 {selectedHour} 출발
               </div>
@@ -243,8 +243,6 @@ export function DateTimeSelector({
                       variant={selectedHour === hour ? "default" : "outline"}
                       size="sm"
                       className={`text-sm py-1 px-2 h-8 min-w-[50px] ${
-                        selectedHour === hour ? "bg-blue-600" : ""
-                      } ${
                         !isHourSelectable(hour)
                           ? "opacity-50 cursor-not-allowed"
                           : ""
@@ -264,7 +262,7 @@ export function DateTimeSelector({
             </div>
           </div>
 
-          <div className="flex border-t p-4 bg-white">
+          <div className="flex border-t p-4 bg-card">
             <Button
               variant="outline"
               onClick={handleClose}
@@ -274,7 +272,7 @@ export function DateTimeSelector({
             </Button>
             <Button
               onClick={handleApply}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="flex-1"
             >
               적용
             </Button>

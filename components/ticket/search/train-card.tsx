@@ -38,9 +38,9 @@ export function TrainCard({
                 {train.trainName}
               </Badge>
               <span className="font-semibold text-lg">{train.trainNumber}</span>
-              <Zap className="h-4 w-4 text-yellow-500" />
+              <Zap className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
             </div>
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>{train.departureStationName}</span>
               <ArrowRight className="h-4 w-4" />
               <span>{train.arrivalStationName}</span>
@@ -50,11 +50,11 @@ export function TrainCard({
           {/* Time Info */}
           <div className="lg:col-span-3">
             <div className="flex items-center space-x-2 mb-1">
-              <span className="text-2xl font-bold text-blue-600">{train.departureTime.substring(0, 5)}</span>
-              <ArrowRight className="h-4 w-4 text-gray-400" />
-              <span className="text-2xl font-bold text-blue-600">{train.arrivalTime.substring(0, 5)}</span>
+              <span className="text-2xl font-bold text-primary">{train.departureTime.substring(0, 5)}</span>
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <span className="text-2xl font-bold text-primary">{train.arrivalTime.substring(0, 5)}</span>
             </div>
-            <div className="text-sm text-gray-600">{train.formattedTravelTime}</div>
+            <div className="text-sm text-muted-foreground">{train.formattedTravelTime}</div>
           </div>
 
           {/* Seat Options */}
@@ -63,7 +63,7 @@ export function TrainCard({
               {/* 일반실 */}
               <div className="border rounded-lg p-3">
                 <div className="text-sm font-medium mb-1">일반실</div>
-                <div className="text-lg font-bold text-blue-600 mb-2">
+                <div className="text-lg font-bold text-primary mb-2">
                   {formatPrice(train.standardSeat.fare)}
                 </div>
                 <Button
@@ -79,7 +79,7 @@ export function TrainCard({
               {/* 특실 */}
               <div className="border rounded-lg p-3">
                 <div className="text-sm font-medium mb-1">특실</div>
-                <div className="text-lg font-bold text-blue-600 mb-2">
+                <div className="text-lg font-bold text-primary mb-2">
                   {train.firstClassSeat ? formatPrice(train.firstClassSeat.fare) : "-"}
                 </div>
                 <Button
