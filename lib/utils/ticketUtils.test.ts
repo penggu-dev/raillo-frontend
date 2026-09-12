@@ -8,27 +8,27 @@ import {
 
 describe("getTrainTypeColor", () => {
   it("KTX는 파란색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("KTX")).toBe("bg-blue-600 text-white")
+    expect(getTrainTypeColor("KTX")).toBe("bg-blue-600 text-white dark:bg-blue-600")
   })
 
   it("KTX-산천도 파란색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("KTX-산천")).toBe("bg-blue-600 text-white")
+    expect(getTrainTypeColor("KTX-산천")).toBe("bg-blue-600 text-white dark:bg-blue-600")
   })
 
   it("ITX-새마을은 초록색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("ITX-새마을")).toBe("bg-green-600 text-white")
+    expect(getTrainTypeColor("ITX-새마을")).toBe("bg-green-600 text-white dark:bg-green-700")
   })
 
   it("무궁화호는 주황색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("무궁화호")).toBe("bg-orange-600 text-white")
+    expect(getTrainTypeColor("무궁화호")).toBe("bg-orange-600 text-white dark:bg-orange-700")
   })
 
   it("ITX-청춘은 보라색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("ITX-청춘")).toBe("bg-purple-600 text-white")
+    expect(getTrainTypeColor("ITX-청춘")).toBe("bg-purple-600 text-white dark:bg-purple-600")
   })
 
   it("알 수 없는 열차는 회색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("SRT")).toBe("bg-gray-600 text-white")
+    expect(getTrainTypeColor("SRT")).toBe("bg-gray-600 text-white dark:bg-gray-500")
   })
 })
 
