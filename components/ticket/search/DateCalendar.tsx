@@ -78,21 +78,21 @@ export function DateCalendar({
             ${
               isCurrentMonth
                 ? isSelected
-                  ? "bg-blue-600 text-white font-semibold"
+                  ? "bg-primary text-primary-foreground font-semibold"
                   : isHoliday
                     ? isSelectable
-                      ? "text-red-500 hover:bg-red-50"
-                      : "text-red-300 cursor-not-allowed"
+                      ? "text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                      : "text-red-300 dark:text-red-400/40 cursor-not-allowed"
                     : isSelectable
                       ? isToday
-                        ? "bg-blue-100 text-blue-600 font-semibold hover:bg-blue-200"
+                        ? "bg-secondary text-secondary-foreground font-semibold hover:bg-primary hover:text-primary-foreground"
                         : isWeekend
                           ? currentDate.getDay() === 0
-                            ? "text-red-500 hover:bg-red-50"
-                            : "text-blue-500 hover:bg-blue-50"
-                          : "text-gray-900 hover:bg-gray-100"
-                      : "text-gray-300 cursor-not-allowed"
-                : "text-gray-300"
+                            ? "text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                            : "text-blue-500 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
+                          : "text-foreground hover:bg-muted"
+                      : "text-muted-foreground opacity-40 cursor-not-allowed"
+                : "text-muted-foreground opacity-40"
             }
           `}
         >
@@ -108,7 +108,7 @@ export function DateCalendar({
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <button
-          className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
+          className="p-2 hover:bg-muted rounded disabled:opacity-50"
           aria-label="이전 달로 이동"
           onClick={() => {
             const prevMonth = new Date(tempDate.getFullYear(), tempDate.getMonth() - 1, 1);
@@ -126,13 +126,13 @@ export function DateCalendar({
             {format(tempDate, "yyyy. MM.", { locale: ko })}
           </h3>
           {!isLoading && calendarData.length > 0 && (
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               예약 가능: {format(today, "MM/dd")} ~ {format(maxAvailableDate, "MM/dd")}
             </p>
           )}
         </div>
         <button
-          className="p-2 hover:bg-gray-100 rounded disabled:opacity-50"
+          className="p-2 hover:bg-muted rounded disabled:opacity-50"
           aria-label="다음 달로 이동"
           onClick={() => {
             const nextMonth = new Date(tempDate.getFullYear(), tempDate.getMonth() + 1, 1);
@@ -148,12 +148,12 @@ export function DateCalendar({
       </div>
 
       {/* 요일 헤더 */}
-      <div className="grid grid-cols-7 bg-gray-50">
+      <div className="grid grid-cols-7 bg-muted">
         {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
           <div
             key={day}
             className={`p-2 text-center text-sm font-medium h-9 flex items-center justify-center ${
-              index === 0 ? "text-red-500" : index === 6 ? "text-blue-500" : "text-gray-700"
+              index === 0 ? "text-red-500 dark:text-red-400" : index === 6 ? "text-blue-500 dark:text-blue-400" : "text-foreground"
             }`}
           >
             {day}
@@ -162,7 +162,7 @@ export function DateCalendar({
       </div>
 
       {/* 달력 그리드 */}
-      <div className="grid grid-cols-7 border rounded-lg overflow-hidden bg-white">
+      <div className="grid grid-cols-7 border rounded-lg overflow-hidden bg-card">
         {generateCalendarDays()}
       </div>
     </div>

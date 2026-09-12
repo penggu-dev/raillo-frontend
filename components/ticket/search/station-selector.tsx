@@ -79,7 +79,7 @@ export function StationSelector({
         </label>
         <Button
           variant="outline"
-          className="w-full justify-start text-left font-normal bg-white text-gray-900 hover:bg-gray-50"
+          className="w-full justify-start text-left font-normal bg-background text-foreground hover:bg-muted"
           onClick={() => setIsOpen(true)}
           disabled={disabled}
         >
@@ -97,7 +97,7 @@ export function StationSelector({
                 variant="ghost"
                 size="sm"
                 onClick={handleClose}
-                className="h-10 w-10 p-0 hover:bg-gray-100"
+                className="h-10 w-10 p-0 hover:bg-muted"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -107,7 +107,7 @@ export function StationSelector({
           <div className="p-4">
             {/* 검색 입력 */}
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="역명을 입력하세요"
                 value={searchTerm}
@@ -125,14 +125,14 @@ export function StationSelector({
                     <button
                       key={history.timestamp}
                       onClick={() => handleHistorySelect(history)}
-                      className="w-full text-left p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors border border-blue-200"
+                      className="w-full text-left p-3 rounded-lg bg-secondary border border-transparent hover:border-primary-light transition-colors"
                     >
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-foreground">
                           {history.departure}
                         </span>
-                        <ArrowRight className="h-3 w-3 text-blue-600" />
-                        <span className="text-sm font-medium text-blue-900">
+                        <ArrowRight className="h-3 w-3 text-primary" />
+                        <span className="text-sm font-medium text-foreground">
                           {history.arrival}
                         </span>
                       </div>
@@ -150,15 +150,15 @@ export function StationSelector({
                     <button
                       key={station.id}
                       onClick={() => handleStationSelect(station)}
-                      className="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition-colors flex items-center space-x-3"
+                      className="w-full text-left p-3 rounded-lg hover:bg-muted transition-colors flex items-center space-x-3"
                     >
-                      <MapPin className="h-4 w-4 text-gray-500" />
-                      <span className="text-gray-900">{station.name}</span>
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-foreground">{station.name}</span>
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-muted-foreground">
                   검색 결과가 없습니다.
                 </div>
               )}
