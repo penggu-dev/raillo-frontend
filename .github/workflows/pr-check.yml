@@ -1,0 +1,63 @@
+name: PR check
+
+on:
+  pull_request:
+    branches: [main]
+
+# 같은 PR에 새 커밋이 올라오면 이전 실행은 취소
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  check:
+    name: test · typecheck · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # 액션은 태그 대신 검증한 커밋 SHA로 고정 (버전은 주석으로 표기)
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # 인증이 필요한 git 명령을 쓰지 않으므로 토큰을 git 설정에 남기지 않는다
+          persist-credentials: false
+
+      # package.json의 packageManager(pnpm@9.15.4) 버전을 사용
+      - name: Install pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20.x
+          cache: pnpm
+
+      # 리포트 전용 — 의존성 설치 없이 실행되므로 이후 단계 실패와 무관하게 요약을 남긴다.
+      # 스크립트가 비정상 종료해도 경고만 남기고 설치·테스트·빌드는 계속 진행한다
+      - name: Color audit (report only)
+        run: |
+          {
+            echo "## 하드코딩 색상 감사"
+            echo '```'
+            node scripts/audit-colors.mjs || echo "⚠️ 감사 스크립트가 exit $?로 종료됨 (리포트 전용이라 이후 단계는 계속 진행)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test
+        run: pnpm test
+
+      # next build는 테스트 파일을 타입 검사하지 않으므로 별도로 실행
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
+      - name: Build
+        run: pnpm build
