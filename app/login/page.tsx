@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   return (
     <div className="py-10 flex justify-center items-center w-full">
-      <Card className="bg-white shadow-lg w-full max-w-md">
+      <Card className="shadow-elev-md w-full max-w-md">
         <LoginHeader />
         <CardContent>
           {/* 회원번호 로그인 */}
@@ -30,7 +30,7 @@ export default function LoginPage() {
           {/* 찾기 및 회원가입 링크 */}
           <LoginHelpLinks />
           {/* 추가 안내 */}
-          <div className="text-center text-xs text-gray-500 mt-6">
+          <div className="text-center text-xs text-muted-foreground mt-6">
             <p>
               로그인 시 RAILLO의 이용약관 및 개인정보처리방침에 동의하게 됩니다.
             </p>
