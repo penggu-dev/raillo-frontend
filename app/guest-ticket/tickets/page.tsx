@@ -71,29 +71,29 @@ export default function GuestTicketsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "사용가능":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 text-green-800 dark:bg-green-500/15 dark:text-green-300"
       case "사용완료":
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-800 dark:bg-gray-500/15 dark:text-gray-300"
       case "기간만료":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-300"
       default:
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-100 text-blue-800 dark:bg-blue-500/15 dark:text-blue-300"
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Breadcrumb */}
-      <div className="bg-white border-b py-3">
+      <div className="bg-card border-b py-3">
         <div className="container mx-auto px-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-blue-600">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-primary">
               <Home className="h-4 w-4" />
             </Link>
             <span>/</span>
             <span>비회원서비스</span>
             <span>/</span>
-            <span className="text-blue-600">승차권 확인</span>
+            <span className="text-primary">승차권 확인</span>
           </div>
           <Button variant="ghost" size="sm">
             <Printer className="h-4 w-4" />
@@ -106,23 +106,23 @@ export default function GuestTicketsPage() {
         <div className="max-w-4xl mx-auto">
           {/* Title */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">예매 승차권 목록</h2>
-            <p className="text-gray-600">총 {tickets.length}건의 승차권이 조회되었습니다.</p>
+            <h2 className="text-2xl font-bold text-foreground mb-2">예매 승차권 목록</h2>
+            <p className="text-muted-foreground">총 {tickets.length}건의 승차권이 조회되었습니다.</p>
           </div>
 
           {/* Tickets List */}
           <div className="space-y-6">
             {tickets.map((ticket) => (
               <Card key={ticket.id} className="overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 pb-4">
+                <CardHeader className="bg-secondary pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <Train className="h-6 w-6 text-blue-600" />
+                      <Train className="h-6 w-6 text-primary" />
                       <div>
-                        <CardTitle className="text-xl font-bold text-blue-900">
+                        <CardTitle className="text-xl font-bold text-foreground">
                           {ticket.trainType} {ticket.trainNumber}호
                         </CardTitle>
-                        <p className="text-sm text-blue-700">예매번호: {ticket.id}</p>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">예매번호: {ticket.id}</p>
                       </div>
                     </div>
                     <Badge className={getStatusColor(ticket.status)}>{ticket.status}</Badge>
@@ -133,30 +133,30 @@ export default function GuestTicketsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* 운행 정보 */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900 flex items-center">
+                      <h3 className="font-semibold text-foreground flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
                         운행 정보
                       </h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium text-gray-900">{ticket.departure.station}</p>
-                            <p className="text-sm text-gray-600">{ticket.departure.date}</p>
+                            <p className="font-medium text-foreground">{ticket.departure.station}</p>
+                            <p className="text-sm text-muted-foreground">{ticket.departure.date}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-blue-600 text-lg">{ticket.departure.time}</p>
-                            <p className="text-xs text-gray-500">출발</p>
+                            <p className="font-bold text-primary text-lg">{ticket.departure.time}</p>
+                            <p className="text-xs text-muted-foreground">출발</p>
                           </div>
                         </div>
-                        <div className="border-l-2 border-dashed border-gray-300 ml-2 h-4"></div>
+                        <div className="border-l-2 border-dashed border-border ml-2 h-4"></div>
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium text-gray-900">{ticket.arrival.station}</p>
-                            <p className="text-sm text-gray-600">{ticket.arrival.date}</p>
+                            <p className="font-medium text-foreground">{ticket.arrival.station}</p>
+                            <p className="text-sm text-muted-foreground">{ticket.arrival.date}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-red-600 text-lg">{ticket.arrival.time}</p>
-                            <p className="text-xs text-gray-500">도착</p>
+                            <p className="font-bold text-red-600 dark:text-red-400 text-lg">{ticket.arrival.time}</p>
+                            <p className="text-xs text-muted-foreground">도착</p>
                           </div>
                         </div>
                       </div>
@@ -164,18 +164,18 @@ export default function GuestTicketsPage() {
 
                     {/* 좌석 정보 */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900">좌석 정보</h3>
+                      <h3 className="font-semibold text-foreground">좌석 정보</h3>
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">좌석등급</span>
+                          <span className="text-muted-foreground">좌석등급</span>
                           <span className="font-medium">{ticket.seat.class}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">호차</span>
+                          <span className="text-muted-foreground">호차</span>
                           <span className="font-medium">{ticket.seat.car}호차</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">좌석번호</span>
+                          <span className="text-muted-foreground">좌석번호</span>
                           <span className="font-medium">{ticket.seat.seat}</span>
                         </div>
                       </div>
@@ -183,26 +183,26 @@ export default function GuestTicketsPage() {
 
                     {/* 승객 및 구매 정보 */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900 flex items-center">
+                      <h3 className="font-semibold text-foreground flex items-center">
                         <User className="h-4 w-4 mr-2" />
                         승객 정보
                       </h3>
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">이름</span>
+                          <span className="text-muted-foreground">이름</span>
                           <span className="font-medium">{ticket.passenger.name}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">연락처</span>
+                          <span className="text-muted-foreground">연락처</span>
                           <span className="font-medium">{ticket.passenger.phone}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">구매일</span>
+                          <span className="text-muted-foreground">구매일</span>
                           <span className="font-medium">{ticket.purchaseDate}</span>
                         </div>
                         <div className="flex justify-between border-t pt-2">
-                          <span className="text-gray-600">결제금액</span>
-                          <span className="font-bold text-lg text-blue-600">{ticket.price.toLocaleString()}원</span>
+                          <span className="text-muted-foreground">결제금액</span>
+                          <span className="font-bold text-lg text-primary">{ticket.price.toLocaleString()}원</span>
                         </div>
                       </div>
                     </div>

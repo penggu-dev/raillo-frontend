@@ -59,7 +59,7 @@ export function TossPaymentWidget({
         </Button>
         <Button
           onClick={onRequestPayment}
-          className="flex-1 bg-blue-600 hover:bg-blue-700"
+          className="flex-1"
         >
           {formatPrice(paymentInfo.amount)} 결제하기
         </Button>

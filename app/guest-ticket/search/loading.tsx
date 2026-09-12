@@ -3,16 +3,16 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default function GuestTicketSearchLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header Skeleton */}
-      <div className="bg-blue-600 py-6">
+      <div className="bg-primary py-6">
         <div className="container mx-auto px-4">
-          <Skeleton className="h-8 w-48 mx-auto bg-blue-500" />
+          <Skeleton className="h-8 w-48 mx-auto bg-primary-light" />
         </div>
       </div>
 
       {/* Breadcrumb Skeleton */}
-      <div className="bg-white border-b py-3">
+      <div className="bg-card border-b py-3">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Skeleton className="h-4 w-4" />
