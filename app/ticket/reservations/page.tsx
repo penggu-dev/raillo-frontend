@@ -384,7 +384,7 @@ function ReservationsPageContent() {
               validReservations.map((reservation) => (
                 <Card
                   key={reservation.pendingBookingId}
-                  className={`shadow-elev-sm transition-all duration-200 hover:shadow-elev-md ${selectedIds.has(reservation.pendingBookingId) ? "border-primary ring-[3px] ring-blue-500/20 dark:ring-blue-400/30" : ""}`}
+                  className={`shadow-elev-sm transition-all duration-200 hover:shadow-elev-md ${selectedIds.has(reservation.pendingBookingId) ? "border-primary ring-[3px] ring-secondary" : ""}`}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-3">
