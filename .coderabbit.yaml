@@ -43,6 +43,10 @@ reviews:
         새로 추가하거나 수정하는 색상은 하드코딩 팔레트 클래스(예: bg-blue-600, text-gray-900) 대신
         시맨틱 토큰(예: bg-primary, text-foreground, text-muted-foreground)을 사용하고 dark: 대응을
         확인하세요. 단, 이번 변경과 무관한 기존 하드코딩 색은 지적하지 마세요(점진적 마이그레이션 진행 중).
+        예외: 열차 등급·좌석 방향·예매 상태·주말/공휴일·경고 문구처럼 의미를 구분하는 도메인 색은
+        팔레트 클래스를 허용합니다. 다만 같은 줄에 dark: 대응 클래스가 함께 있어야 하며
+        (예: bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400),
+        dark: 짝이 없는 경우에만 지적하세요. 화면을 덮는 스크림(bg-black/50 등)도 예외입니다.
 
 chat:
   auto_reply: true
