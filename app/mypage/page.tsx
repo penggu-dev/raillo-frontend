@@ -14,10 +14,10 @@ function MyPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-gray-600">페이지를 불러오는 중...</p>
+          <p className="text-muted-foreground">페이지를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -30,7 +30,7 @@ function MyPageContent() {
   const displayPhone = memberInfo?.phoneNumber || "인증 필요";
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar */}
@@ -39,7 +39,7 @@ function MyPageContent() {
           {/* Main Content */}
           <div className="flex-1">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-foreground">
                 나의 기본정보
               </h1>
             </div>
@@ -48,24 +48,24 @@ function MyPageContent() {
               <CardContent className="p-6">
                 <div className="space-y-2">
                   {/* 회원명 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-gray-100">
-                    <div className="font-medium text-gray-700">회원명</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-border">
+                    <div className="font-medium text-foreground">회원명</div>
                     <div className="md:col-span-2">
                       <span className="text-lg">{displayName}</span>
                     </div>
                   </div>
 
                   {/* 멤버십 번호 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-gray-100">
-                    <div className="font-medium text-gray-700">멤버십 번호</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-border">
+                    <div className="font-medium text-foreground">멤버십 번호</div>
                     <div className="md:col-span-2">
                       <span className="text-lg">{displayMemberId}</span>
                     </div>
                   </div>
 
                   {/* 비밀번호 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-gray-100">
-                    <div className="font-medium text-gray-700">비밀번호</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-border">
+                    <div className="font-medium text-foreground">비밀번호</div>
                     <div className="md:col-span-2">
                       <Link href="/mypage/password/change">
                         <Button
@@ -81,8 +81,8 @@ function MyPageContent() {
                   </div>
 
                   {/* 이메일 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-gray-100">
-                    <div className="font-medium text-gray-700">이메일</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-border">
+                    <div className="font-medium text-foreground">이메일</div>
                     <div className="md:col-span-2">
                       <Link href="/mypage/email/change">
                         <Button
@@ -99,7 +99,7 @@ function MyPageContent() {
 
                   {/* 휴대폰 번호 */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5">
-                    <div className="font-medium text-gray-700">휴대폰 번호</div>
+                    <div className="font-medium text-foreground">휴대폰 번호</div>
                     <div className="md:col-span-2">
                       <Link href="/mypage/phone/change">
                         <Button

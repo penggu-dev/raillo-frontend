@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ContactVerifyLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar Skeleton */}
@@ -53,7 +53,7 @@ export default function ContactVerifyLoading() {
                   ))}
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-6">
+                <div className="bg-muted rounded-lg p-6">
                   <Skeleton className="h-6 w-16 mb-4" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
