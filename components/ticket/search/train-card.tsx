@@ -26,7 +26,7 @@ export function TrainCard({
   return (
     <Card
       className={`shadow-elev-sm transition-all duration-200 hover:shadow-elev-md ${
-        isSelected ? "border-primary ring-[3px] ring-blue-500/20 dark:ring-blue-400/30" : ""
+        isSelected ? "border-primary ring-[3px] ring-secondary" : ""
       }`}
     >
       <CardContent className="p-6">

@@ -85,7 +85,7 @@ export function DateCalendar({
                       : "text-red-300 dark:text-red-400/40 cursor-not-allowed"
                     : isSelectable
                       ? isToday
-                        ? "bg-secondary text-secondary-foreground font-semibold hover:bg-blue-200 dark:hover:bg-blue-500/25"
+                        ? "bg-secondary text-secondary-foreground font-semibold hover:bg-primary hover:text-primary-foreground"
                         : isWeekend
                           ? currentDate.getDay() === 0
                             ? "text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
