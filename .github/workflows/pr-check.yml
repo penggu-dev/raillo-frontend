@@ -1,0 +1,58 @@
+name: PR check
+
+on:
+  pull_request:
+    branches: [main]
+
+# 같은 PR에 새 커밋이 올라오면 이전 실행은 취소
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  check:
+    name: test · typecheck · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # package.json의 packageManager(pnpm@9.15.4) 버전을 사용
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: pnpm
+
+      # 리포트 전용(항상 exit 0) — 의존성 설치 없이 실행되므로 이후 단계 실패와 무관하게 요약을 남긴다
+      - name: Color audit (report only)
+        run: |
+          {
+            echo "## 하드코딩 색상 감사"
+            echo '```'
+            node scripts/audit-colors.mjs
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test
+        run: pnpm test
+
+      # next build는 테스트 파일을 타입 검사하지 않으므로 별도로 실행
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
+      - name: Build
+        run: pnpm build
