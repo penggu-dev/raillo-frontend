@@ -41,7 +41,7 @@ export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
           <div className="mb-4">
             <Train className="h-16 w-16 mx-auto mb-2 text-primary-foreground" />
             <h2 className="text-xl font-bold">마이페이지</h2>
-            <p className="text-primary-foreground/80">마이페이지</p>
+            <p className="text-primary-foreground">마이페이지</p>
           </div>
         </CardContent>
       </Card>

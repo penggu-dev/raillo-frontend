@@ -12,42 +12,45 @@
 
 @layer base {
   :root {
+    /* 색상 토큰은 RGB 채널(r g b)로 정의한다.
+       tailwind에서 rgb(var(--token) / <alpha-value>)로 참조해 bg-primary/80 같은 투명도 수식어를 지원한다. */
+
     /* Background / Foreground */
-    --background: #ffffff;
-    --foreground: #18181b;
+    --background: 255 255 255; /* #ffffff */
+    --foreground: 24 24 27; /* #18181b */
 
     /* Card / Popover */
-    --card: #ffffff;
-    --card-foreground: #18181b;
-    --popover: #ffffff;
-    --popover-foreground: #18181b;
+    --card: 255 255 255; /* #ffffff */
+    --card-foreground: 24 24 27; /* #18181b */
+    --popover: 255 255 255; /* #ffffff */
+    --popover-foreground: 24 24 27; /* #18181b */
 
     /* Primary */
-    --primary: #2563EB;
-    --primary-foreground: #FFFFFF;
-    --primary-active: #1D4ED8;
-    --primary-light: #93C5FD;
+    --primary: 37 99 235; /* #2563eb */
+    --primary-foreground: 255 255 255; /* #ffffff */
+    --primary-active: 29 78 216; /* #1d4ed8 */
+    --primary-light: 147 197 253; /* #93c5fd */
 
     /* Secondary */
-    --secondary: #DBEAFE;
-    --secondary-foreground: #2563EB;
+    --secondary: 219 234 254; /* #dbeafe */
+    --secondary-foreground: 37 99 235; /* #2563eb */
 
     /* Accent */
-    --accent: #60A5FA;
-    --accent-foreground: #FFFFFF;
+    --accent: 96 165 250; /* #60a5fa */
+    --accent-foreground: 255 255 255; /* #ffffff */
 
     /* Muted */
-    --muted: #f4f4f6;
-    --muted-foreground: #71717a;
+    --muted: 244 244 246; /* #f4f4f6 */
+    --muted-foreground: 113 113 122; /* #71717a */
 
     /* Destructive */
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
+    --destructive: 239 68 68; /* #ef4444 */
+    --destructive-foreground: 255 255 255; /* #ffffff */
 
     /* Border / Input / Ring */
-    --border: #e4e4e7;
-    --input: #e4e4e7;
-    --ring: #2563EB;
+    --border: 228 228 231; /* #e4e4e7 */
+    --input: 228 228 231; /* #e4e4e7 */
+    --ring: 37 99 235; /* #2563eb */
 
     /* Radius */
     --radius: 0.75rem;
@@ -58,63 +61,63 @@
     --shadow-lg: 0 20px 45px rgba(37, 99, 235, 0.1), 0 8px 20px rgba(16, 24, 40, 0.08);
 
     /* Chart */
-    --chart-1: #e8775a;
-    --chart-2: #279a89;
-    --chart-3: #243c4b;
-    --chart-4: #e9c45d;
-    --chart-5: #f39054;
+    --chart-1: 232 119 90; /* #e8775a */
+    --chart-2: 39 154 137; /* #279a89 */
+    --chart-3: 36 60 75; /* #243c4b */
+    --chart-4: 233 196 93; /* #e9c45d */
+    --chart-5: 243 144 84; /* #f39054 */
 
     /* Sidebar */
-    --sidebar-background: #fafafa;
-    --sidebar-foreground: #3f3f46;
-    --sidebar-primary: #18181b;
-    --sidebar-primary-foreground: #fafafa;
-    --sidebar-accent: #f4f4f6;
-    --sidebar-accent-foreground: #18181b;
-    --sidebar-border: #e4e4e7;
-    --sidebar-ring: #2563EB;
+    --sidebar-background: 250 250 250; /* #fafafa */
+    --sidebar-foreground: 63 63 70; /* #3f3f46 */
+    --sidebar-primary: 24 24 27; /* #18181b */
+    --sidebar-primary-foreground: 250 250 250; /* #fafafa */
+    --sidebar-accent: 244 244 246; /* #f4f4f6 */
+    --sidebar-accent-foreground: 24 24 27; /* #18181b */
+    --sidebar-border: 228 228 231; /* #e4e4e7 */
+    --sidebar-ring: 37 99 235; /* #2563eb */
   }
   .dark {
-    --background: #09090b;
-    --foreground: #fafafa;
-    --card: #131318;
-    --card-foreground: #fafafa;
-    --popover: #1b1b22;
-    --popover-foreground: #fafafa;
-    --primary: #2563eb;
-    --primary-foreground: #ffffff;
-    --primary-active: #1d4ed8;
-    --primary-light: #60a5fa;
-    --secondary: #16233f;
-    --secondary-foreground: #93c5fd;
-    --accent: #2563eb;
-    --accent-foreground: #ffffff;
-    --muted: #27272a;
-    --muted-foreground: #a1a1aa;
-    --destructive: #7f1d1d;
-    --destructive-foreground: #fafafa;
-    --border: #27272a;
-    --input: #27272a;
-    --ring: #3b82f6;
+    --background: 9 9 11; /* #09090b */
+    --foreground: 250 250 250; /* #fafafa */
+    --card: 19 19 24; /* #131318 */
+    --card-foreground: 250 250 250; /* #fafafa */
+    --popover: 27 27 34; /* #1b1b22 */
+    --popover-foreground: 250 250 250; /* #fafafa */
+    --primary: 37 99 235; /* #2563eb */
+    --primary-foreground: 255 255 255; /* #ffffff */
+    --primary-active: 29 78 216; /* #1d4ed8 */
+    --primary-light: 96 165 250; /* #60a5fa */
+    --secondary: 22 35 63; /* #16233f */
+    --secondary-foreground: 147 197 253; /* #93c5fd */
+    --accent: 37 99 235; /* #2563eb */
+    --accent-foreground: 255 255 255; /* #ffffff */
+    --muted: 39 39 42; /* #27272a */
+    --muted-foreground: 161 161 170; /* #a1a1aa */
+    --destructive: 127 29 29; /* #7f1d1d */
+    --destructive-foreground: 250 250 250; /* #fafafa */
+    --border: 39 39 42; /* #27272a */
+    --input: 39 39 42; /* #27272a */
+    --ring: 59 130 246; /* #3b82f6 */
 
     /* Elevation */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 24px 55px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.5);
 
-    --chart-1: #2563eb;
-    --chart-2: #29a87a;
-    --chart-3: #f0872a;
-    --chart-4: #a855f7;
-    --chart-5: #ec4899;
-    --sidebar-background: #18181b;
-    --sidebar-foreground: #f4f4f5;
-    --sidebar-primary: #2563eb;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #27272a;
-    --sidebar-accent-foreground: #f4f4f5;
-    --sidebar-border: #27272a;
-    --sidebar-ring: #3b82f6;
+    --chart-1: 37 99 235; /* #2563eb */
+    --chart-2: 41 168 122; /* #29a87a */
+    --chart-3: 240 135 42; /* #f0872a */
+    --chart-4: 168 85 247; /* #a855f7 */
+    --chart-5: 236 72 153; /* #ec4899 */
+    --sidebar-background: 24 24 27; /* #18181b */
+    --sidebar-foreground: 244 244 245; /* #f4f4f5 */
+    --sidebar-primary: 37 99 235; /* #2563eb */
+    --sidebar-primary-foreground: 255 255 255; /* #ffffff */
+    --sidebar-accent: 39 39 42; /* #27272a */
+    --sidebar-accent-foreground: 244 244 245; /* #f4f4f5 */
+    --sidebar-border: 39 39 42; /* #27272a */
+    --sidebar-ring: 59 130 246; /* #3b82f6 */
   }
 }
 
