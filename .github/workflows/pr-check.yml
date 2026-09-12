@@ -38,13 +38,14 @@ jobs:
           node-version: 20.x
           cache: pnpm
 
-      # 리포트 전용(항상 exit 0) — 의존성 설치 없이 실행되므로 이후 단계 실패와 무관하게 요약을 남긴다
+      # 리포트 전용 — 의존성 설치 없이 실행되므로 이후 단계 실패와 무관하게 요약을 남긴다.
+      # 스크립트가 비정상 종료해도 경고만 남기고 설치·테스트·빌드는 계속 진행한다
       - name: Color audit (report only)
         run: |
           {
             echo "## 하드코딩 색상 감사"
             echo '```'
-            node scripts/audit-colors.mjs
+            node scripts/audit-colors.mjs || echo "⚠️ 감사 스크립트가 exit $?로 종료됨 (리포트 전용이라 이후 단계는 계속 진행)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
