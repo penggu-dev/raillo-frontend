@@ -87,7 +87,7 @@ export function PassengerSelector({ value, onValueChange, placeholder, label, si
         <label className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-foreground"}`}>{label}</label>
         <Button
           variant="outline"
-          className="w-full justify-start text-left font-normal bg-white text-gray-900 hover:bg-gray-50"
+          className="w-full justify-start text-left font-normal bg-background text-foreground hover:bg-muted"
           onClick={handleOpen}
           aria-label={`${label} 선택 열기`}
         >
@@ -123,7 +123,7 @@ export function PassengerSelector({ value, onValueChange, placeholder, label, si
                   <div className="flex flex-col">
                     <span className="font-medium">{passengerType.label}</span>
                     {passengerType.description && (
-                      <span className="text-sm text-gray-500">{passengerType.description}</span>
+                      <span className="text-sm text-muted-foreground">{passengerType.description}</span>
                     )}
                   </div>
                   <div className="flex items-center space-x-3">
@@ -156,11 +156,11 @@ export function PassengerSelector({ value, onValueChange, placeholder, label, si
             </div>
           </div>
 
-          <div className="flex border-t p-4 bg-white shrink-0">
+          <div className="flex border-t p-4 bg-card shrink-0">
             <Button variant="outline" onClick={handleClose} className="flex-1 mr-2">
               취소
             </Button>
-            <Button onClick={handleApply} className="flex-1 bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleApply} className="flex-1">
               적용
             </Button>
           </div>

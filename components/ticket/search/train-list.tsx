@@ -39,11 +39,11 @@ export function TrainList({
     return (
       <Card>
         <CardContent className="p-12 text-center">
-          <Train className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <Train className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-foreground mb-2">
             검색 결과가 없습니다
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-muted-foreground mb-4">
             선택하신 조건에 맞는 열차가 없습니다.
           </p>
           <Button onClick={() => router.push("/")} variant="outline">

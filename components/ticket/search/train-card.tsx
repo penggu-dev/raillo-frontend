@@ -25,8 +25,8 @@ export function TrainCard({
 }: TrainCardProps) {
   return (
     <Card
-      className={`hover:shadow-lg transition-shadow ${
-        isSelected ? "ring-2 ring-blue-500 bg-blue-50" : ""
+      className={`shadow-elev-sm transition-all duration-200 hover:shadow-elev-md ${
+        isSelected ? "border-primary ring-[3px] ring-secondary" : ""
       }`}
     >
       <CardContent className="p-6">
@@ -38,9 +38,9 @@ export function TrainCard({
                 {train.trainName}
               </Badge>
               <span className="font-semibold text-lg">{train.trainNumber}</span>
-              <Zap className="h-4 w-4 text-yellow-500" />
+              <Zap className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
             </div>
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>{train.departureStationName}</span>
               <ArrowRight className="h-4 w-4" />
               <span>{train.arrivalStationName}</span>
@@ -50,20 +50,20 @@ export function TrainCard({
           {/* Time Info */}
           <div className="lg:col-span-3">
             <div className="flex items-center space-x-2 mb-1">
-              <span className="text-2xl font-bold text-blue-600">{train.departureTime.substring(0, 5)}</span>
-              <ArrowRight className="h-4 w-4 text-gray-400" />
-              <span className="text-2xl font-bold text-blue-600">{train.arrivalTime.substring(0, 5)}</span>
+              <span className="text-2xl font-bold tracking-tight text-primary">{train.departureTime.substring(0, 5)}</span>
+              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <span className="text-2xl font-bold tracking-tight text-primary">{train.arrivalTime.substring(0, 5)}</span>
             </div>
-            <div className="text-sm text-gray-600">{train.formattedTravelTime}</div>
+            <div className="text-sm text-muted-foreground">{train.formattedTravelTime}</div>
           </div>
 
           {/* Seat Options */}
           <div className="lg:col-span-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:max-w-[340px] sm:ml-auto">
               {/* 일반실 */}
-              <div className="border rounded-lg p-3">
+              <div className="rounded-lg border bg-muted p-3">
                 <div className="text-sm font-medium mb-1">일반실</div>
-                <div className="text-lg font-bold text-blue-600 mb-2">
+                <div className={`text-lg font-bold mb-2 ${train.standardSeat.canReserve ? "text-primary" : "text-muted-foreground"}`}>
                   {formatPrice(train.standardSeat.fare)}
                 </div>
                 <Button
@@ -77,9 +77,9 @@ export function TrainCard({
               </div>
 
               {/* 특실 */}
-              <div className="border rounded-lg p-3">
+              <div className="rounded-lg border bg-muted p-3">
                 <div className="text-sm font-medium mb-1">특실</div>
-                <div className="text-lg font-bold text-blue-600 mb-2">
+                <div className={`text-lg font-bold mb-2 ${train.firstClassSeat?.canReserve ? "text-primary" : "text-muted-foreground"}`}>
                   {train.firstClassSeat ? formatPrice(train.firstClassSeat.fare) : "-"}
                 </div>
                 <Button

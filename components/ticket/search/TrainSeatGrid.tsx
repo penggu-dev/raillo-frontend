@@ -60,30 +60,30 @@ export function TrainSeatGrid({
 
   const renderAisle = () => (
     <div className="flex justify-between items-center px-2 py-1">
-      <span className="font-semibold text-blue-700 text-sm">
+      <span className="font-semibold text-blue-700 dark:text-blue-300 text-sm">
         {selectedTrain.departureStationName || "출발역"}
       </span>
       <div className="flex items-center space-x-1">
         {Array.from({ length: 6 }, (_, i) => (
-          <span key={i} className="text-blue-500 text-lg font-bold">→</span>
+          <span key={i} className="text-blue-500 dark:text-blue-400 text-lg font-bold">→</span>
         ))}
       </div>
-      <span className="font-semibold text-blue-700 text-sm">
+      <span className="font-semibold text-blue-700 dark:text-blue-300 text-sm">
         {selectedTrain.arrivalStationName || "도착역"}
       </span>
     </div>
   )
 
   return (
-    <div className="border-2 border-blue-200 rounded-lg p-6 bg-blue-50 min-w-[800px]">
+    <div className="border-2 border-blue-200 dark:border-blue-500/30 rounded-lg p-6 bg-blue-50 dark:bg-blue-500/10 min-w-[800px]">
       <div className="flex items-center justify-center">
         <div className="flex items-center space-x-6">
           {/* Left Restrooms */}
           <div className="flex flex-col space-y-3">
-            <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center border-2 border-gray-300">
+            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center border-2 border-border">
               <span className="text-lg">🚻</span>
             </div>
-            <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center border-2 border-gray-300">
+            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center border-2 border-border">
               <span className="text-lg">🚻</span>
             </div>
           </div>
@@ -109,10 +109,10 @@ export function TrainSeatGrid({
 
           {/* Right Restrooms */}
           <div className="flex flex-col space-y-3">
-            <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center border-2 border-gray-300">
+            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center border-2 border-border">
               <span className="text-lg">🚻</span>
             </div>
-            <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center border-2 border-gray-300">
+            <div className="w-12 h-12 bg-muted rounded flex items-center justify-center border-2 border-border">
               <span className="text-lg">🚻</span>
             </div>
           </div>
