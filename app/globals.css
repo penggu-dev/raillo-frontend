@@ -30,10 +30,13 @@
     --primary-foreground: 255 255 255; /* #ffffff */
     --primary-active: 29 78 216; /* #1d4ed8 */
     --primary-light: 147 197 253; /* #93c5fd */
+    /* 텍스트 전용 — 배경·테두리용 --primary와 분리해 배경별 대비를 따로 맞춘다 */
+    --primary-text: 37 99 235; /* #2563eb */
+    --primary-active-text: 29 78 216; /* #1d4ed8 */
 
     /* Secondary */
     --secondary: 219 234 254; /* #dbeafe */
-    --secondary-foreground: 37 99 235; /* #2563eb */
+    --secondary-foreground: 29 78 216; /* #1d4ed8 — secondary 위 5.49:1 */
 
     /* Accent */
     --accent: 96 165 250; /* #60a5fa */
@@ -41,7 +44,7 @@
 
     /* Muted */
     --muted: 244 244 246; /* #f4f4f6 */
-    --muted-foreground: 113 113 122; /* #71717a */
+    --muted-foreground: 99 99 107; /* #63636b — 흰 배경 5.95:1 · muted 5.42:1 */
 
     /* Destructive */
     --destructive: 239 68 68; /* #ef4444 */
@@ -88,6 +91,8 @@
     --primary-foreground: 255 255 255; /* #ffffff */
     --primary-active: 29 78 216; /* #1d4ed8 */
     --primary-light: 96 165 250; /* #60a5fa */
+    --primary-text: 96 165 250; /* #60a5fa — card 7.28:1 · muted 5.86:1 · secondary 6.14:1 */
+    --primary-active-text: 147 197 253; /* #93c5fd */
     --secondary: 22 35 63; /* #16233f */
     --secondary-foreground: 147 197 253; /* #93c5fd */
     --accent: 37 99 235; /* #2563eb */
