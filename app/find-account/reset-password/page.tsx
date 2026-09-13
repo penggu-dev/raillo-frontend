@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Train, Home, Printer, Eye, EyeOff } from "lucide-react";
+import { Home, Printer, Eye, EyeOff } from "lucide-react";
 import { updatePassword } from "@/lib/api/members";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
@@ -68,49 +68,29 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <Train className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-blue-600">RAILLO</h1>
-            </Link>
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link href="/login" className="text-gray-600 hover:text-blue-600">
-                로그인
-              </Link>
-              <Link href="/" className="text-gray-600 hover:text-blue-600">
-                홈으로
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen">
       {/* Page Header */}
-      <div className="bg-blue-500 text-white py-6">
+      <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-4">
           <h1 className="text-2xl font-bold text-center">비밀번호 변경</h1>
         </div>
       </div>
 
       {/* Breadcrumb */}
-      <div className="bg-white border-b">
+      <div className="bg-card border-b">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <Home className="h-4 w-4" />
-              <Link href="/" className="hover:text-blue-600">
+              <Link href="/" className="hover:text-primary">
                 홈
               </Link>
               <span>/</span>
-              <Link href="/find-account" className="hover:text-blue-600">
+              <Link href="/find-account" className="hover:text-primary">
                 회원번호/비밀번호 찾기
               </Link>
               <span>/</span>
-              <span className="text-gray-900">비밀번호 변경</span>
+              <span className="text-foreground">비밀번호 변경</span>
             </div>
             <Button
               variant="outline"
@@ -125,24 +105,24 @@ export default function ResetPasswordPage() {
       </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="bg-white shadow-lg">
+          <Card className="shadow-elev-md">
             <CardContent className="p-8">
               <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 mb-6">
+                <h1 className="text-2xl font-bold text-foreground mb-6">
                   새 비밀번호 설정
                 </h1>
 
                 <div className="space-y-3 mb-8">
-                  <p className="text-gray-700">
+                  <p className="text-foreground">
                     • 새로운 비밀번호를 설정해 주세요.
                   </p>
-                  <p className="text-gray-700">
+                  <p className="text-foreground">
                     • 영문자, 숫자, 특수문자 2가지 이상을 조합하여 8자 이상
                     입력해 주세요.
                   </p>
-                  <p className="text-gray-700">
+                  <p className="text-foreground">
                     • 개인정보와 관련된 숫자, 연속된 숫자, 동일 반복된 숫자 등은
                     사용하지 마십시오.
                   </p>
@@ -156,7 +136,7 @@ export default function ResetPasswordPage() {
                     htmlFor="new-password"
                     className="text-base font-medium"
                   >
-                    신규 비밀번호 <span className="text-red-500">*</span>
+                    신규 비밀번호 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="relative">
                     <Input
@@ -164,7 +144,7 @@ export default function ResetPasswordPage() {
                       type={showPasswords.new ? "text" : "password"}
                       placeholder="신규 비밀번호를 입력하세요"
                       {...register("newPassword")}
-                      className={`pr-10 h-12 text-lg ${errors.newPassword ? "border-red-500" : ""}`}
+                      className={`pr-10 h-12 text-lg ${errors.newPassword ? "border-red-500 dark:border-red-400" : ""}`}
                       autoComplete="new-password"
                     />
                     <Button
@@ -180,14 +160,14 @@ export default function ResetPasswordPage() {
                       }
                     >
                       {showPasswords.new ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-muted-foreground" />
                       )}
                     </Button>
                   </div>
                   {errors.newPassword && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.newPassword.message}
                     </p>
                   )}
@@ -199,7 +179,7 @@ export default function ResetPasswordPage() {
                     htmlFor="confirm-password"
                     className="text-base font-medium"
                   >
-                    비밀번호 확인 <span className="text-red-500">*</span>
+                    비밀번호 확인 <span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <div className="relative">
                     <Input
@@ -207,7 +187,7 @@ export default function ResetPasswordPage() {
                       type={showPasswords.confirm ? "text" : "password"}
                       placeholder="확인 비밀번호를 입력하세요"
                       {...register("confirmPassword")}
-                      className={`pr-10 h-12 text-lg ${errors.confirmPassword ? "border-red-500" : ""}`}
+                      className={`pr-10 h-12 text-lg ${errors.confirmPassword ? "border-red-500 dark:border-red-400" : ""}`}
                       autoComplete="new-password"
                     />
                     <Button
@@ -223,14 +203,14 @@ export default function ResetPasswordPage() {
                       }
                     >
                       {showPasswords.confirm ? (
-                        <EyeOff className="h-4 w-4 text-gray-400" />
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
                       ) : (
-                        <Eye className="h-4 w-4 text-gray-400" />
+                        <Eye className="h-4 w-4 text-muted-foreground" />
                       )}
                     </Button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-xs text-red-500">
+                    <p className="text-xs text-red-600 dark:text-red-400">
                       {errors.confirmPassword.message}
                     </p>
                   )}
@@ -240,9 +220,9 @@ export default function ResetPasswordPage() {
                 {watchNew && watchConfirm && !errors.confirmPassword && (
                   <div className="text-sm">
                     {watchNew === watchConfirm ? (
-                      <p className="text-green-600">✓ 비밀번호가 일치합니다.</p>
+                      <p className="text-green-600 dark:text-green-400">✓ 비밀번호가 일치합니다.</p>
                     ) : (
-                      <p className="text-red-500">
+                      <p className="text-red-600 dark:text-red-400">
                         ✗ 비밀번호가 일치하지 않습니다.
                       </p>
                     )}
@@ -254,7 +234,7 @@ export default function ResetPasswordPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 text-lg rounded-full"
+                    className="w-full font-semibold py-3 text-lg rounded-full"
                     size="lg"
                   >
                     {isSubmitting ? "변경 중..." : "비밀번호 변경완료"}
@@ -263,18 +243,18 @@ export default function ResetPasswordPage() {
               </form>
 
               {/* 추가 링크 */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
+              <div className="mt-8 pt-6 border-t border-border">
                 <div className="flex justify-center space-x-6 text-sm">
                   <Link
                     href="/find-account"
-                    className="text-blue-600 hover:text-blue-700 font-semibold"
+                    className="text-primary hover:text-primary-active font-semibold"
                   >
                     이전으로
                   </Link>
-                  <span className="text-gray-300">|</span>
+                  <span className="text-muted-foreground opacity-40">|</span>
                   <Link
                     href="/login"
-                    className="text-blue-600 hover:text-blue-700 font-semibold"
+                    className="text-primary hover:text-primary-active font-semibold"
                   >
                     로그인하기
                   </Link>
@@ -283,50 +263,7 @@ export default function ResetPasswordPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="font-semibold mb-4">고객센터</h3>
-              <p className="text-sm text-gray-300">1544-7788</p>
-              <p className="text-sm text-gray-300">평일 05:30~23:30</p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">빠른 링크</h3>
-              <ul className="space-y-2 text-sm text-gray-300">
-                <li>
-                  <Link href="#" className="hover:text-white">
-                    이용약관
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-white">
-                    개인정보처리방침
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-white">
-                    사이트맵
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">RAILLO 소개</h3>
-              <p className="text-sm text-gray-300">
-                한국철도공사는 국민의 안전하고 편리한 철도여행을 위해 최선을
-                다하고 있습니다.
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2024 RAILLO. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }
