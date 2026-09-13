@@ -112,7 +112,7 @@ export default function FindAccountResultPage() {
                 <Button
                   onClick={handleFindPassword}
                   variant="outline"
-                  className="w-full border-primary text-primary hover:bg-secondary font-semibold py-3"
+                  className="w-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground font-semibold py-3"
                   size="lg"
                 >
                   비밀번호 찾기

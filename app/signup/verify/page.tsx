@@ -72,7 +72,7 @@ export default function SignupVerifyPage() {
                     <Button
                       onClick={() => handleVerification("ipin")}
                       variant="outline"
-                      className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary"
+                      className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
                     >
                       아이핀으로 확인하기
                     </Button>
@@ -89,7 +89,7 @@ export default function SignupVerifyPage() {
                     <Button
                       onClick={() => handleVerification("phone")}
                       variant="outline"
-                      className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary"
+                      className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
                     >
                       휴대전화로 확인하기
                     </Button>

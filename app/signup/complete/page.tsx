@@ -173,7 +173,7 @@ export default function SignupCompletePage() {
                   <Button
                     asChild
                     variant="outline"
-                    className="flex-1 border-primary text-primary hover:bg-secondary"
+                    className="flex-1 border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
                   >
                     <Link href="/">홈으로 이동</Link>
                   </Button>
