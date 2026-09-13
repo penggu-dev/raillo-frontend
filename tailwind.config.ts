@@ -86,6 +86,15 @@ const config: Config = {
   				ring: 'rgb(var(--sidebar-ring) / <alpha-value>)'
   			}
   		},
+  		// 텍스트 전용 primary: 배경용 --primary와 분리 (bg-/border-/ring-primary는 colors 그대로)
+  		textColor: {
+  			primary: {
+  				DEFAULT: 'rgb(var(--primary-text) / <alpha-value>)',
+  				foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
+  				active: 'rgb(var(--primary-active-text) / <alpha-value>)',
+  				light: 'rgb(var(--primary-light) / <alpha-value>)',
+  			},
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
