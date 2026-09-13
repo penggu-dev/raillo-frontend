@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function PaymentCompleteLoading() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-2xl mx-auto px-4">
         {/* 헤더 스켈레톤 */}
         <div className="text-center mb-8">

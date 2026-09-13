@@ -50,10 +50,10 @@ export default function PaymentHistoryPage() {
 
   if (isChecking || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <div className="flex-1 container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-gray-600">인증을 확인하고 있습니다...</p>
+          <p className="text-muted-foreground">인증을 확인하고 있습니다...</p>
         </div>
       </div>
     );
@@ -61,22 +61,22 @@ export default function PaymentHistoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+      <div className="min-h-screen flex flex-col">
         <div className="flex-1 container mx-auto px-4 py-16 text-center">
           <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-gray-600">예매 내역을 불러오고 있습니다...</p>
+          <p className="text-muted-foreground">예매 내역을 불러오고 있습니다...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">예매 내역</h2>
-            <p className="text-gray-600">
+            <h2 className="text-3xl font-bold text-foreground mb-2">예매 내역</h2>
+            <p className="text-muted-foreground">
               예매번호와 영수증 상세를 확인할 수 있습니다
             </p>
           </div>
@@ -90,19 +90,19 @@ export default function PaymentHistoryPage() {
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger
                   value="all"
-                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   전체
                 </TabsTrigger>
                 <TabsTrigger
                   value="issued"
-                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   발권완료
                 </TabsTrigger>
                 <TabsTrigger
                   value="cancelled"
-                  className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   취소/환불
                 </TabsTrigger>
@@ -112,9 +112,9 @@ export default function PaymentHistoryPage() {
 
           <div className="space-y-6">
             {isError && (
-              <Card className="border-red-200 bg-red-50">
+              <Card className="border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10">
                 <CardContent className="p-4">
-                  <p className="text-sm text-red-700">
+                  <p className="text-sm text-red-700 dark:text-red-300">
                     {error?.message ?? "오류가 발생했습니다."}
                   </p>
                 </CardContent>
@@ -122,21 +122,21 @@ export default function PaymentHistoryPage() {
             )}
 
             {filteredBookings.length === 0 ? (
-              <Card className="border-gray-200">
+              <Card>
                 <CardContent className="p-16 text-center">
                   <div className="mx-auto mb-6 w-16 h-16 relative">
-                    <Receipt className="w-full h-full text-gray-400" />
+                    <Receipt className="w-full h-full text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium text-foreground mb-2">
                     {activeTab === "all" && "예매 내역이 없습니다."}
                     {activeTab === "issued" && "발권 완료된 내역이 없습니다."}
                     {activeTab === "cancelled" && "취소/환불 내역이 없습니다."}
                   </h3>
-                  <p className="text-gray-500 mb-4">
+                  <p className="text-muted-foreground mb-4">
                     승차권을 예매하시면 내역이 여기에 표시됩니다.
                   </p>
                   <Link href="/ticket/search">
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Button>
                       승차권 예매하기
                     </Button>
                   </Link>
@@ -151,7 +151,7 @@ export default function PaymentHistoryPage() {
 
           {filteredBookings.length > 0 && (
             <div className="mt-8 text-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 총 {filteredBookings.length}건의 예매 내역
               </p>
             </div>

@@ -51,7 +51,7 @@ export default function TicketReceiptDetailPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-gray-600">인증을 확인하고 있습니다...</p>
+        <p className="text-muted-foreground">인증을 확인하고 있습니다...</p>
       </div>
     );
   }
@@ -60,7 +60,7 @@ export default function TicketReceiptDetailPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-gray-600">영수증 상세를 불러오고 있습니다...</p>
+        <p className="text-muted-foreground">영수증 상세를 불러오고 있습니다...</p>
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function TicketReceiptDetailPage() {
   if (isError || !receipt) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <div className="text-red-600 mb-4">
+        <div className="text-red-600 dark:text-red-400 mb-4">
           <p className="text-lg font-semibold">
             영수증 정보를 불러올 수 없습니다
           </p>
@@ -82,14 +82,14 @@ export default function TicketReceiptDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen">
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-foreground mb-2">
               영수증 상세
             </h2>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               승차권 영수증 정보를 확인할 수 있습니다
             </p>
           </div>
@@ -97,30 +97,30 @@ export default function TicketReceiptDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Receipt className="h-5 w-5 text-blue-600" />
+                <Receipt className="h-5 w-5 text-primary" />
                 <span>승차권 정보</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">승차권 번호</span>
+                <span className="text-muted-foreground">승차권 번호</span>
                 <span className="font-mono font-medium">
                   {receipt.ticketNumber}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">열차</span>
+                <span className="text-muted-foreground">열차</span>
                 <Badge variant="outline">{receipt.trainNumber}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">좌석</span>
+                <span className="text-muted-foreground">좌석</span>
                 <span className="font-medium">
                   {receipt.carNumber}호차 {receipt.seatNumber} (
                   {getCarTypeName(receipt.carType)})
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">승객</span>
+                <span className="text-muted-foreground">승객</span>
                 <span className="font-medium">
                   {getPassengerTypeName(receipt.passengerType)}
                 </span>
@@ -131,28 +131,28 @@ export default function TicketReceiptDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-blue-600" />
+                <MapPin className="h-5 w-5 text-primary" />
                 <span>운행 정보</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">운행일</span>
+                <span className="text-muted-foreground">운행일</span>
                 <span className="font-medium">
                   {formatDate(receipt.operationDate)}
                 </span>
               </div>
-              <div className="flex items-center justify-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-center gap-3 p-3 bg-muted rounded-lg">
                 <span className="font-semibold">
                   {receipt.departureStationName}
                 </span>
-                <ArrowRight className="h-4 w-4 text-gray-400" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
                 <span className="font-semibold">
                   {receipt.arrivalStationName}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">출발/도착</span>
+                <span className="text-muted-foreground">출발/도착</span>
                 <span className="font-medium">
                   {formatTime(receipt.departureTime)} ~{" "}
                   {formatTime(receipt.arrivalTime)}
@@ -164,31 +164,31 @@ export default function TicketReceiptDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-5 w-5 text-primary" />
                 <span>결제 정보</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">결제수단</span>
+                <span className="text-muted-foreground">결제수단</span>
                 <span className="font-medium">
                   {getPaymentMethodName(receipt.paymentMethod)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">결제금액</span>
-                <span className="text-lg font-bold text-blue-600">
+                <span className="text-muted-foreground">결제금액</span>
+                <span className="text-lg font-bold text-primary">
                   {formatPrice(receipt.amount)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">결제일시</span>
+                <span className="text-muted-foreground">결제일시</span>
                 <span className="font-medium">
                   {formatDateTime(receipt.paidAt)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-600">발권일시</span>
+                <span className="text-muted-foreground">발권일시</span>
                 <span className="font-medium">
                   {formatDateTime(receipt.ticketCreatedAt)}
                 </span>

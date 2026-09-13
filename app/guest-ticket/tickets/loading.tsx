@@ -3,16 +3,16 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 export default function GuestTicketsLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header Skeleton */}
-      <div className="bg-blue-600 py-6">
+      <div className="bg-primary py-6">
         <div className="container mx-auto px-4">
-          <Skeleton className="h-8 w-64 mx-auto bg-blue-500" />
+          <Skeleton className="h-8 w-64 mx-auto bg-primary-light" />
         </div>
       </div>
 
       {/* Breadcrumb Skeleton */}
-      <div className="bg-white border-b py-3">
+      <div className="bg-card border-b py-3">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Skeleton className="h-4 w-4" />
@@ -33,7 +33,7 @@ export default function GuestTicketsLoading() {
           <div className="space-y-6">
             {[1, 2].map((i) => (
               <Card key={i}>
-                <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100">
+                <CardHeader className="bg-secondary">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <Skeleton className="h-6 w-6" />

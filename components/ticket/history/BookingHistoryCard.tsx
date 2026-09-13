@@ -79,7 +79,7 @@ const getTicketStatusColor = (status: string) => {
 
 export default function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
   return (
-    <Card className="border-l-4 border-blue-500 shadow-md">
+    <Card className="border-l-4 border-l-primary shadow-elev-sm">
       <CardContent className="p-6 space-y-4">
         <div className="flex items-start justify-between">
           <div>
@@ -91,7 +91,7 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
                 열차번호 {booking.trainNumber}
               </Badge>
             </div>
-            <div className="text-sm text-gray-600 space-y-1">
+            <div className="text-sm text-muted-foreground space-y-1">
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4" />
                 <span>운행일자: {formatDate(booking.operationDate)}</span>
@@ -103,18 +103,18 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
             </div>
           </div>
           <div className="text-right text-sm">
-            <span className="text-gray-500 mr-1">예매번호:</span>
+            <span className="text-muted-foreground mr-1">예매번호:</span>
             <span className="font-mono">{booking.bookingCode}</span>
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-4">
+        <div className="bg-muted rounded-lg p-4">
           <div className="flex items-center space-x-3 text-sm">
-            <MapPin className="h-4 w-4 text-blue-600" />
+            <MapPin className="h-4 w-4 text-primary" />
             <span className="font-medium">{booking.departureStationName}</span>
-            <ArrowRight className="h-4 w-4 text-gray-400" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">{booking.arrivalStationName}</span>
-            <Clock className="h-4 w-4 text-gray-400 ml-2" />
+            <Clock className="h-4 w-4 text-muted-foreground ml-2" />
             <span>
               {formatTime(booking.departureTime)} ~ {formatTime(booking.arrivalTime)}
             </span>
@@ -122,7 +122,7 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
         </div>
 
         <div className="space-y-2">
-          <h4 className="font-semibold text-gray-900">승차권 목록</h4>
+          <h4 className="font-semibold text-foreground">승차권 목록</h4>
           {booking.tickets.map((ticket) => (
             <div
               key={ticket.ticketId}
@@ -136,11 +136,11 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
                   <Badge className={`${getTicketStatusColor(ticket.status)} text-xs`}>
                     {getTicketStatusName(ticket.status)}
                   </Badge>
-                  <span className="font-mono text-xs text-gray-600">
+                  <span className="font-mono text-xs text-muted-foreground">
                     승차권번호: {ticket.ticketNumber}
                   </span>
                 </div>
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-foreground">
                   {ticket.carNumber}호차 {ticket.seatNumber} /{" "}
                   {getPassengerTypeName(ticket.passengerType)}
                 </div>

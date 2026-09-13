@@ -57,19 +57,19 @@ function PurchasedTicketsPageContent() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-gray-600">승차권을 불러오고 있습니다...</p>
+        <p className="text-muted-foreground">승차권을 불러오고 있습니다...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Main Content */}
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-foreground mb-2">
               승차권 확인
             </h2>
           </div>
@@ -77,15 +77,15 @@ function PurchasedTicketsPageContent() {
           {/* Content */}
           <div className="w-full">
             <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">승차권</h2>
+              <h2 className="text-xl font-semibold text-foreground">승차권</h2>
             </div>
 
             <div className="space-y-6">
               {/* Error Message */}
               {isError && (
-                <Card className="border-red-200 bg-red-50">
+                <Card className="border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10">
                   <CardContent className="p-4">
-                    <p className="text-sm text-red-700">
+                    <p className="text-sm text-red-700 dark:text-red-300">
                       {error?.message ?? "오류가 발생했습니다."}
                     </p>
                   </CardContent>
@@ -94,13 +94,13 @@ function PurchasedTicketsPageContent() {
 
               {/* Ticket List or Empty State */}
               {tickets.length === 0 ? (
-                <Card className="border-gray-200">
+                <Card>
                   <CardContent className="p-16 text-center">
                     {/* Ticket Icon */}
                     <div className="mx-auto mb-6 w-24 h-16 relative">
                       <svg
                         viewBox="0 0 100 60"
-                        className="w-full h-full text-gray-400"
+                        className="w-full h-full text-muted-foreground"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -129,7 +129,7 @@ function PurchasedTicketsPageContent() {
                         <circle cx="50" cy="45" r="1" fill="currentColor" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <h3 className="text-lg font-medium text-foreground mb-2">
                       발권하신 승차권이 없습니다.
                     </h3>
                   </CardContent>
@@ -139,15 +139,15 @@ function PurchasedTicketsPageContent() {
                   return (
                     <Card
                       key={ticket.bookingId}
-                      className="border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-white shadow-lg"
+                      className="border-2 border-blue-300 dark:border-blue-500/40 shadow-elev-md"
                     >
                       <CardContent className="p-6">
                         {/* 승차권 헤더 */}
-                        <div className="border-b-2 border-blue-200 pb-4 mb-4">
+                        <div className="border-b-2 border-blue-200 dark:border-blue-500/30 pb-4 mb-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
-                              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                                <Train className="h-6 w-6 text-white" />
+                              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                                <Train className="h-6 w-6 text-primary-foreground" />
                               </div>
                               <div>
                                 <div className="flex items-center space-x-2">
@@ -156,17 +156,17 @@ function PurchasedTicketsPageContent() {
                                   >
                                     {ticket.trainName}
                                   </Badge>
-                                  <span className="text-xl font-bold text-gray-900">
+                                  <span className="text-xl font-bold text-foreground">
                                     {ticket.trainNumber}
                                   </span>
                                 </div>
-                                <div className="text-sm text-gray-600 mt-1">
+                                <div className="text-sm text-muted-foreground mt-1">
                                   {formatDate(ticket.operationDate)}
                                 </div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-muted-foreground">
                                 예매번호: {ticket.bookingCode}
                               </div>
                             </div>
@@ -176,37 +176,37 @@ function PurchasedTicketsPageContent() {
                         {/* 승차권 본문 */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                           {/* 운행 정보 */}
-                          <div className="bg-white rounded-lg p-4 border border-gray-200">
-                            <h4 className="font-bold text-gray-900 mb-3 flex items-center">
-                              <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                          <div className="bg-card rounded-lg p-4 border border-border">
+                            <h4 className="font-bold text-foreground mb-3 flex items-center">
+                              <MapPin className="h-4 w-4 mr-2 text-primary" />
                               운행 정보
                             </h4>
                             <div className="space-y-3">
                               <div className="flex items-center justify-between">
                                 <div className="text-center flex-1">
-                                  <div className="text-2xl font-bold text-blue-600">
+                                  <div className="text-2xl font-bold text-primary">
                                     {formatTime(ticket.departureTime)}
                                   </div>
-                                  <div className="text-sm text-gray-600 mt-1">
+                                  <div className="text-sm text-muted-foreground mt-1">
                                     {ticket.departureStationName}
                                   </div>
                                 </div>
                                 <div className="flex items-center mx-4">
-                                  <div className="w-16 h-0.5 bg-blue-300"></div>
-                                  <ArrowRight className="h-4 w-4 text-blue-400 mx-1" />
-                                  <div className="w-16 h-0.5 bg-blue-300"></div>
+                                  <div className="w-16 h-0.5 bg-primary-light"></div>
+                                  <ArrowRight className="h-4 w-4 text-primary-light mx-1" />
+                                  <div className="w-16 h-0.5 bg-primary-light"></div>
                                 </div>
                                 <div className="text-center flex-1">
-                                  <div className="text-2xl font-bold text-blue-600">
+                                  <div className="text-2xl font-bold text-primary">
                                     {formatTime(ticket.arrivalTime)}
                                   </div>
-                                  <div className="text-sm text-gray-600 mt-1">
+                                  <div className="text-sm text-muted-foreground mt-1">
                                     {ticket.arrivalStationName}
                                   </div>
                                 </div>
                               </div>
                               <div className="text-center">
-                                <span className="text-sm text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                                <span className="text-sm text-secondary-foreground bg-secondary px-3 py-1 rounded-full">
                                   소요시간{" "}
                                   {getDuration(
                                     ticket.departureTime,
@@ -218,9 +218,9 @@ function PurchasedTicketsPageContent() {
                           </div>
 
                           {/* 좌석 정보 */}
-                          <div className="bg-white rounded-lg p-4 border border-gray-200">
-                            <h4 className="font-bold text-gray-900 mb-3 flex items-center">
-                              <User className="h-4 w-4 mr-2 text-green-600" />
+                          <div className="bg-card rounded-lg p-4 border border-border">
+                            <h4 className="font-bold text-foreground mb-3 flex items-center">
+                              <User className="h-4 w-4 mr-2 text-green-600 dark:text-green-400" />
                               좌석 정보
                             </h4>
                             <div className="space-y-2">
@@ -248,7 +248,7 @@ function PurchasedTicketsPageContent() {
                                   ([carNumber, value]) => (
                                     <div
                                       key={carNumber}
-                                      className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                                      className="flex items-center justify-between p-2 bg-muted rounded"
                                     >
                                       <div className="flex items-center space-x-2">
                                         <Badge
@@ -257,7 +257,7 @@ function PurchasedTicketsPageContent() {
                                         >
                                           {getCarTypeName(value.carType)}
                                         </Badge>
-                                        <span className="font-medium text-gray-900">
+                                        <span className="font-medium text-foreground">
                                           {carNumber}호차(
                                           {value.seats.join(", ")})
                                         </span>
@@ -271,8 +271,8 @@ function PurchasedTicketsPageContent() {
                         </div>
 
                         {/* 승차권 하단 정보 */}
-                        <div className="mt-4 pt-4 border-t border-gray-200">
-                          <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="mt-4 pt-4 border-t border-border">
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
                             <div className="flex items-center space-x-4">
                               <span>승차권 발권완료</span>
                             </div>
