@@ -160,7 +160,7 @@ function ContactChangePageContent() {
                       type="submit"
                       disabled={emailForm.formState.isSubmitting}
                       variant="outline"
-                      className="mt-7 px-6 py-2 rounded-full border-primary text-primary hover:bg-secondary disabled:opacity-50"
+                      className="mt-7 px-6 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground disabled:opacity-50"
                     >
                       {emailForm.formState.isSubmitting ? "처리 중..." : "이메일 인증"}
                     </Button>
@@ -243,7 +243,7 @@ function ContactChangePageContent() {
                       type="submit"
                       disabled={phoneForm.formState.isSubmitting}
                       variant="outline"
-                      className="px-6 py-2 rounded-full border-primary text-primary hover:bg-secondary disabled:opacity-50"
+                      className="px-6 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground disabled:opacity-50"
                     >
                       {phoneForm.formState.isSubmitting ? "처리 중..." : "휴대폰 인증/변경"}
                     </Button>
