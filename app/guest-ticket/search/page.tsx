@@ -125,7 +125,7 @@ export default function GuestTicketSearchPage() {
                       placeholder="이름을 입력하세요."
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="pl-10 bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                      className="pl-10"
                       autoComplete="name"
                     />
                   </div>
@@ -147,7 +147,7 @@ export default function GuestTicketSearchPage() {
                       placeholder="'*'를 제외, 휴대폰번호를 입력하세요."
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="pl-10 bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                      className="pl-10"
                       autoComplete="tel"
                     />
                   </div>
@@ -170,7 +170,7 @@ export default function GuestTicketSearchPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       maxLength={5}
-                      className="pl-10 bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                      className="pl-10"
                       autoComplete="current-password"
                     />
                   </div>

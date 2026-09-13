@@ -154,7 +154,7 @@ export default function GuestBookingPage() {
                     placeholder="본인 이름을 입력"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="h-12 text-base bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                    className="h-12 text-base"
                   />
                 </div>
 
@@ -170,7 +170,7 @@ export default function GuestBookingPage() {
                     value={phoneNumber}
                     onChange={(e) => handlePhoneNumberChange(e.target.value)}
                     maxLength={11}
-                    className="h-12 text-base bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                    className="h-12 text-base"
                   />
                 </div>
 
@@ -186,7 +186,7 @@ export default function GuestBookingPage() {
                     value={password}
                     onChange={(e) => handlePasswordChange(e.target.value)}
                     maxLength={5}
-                    className="h-12 text-base bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                    className="h-12 text-base"
                   />
                 </div>
 
@@ -202,7 +202,7 @@ export default function GuestBookingPage() {
                     value={passwordConfirm}
                     onChange={(e) => handlePasswordConfirmChange(e.target.value)}
                     maxLength={5}
-                    className="h-12 text-base bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30"
+                    className="h-12 text-base"
                   />
                 </div>
               </div>
