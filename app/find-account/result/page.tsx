@@ -120,7 +120,7 @@ export default function FindAccountResultPage() {
               </div>
 
               {/* Additional Info */}
-              <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-500/10 rounded-lg">
+              <div className="mt-8 p-4 bg-primary/10 rounded-lg">
                 <div className="flex items-start space-x-3">
                   <User className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                   <div className="text-left">

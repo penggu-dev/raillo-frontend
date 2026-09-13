@@ -377,7 +377,7 @@ export function FindPasswordTab() {
           </div>
         </form>
 
-        <div className="bg-blue-50 dark:bg-blue-500/10 rounded-lg p-4">
+        <div className="bg-primary/10 rounded-lg p-4">
           <div className="flex items-start space-x-3">
             <Mail className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
             <div>

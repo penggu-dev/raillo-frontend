@@ -65,7 +65,7 @@ export default function SignupVerifyPage() {
                 {/* 아이핀 인증 */}
                 <div className="text-center">
                   <div className="mb-6">
-                    <div className="w-32 h-32 mx-auto mb-4 bg-blue-50 dark:bg-blue-500/10 rounded-lg flex items-center justify-center">
+                    <div className="w-32 h-32 mx-auto mb-4 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Monitor className="h-16 w-16 text-primary" />
                     </div>
                     <h3 className="text-lg font-semibold mb-4">아이핀(I-PIN) 으로 인증</h3>
@@ -82,7 +82,7 @@ export default function SignupVerifyPage() {
                 {/* 휴대전화 인증 */}
                 <div className="text-center">
                   <div className="mb-6">
-                    <div className="w-32 h-32 mx-auto mb-4 bg-blue-50 dark:bg-blue-500/10 rounded-lg flex items-center justify-center">
+                    <div className="w-32 h-32 mx-auto mb-4 bg-primary/10 rounded-lg flex items-center justify-center">
                       <Smartphone className="h-16 w-16 text-primary" />
                     </div>
                     <h3 className="text-lg font-semibold mb-4">휴대전화로 인증</h3>
