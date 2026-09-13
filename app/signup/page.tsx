@@ -132,7 +132,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen">
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-elev-md">
             <CardHeader className="text-center">
@@ -540,7 +540,7 @@ export default function SignupPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
