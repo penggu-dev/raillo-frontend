@@ -12,6 +12,9 @@ const PATH_MAP: { [key: string]: string } = {
   payment: "결제",
   "payment-complete": "결제완료",
   purchased: "구매완료",
+  history: "예매 내역",
+  receipt: "영수증",
+  "guest-booking": "비회원 예매",
   reservation: "예약",
   reservations: "예약승차권 조회",
   general: "일반",
@@ -30,6 +33,8 @@ const PATH_MAP: { [key: string]: string } = {
   contact: "연락처",
   change: "변경",
   password: "비밀번호",
+  email: "이메일",
+  phone: "휴대폰 번호",
 };
 
 const Breadcrumb = () => {
