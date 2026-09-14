@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function PasswordVerifyLoading() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar Skeleton */}
@@ -55,7 +55,7 @@ export default function PasswordVerifyLoading() {
                   ))}
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-6">
+                <div className="bg-muted rounded-lg p-6">
                   <Skeleton className="h-6 w-16 mb-4" />
                   <Skeleton className="h-4 w-full mb-2" />
                   <Skeleton className="h-4 w-full mb-2" />

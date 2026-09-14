@@ -78,23 +78,23 @@ function WithdrawPageContent() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-md mx-auto">
             <Card className="text-center">
               <CardContent className="p-8">
                 <div className="mb-6">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <UserX className="h-8 w-8 text-green-600" />
+                  <div className="w-16 h-16 bg-green-100 dark:bg-green-500/15 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <UserX className="h-8 w-8 text-green-600 dark:text-green-400" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-xl font-bold text-foreground mb-2">
                     회원탈퇴 완료
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground">
                     회원탈퇴가 성공적으로 완료되었습니다.
                   </p>
                 </div>
-                <p className="text-sm text-gray-500 mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   잠시 후 홈페이지로 이동합니다...
                 </p>
                 <Link href="/">
@@ -109,14 +109,14 @@ function WithdrawPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           {/* 뒤로가기 버튼 */}
           <div className="mb-6">
             <button
               onClick={() => router.back()}
-              className="inline-flex items-center text-gray-600 hover:text-gray-900"
+              className="inline-flex items-center text-muted-foreground hover:text-foreground"
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
               뒤로가기
@@ -124,17 +124,17 @@ function WithdrawPageContent() {
           </div>
 
           {/* 경고 알림 */}
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
+          <Alert className="mb-6 border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10">
+            <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+            <AlertDescription className="text-red-800 dark:text-red-200">
               회원탈퇴는 되돌릴 수 없습니다. 신중하게 결정해 주세요.
             </AlertDescription>
           </Alert>
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center text-xl font-bold text-gray-900">
-                <UserX className="h-6 w-6 mr-2 text-red-600" />
+              <CardTitle className="flex items-center text-xl font-bold text-foreground">
+                <UserX className="h-6 w-6 mr-2 text-red-600 dark:text-red-400" />
                 회원탈퇴
               </CardTitle>
             </CardHeader>
@@ -146,11 +146,11 @@ function WithdrawPageContent() {
                 }}
               >
                 {/* 주의사항 */}
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 mb-2">
+                <div className="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-lg p-4">
+                  <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
                     회원탈퇴 시 주의사항
                   </h3>
-                  <ul className="text-sm text-yellow-700 space-y-1">
+                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
                     <li>• 모든 개인정보가 영구적으로 삭제됩니다</li>
                     <li>• 구매 내역, 마일리지 등 모든 데이터가 소멸됩니다</li>
                     <li>• 탈퇴 후에는 복구가 불가능합니다</li>
@@ -172,14 +172,14 @@ function WithdrawPageContent() {
                     className="w-full"
                     autoComplete="off"
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     위 입력란에 "회원탈퇴"를 정확히 입력해주세요
                   </p>
                 </div>
 
                 {/* 동의사항 */}
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-gray-900">동의사항</h3>
+                  <h3 className="font-semibold text-foreground">동의사항</h3>
 
                   <div className="space-y-3">
                     <div className="flex items-start space-x-3">
@@ -234,9 +234,9 @@ function WithdrawPageContent() {
 
                 {/* 에러 메시지 */}
                 {error && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertTriangle className="h-4 w-4 text-red-600" />
-                    <AlertDescription className="text-red-800">
+                  <Alert className="border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10">
+                    <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                    <AlertDescription className="text-red-800 dark:text-red-200">
                       {error}
                     </AlertDescription>
                   </Alert>
@@ -255,7 +255,7 @@ function WithdrawPageContent() {
                   <Button
                     type="submit"
                     disabled={!isFormValid || isLoading}
-                    className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300"
+                    className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 dark:bg-red-700 dark:hover:bg-red-800 dark:disabled:bg-zinc-700 disabled:text-muted-foreground"
                   >
                     {isLoading ? "처리 중..." : "회원탈퇴"}
                   </Button>
