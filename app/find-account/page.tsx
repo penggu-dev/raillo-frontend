@@ -35,17 +35,11 @@ export default function FindAccountPage() {
           <Card className="shadow-elev-md">
             <CardContent className="p-8">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-8 h-14">
-                  <TabsTrigger
-                    value="member"
-                    className="text-base font-medium py-4 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
-                  >
+                <TabsList className="grid w-full grid-cols-2 mb-8">
+                  <TabsTrigger value="member">
                     회원번호 찾기
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="password"
-                    className="text-base font-medium py-4 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
-                  >
+                  <TabsTrigger value="password">
                     비밀번호 찾기
                   </TabsTrigger>
                 </TabsList>
