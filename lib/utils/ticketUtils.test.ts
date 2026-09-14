@@ -16,11 +16,11 @@ describe("getTrainTypeColor", () => {
   })
 
   it("ITX-새마을은 초록색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("ITX-새마을")).toBe("bg-green-600 text-white dark:bg-green-700")
+    expect(getTrainTypeColor("ITX-새마을")).toBe("bg-green-700 text-white dark:bg-green-700")
   })
 
   it("무궁화호는 주황색 배경을 반환한다", () => {
-    expect(getTrainTypeColor("무궁화호")).toBe("bg-orange-600 text-white dark:bg-orange-700")
+    expect(getTrainTypeColor("무궁화호")).toBe("bg-orange-700 text-white dark:bg-orange-700")
   })
 
   it("ITX-청춘은 보라색 배경을 반환한다", () => {

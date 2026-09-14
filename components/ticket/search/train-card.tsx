@@ -2,15 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Zap } from "lucide-react"
 import type { TrainSchedule, SeatType } from "@/types/trainType"
+import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
 
 interface TrainCardProps {
   train: TrainSchedule
   isSelected: boolean
   onSeatSelection: (train: TrainSchedule, seatType: SeatType) => void
-  getTrainTypeColor: (trainType: string) => string
   formatPrice: (price: number) => string
   getSeatTypeName: (seatType: SeatType) => string
 }
@@ -19,7 +18,6 @@ export function TrainCard({
   train,
   isSelected,
   onSeatSelection,
-  getTrainTypeColor,
   formatPrice,
   getSeatTypeName,
 }: TrainCardProps) {
@@ -34,11 +32,9 @@ export function TrainCard({
           {/* Train Info */}
           <div className="lg:col-span-4">
             <div className="flex items-center space-x-3 mb-2">
-              <Badge className={`${getTrainTypeColor(train.trainName)} px-3 py-1`}>
-                {train.trainName}
-              </Badge>
+              <TrainTypeBadge trainName={train.trainName} />
               <span className="font-semibold text-lg">{train.trainNumber}</span>
-              <Zap className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
+              <Zap className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>{train.departureStationName}</span>

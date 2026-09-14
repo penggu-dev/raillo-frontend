@@ -276,7 +276,7 @@ export default function SignupPage() {
                   )}
                   {watchConfirmPassword && !errors.confirmPassword && (
                     <p
-                      className={`text-xs ${passwordsMatch ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                      className={`text-xs ${passwordsMatch ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                     >
                       {passwordsMatch
                         ? "비밀번호가 일치합니다."

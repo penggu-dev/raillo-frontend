@@ -81,15 +81,15 @@ export function DateCalendar({
                   ? "bg-primary text-primary-foreground font-semibold"
                   : isHoliday
                     ? isSelectable
-                      ? "text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                      ? "text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
                       : "text-red-300 dark:text-red-400/40 cursor-not-allowed"
                     : isSelectable
                       ? isToday
                         ? "bg-secondary text-secondary-foreground font-semibold hover:bg-primary hover:text-primary-foreground"
                         : isWeekend
                           ? currentDate.getDay() === 0
-                            ? "text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-                            : "text-blue-500 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
+                            ? "text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+                            : "text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
                           : "text-foreground hover:bg-muted"
                       : "text-muted-foreground opacity-40 cursor-not-allowed"
                 : "text-muted-foreground opacity-40"
@@ -153,7 +153,7 @@ export function DateCalendar({
           <div
             key={day}
             className={`p-2 text-center text-sm font-medium h-9 flex items-center justify-center ${
-              index === 0 ? "text-red-500 dark:text-red-400" : index === 6 ? "text-blue-500 dark:text-blue-400" : "text-foreground"
+              index === 0 ? "text-red-700 dark:text-red-400" : index === 6 ? "text-blue-600 dark:text-blue-400" : "text-foreground"
             }`}
           >
             {day}
