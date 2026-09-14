@@ -257,8 +257,9 @@ function WithdrawPageContent() {
                   </Button>
                   <Button
                     type="submit"
+                    variant="destructive"
                     disabled={!isFormValid || isLoading}
-                    className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 dark:bg-red-700 dark:hover:bg-red-800 dark:disabled:bg-zinc-700 disabled:text-muted-foreground"
+                    className="flex-1"
                   >
                     {isLoading ? "처리 중..." : "회원탈퇴"}
                   </Button>
