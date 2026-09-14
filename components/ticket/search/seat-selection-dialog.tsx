@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type {
   CarInfo,
   SeatDetail,
@@ -59,6 +59,7 @@ export function SeatSelectionDialog({
   onCarSelect,
   onRefreshSeats,
 }: SeatSelectionDialogProps) {
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const [selectedCar, setSelectedCar] = useState<CarInfo | null>(null);
   const [selectionError, setSelectionError] = useState<string | null>(null);
   const onCarSelectRef = useRef(onCarSelect);
@@ -220,18 +221,36 @@ export function SeatSelectionDialog({
     onSeatClick(seatNumber);
   };
 
-  if (!isOpen || !selectedTrain) return null;
+  if (!selectedTrain) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-card rounded-2xl border shadow-elev-lg w-full max-w-7xl max-h-[95vh] overflow-hidden">
+    // Dialog(Radix): role="dialog"·aria-modal, 포커스 트랩, Esc 닫기, 닫힌 뒤 포커스 복귀, 우측 상단 닫기 버튼 제공
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent
+        className="block w-[calc(100%-2rem)] max-w-7xl max-h-[95vh] gap-0 overflow-hidden rounded-2xl p-0 shadow-elev-lg sm:rounded-2xl [&>button:last-child]:right-6 [&>button:last-child]:top-7"
+        // 바깥 클릭으로는 닫지 않음(기존 동작) — 고르던 좌석이 실수로 초기화되지 않도록
+        onInteractOutside={(event) => event.preventDefault()}
+        // 트리거 없이 상태로 여닫는 모달 — 연 요소가 화면에 남아 있으면 그 요소로 포커스 복귀
+        onOpenAutoFocus={() => {
+          returnFocusRef.current = document.activeElement as HTMLElement | null;
+        }}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          if (returnFocusRef.current?.isConnected) returnFocusRef.current.focus();
+        }}
+      >
         {/* Dialog Header */}
-        <div className="flex items-center justify-between p-6 border-b bg-card">
+        <div className="flex items-center justify-between p-6 pr-16 border-b bg-card">
           <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-primary rounded-full"></div>
-            <h2 className="text-xl font-bold text-foreground">
+            <div className="w-3 h-3 bg-primary rounded-full" aria-hidden="true"></div>
+            <DialogTitle className="text-xl font-bold text-foreground">
               좌석선택 - {selectedTrain.trainName} {selectedTrain.trainNumber}
-            </h2>
+            </DialogTitle>
             {selectedCar && (
               <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
                 {selectedCar.carNumber}호차 (
@@ -239,9 +258,6 @@ export function SeatSelectionDialog({
               </span>
             )}
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
         </div>
 
         {/* Car Selection */}
@@ -367,7 +383,7 @@ export function SeatSelectionDialog({
             </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
