@@ -52,6 +52,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function ReservationsPageContent() {
   const router = useRouter();
@@ -317,16 +318,12 @@ function ReservationsPageContent() {
           </div>
 
           {/* Notice */}
-          <Card className="mb-8 bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2 text-blue-700 dark:text-blue-300">
-                <Info className="h-5 w-5" />
-                <span className="font-medium">
-                  결제 기한이 지난 목록은 자동 삭제됩니다
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <Alert variant="info" role="note" className="mb-8">
+            <Info className="h-4 w-4" />
+            <AlertDescription className="font-medium">
+              결제 기한이 지난 목록은 자동 삭제됩니다
+            </AlertDescription>
+          </Alert>
 
           {/* Reservation List */}
           <div className="space-y-4">
@@ -484,24 +481,22 @@ function ReservationsPageContent() {
           </div>
 
           {/* Notice */}
-          <Card className="mt-8 bg-yellow-50 border-yellow-200 dark:bg-yellow-500/10 dark:border-yellow-500/30">
-            <CardContent className="p-6">
-              <div className="flex items-start space-x-3">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-                <div className="space-y-2 text-sm text-yellow-800 dark:text-yellow-200">
-                  <h3 className="font-semibold">예약승차권 조회 안내</h3>
-                  <ul className="space-y-1 list-disc list-inside">
-                    <li>
-                      예약 후 10분 이내에 결제하지 않으면 자동으로 취소됩니다.
-                    </li>
-                    <li>결제 기한이 지난 예약은 자동으로 삭제됩니다.</li>
-                    <li>예약 취소는 결제 기한 내에만 가능합니다.</li>
-                    <li>예약번호는 예약 완료 시 발급된 번호입니다.</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <Alert variant="warning" role="note" className="mt-8">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle asChild>
+              <h3 className="mb-2 font-semibold">예약승차권 조회 안내</h3>
+            </AlertTitle>
+            <AlertDescription>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>
+                  예약 후 10분 이내에 결제하지 않으면 자동으로 취소됩니다.
+                </li>
+                <li>결제 기한이 지난 예약은 자동으로 삭제됩니다.</li>
+                <li>예약 취소는 결제 기한 내에만 가능합니다.</li>
+                <li>예약번호는 예약 완료 시 발급된 번호입니다.</li>
+              </ul>
+            </AlertDescription>
+          </Alert>
         </div>
       </main>
 

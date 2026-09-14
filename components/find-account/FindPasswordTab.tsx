@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, User, Lock, Mail, ArrowLeft } from "lucide-react";
+import { FileText, User, Lock, Mail, ArrowLeft, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { findPassword, verifyPassword } from "@/lib/api/authMembers";
 import { updatePassword } from "@/lib/api/members";
@@ -13,6 +13,7 @@ import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import { AUTH_CODE_LENGTH, PASSWORD_MIN_LENGTH } from "@/constants/validation";
 import LoadingSpinner from "../common/LoadingSpinner";
 import useErrorToast from "@/hooks/useErrorToast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function FindPasswordTab() {
   const [passwordName, setPasswordName] = useState("");
@@ -487,21 +488,17 @@ export function FindPasswordTab() {
           </div>
         </form>
 
-        <div className="bg-green-50 dark:bg-green-500/10 rounded-lg p-4">
-          <div className="flex items-start space-x-3">
-            <Lock className="h-5 w-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0" />
-            <div>
-              <h3 className="font-semibold text-foreground mb-1">
-                비밀번호 변경 안내
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                비밀번호는 8자 이상이어야 하며, 영문, 숫자, 특수문자를 포함하는
-                것을 권장합니다. 비밀번호 변경 후 자동으로 로그인 페이지로
-                이동합니다.
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="success" role="note">
+          <Lock className="h-4 w-4" />
+          <AlertTitle asChild>
+            <h3 className="font-semibold">비밀번호 변경 안내</h3>
+          </AlertTitle>
+          <AlertDescription className="leading-relaxed">
+            비밀번호는 8자 이상이어야 하며, 영문, 숫자, 특수문자를 포함하는
+            것을 권장합니다. 비밀번호 변경 후 자동으로 로그인 페이지로
+            이동합니다.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
@@ -546,30 +543,16 @@ export function FindPasswordTab() {
         </Button>
       </div>
 
-      <div className="bg-green-50 dark:bg-green-500/10 rounded-lg p-4 mt-6">
-        <div className="flex items-start space-x-3">
-          <svg
-            className="h-5 w-5 text-green-600 dark:text-green-400 mt-1 flex-shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <div>
-            <h3 className="font-semibold text-foreground mb-1">변경 완료 안내</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              새로운 비밀번호로 로그인하실 수 있습니다. 보안을 위해 정기적으로
-              비밀번호를 변경하시는 것을 권장합니다.
-            </p>
-          </div>
-        </div>
-      </div>
+      <Alert variant="success" role="note" className="mt-6">
+        <Info className="h-4 w-4" />
+        <AlertTitle asChild>
+          <h3 className="font-semibold">변경 완료 안내</h3>
+        </AlertTitle>
+        <AlertDescription className="leading-relaxed">
+          새로운 비밀번호로 로그인하실 수 있습니다. 보안을 위해 정기적으로
+          비밀번호를 변경하시는 것을 권장합니다.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }
