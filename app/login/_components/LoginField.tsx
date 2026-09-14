@@ -105,6 +105,7 @@ const LoginField = () => {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
             disabled={isSubmitting}
           >

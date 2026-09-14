@@ -152,6 +152,7 @@ export default function ResetPasswordPage() {
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      aria-label={showPasswords.new ? "신규 비밀번호 숨기기" : "신규 비밀번호 보기"}
                       onClick={() =>
                         setShowPasswords((prev) => ({
                           ...prev,
@@ -195,6 +196,7 @@ export default function ResetPasswordPage() {
                       variant="ghost"
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      aria-label={showPasswords.confirm ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
                       onClick={() =>
                         setShowPasswords((prev) => ({
                           ...prev,
