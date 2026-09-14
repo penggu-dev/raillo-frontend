@@ -1,12 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Train, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { TrainCard } from "./train-card";
 import type { TrainSchedule, SeatType } from "@/types/trainType";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 
 interface TrainListProps {
   displayedTrains: TrainSchedule[];
@@ -36,20 +36,16 @@ export function TrainList({
 
   if (displayedTrains.length === 0) {
     return (
-      <Card>
-        <CardContent className="p-12 text-center">
-          <Train className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">
-            검색 결과가 없습니다
-          </h3>
-          <p className="text-muted-foreground mb-4">
-            선택하신 조건에 맞는 열차가 없습니다.
-          </p>
+      <EmptyState
+        icon={Train}
+        title="검색 결과가 없습니다"
+        description="선택하신 조건에 맞는 열차가 없습니다."
+        action={
           <Button onClick={() => router.push("/")} variant="outline">
             다시 검색하기
           </Button>
-        </CardContent>
-      </Card>
+        }
+      />
     );
   }
 
