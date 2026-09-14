@@ -6,9 +6,11 @@ export const getTrainTypeColor = (trainName: string): string => {
     case TRAIN_TYPE.KTX_SANCHEON:
       return "bg-blue-600 text-white dark:bg-blue-600"
     case TRAIN_TYPE.ITX_SAEMAUL:
-      return "bg-green-600 text-white dark:bg-green-700"
+      // 라이트 green-600 위 흰 글자 3.30:1 → green-700(5.02:1)
+      return "bg-green-700 text-white dark:bg-green-700"
     case TRAIN_TYPE.MUGUNGHWA:
-      return "bg-orange-600 text-white dark:bg-orange-700"
+      // 라이트 orange-600 위 흰 글자 3.56:1 → orange-700(5.18:1)
+      return "bg-orange-700 text-white dark:bg-orange-700"
     case TRAIN_TYPE.ITX_CHEONGCHUN:
       return "bg-purple-600 text-white dark:bg-purple-600"
     default:
