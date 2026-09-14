@@ -6,10 +6,11 @@ import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import {Badge} from "@/components/ui/badge"
 import {Separator} from "@/components/ui/separator"
-import {Calendar, CheckCircle, Clock, CreditCard, Download, Home, List, Train, User, ArrowRight} from "lucide-react"
+import {Calendar, CheckCircle, Clock, CreditCard, Download, Home, Info, List, Train, User, ArrowRight} from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { TRAIN_TYPE } from "@/constants/trainType"
 import { formatPrice, formatDate } from "@/lib/utils/format"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export default function PaymentCompletePage() {
   const router = useRouter()
@@ -206,17 +207,20 @@ export default function PaymentCompletePage() {
         </div>
 
         {/* 안내사항 */}
-        <Card className="mt-6 bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">이용 안내</h3>
-            <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+        <Alert variant="info" role="note" className="mt-6">
+          <Info className="h-4 w-4" />
+          <AlertTitle asChild>
+            <h3 className="mb-2 font-semibold">이용 안내</h3>
+          </AlertTitle>
+          <AlertDescription>
+            <ul className="space-y-1">
               <li>• 승차권은 출발시간 20분 전까지 발권하셔야 합니다.</li>
               <li>• 예매 취소는 출발시간 20분 전까지 가능합니다.</li>
               <li>• 승차권은 모바일 앱이나 홈페이지에서 확인할 수 있습니다.</li>
               <li>• 문의사항은 고객센터(1544-1234)로 연락주세요.</li>
             </ul>
-          </CardContent>
-        </Card>
+          </AlertDescription>
+        </Alert>
       </div>
     </div>
   )

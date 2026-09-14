@@ -15,6 +15,9 @@ const buttonVariants = cva(
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-border bg-transparent text-foreground hover:bg-muted hover:border-primary hover:text-primary active:bg-secondary active:border-primary-active active:text-primary-active disabled:pointer-events-none disabled:bg-transparent disabled:border-border disabled:text-muted-foreground",
+        // 브랜드 테두리 버튼 — 흰(카드) 배경 위 보조 CTA. hover는 secondary 틴트 + 전용 글자색(대비 5.49:1 · 다크 8.65:1)
+        "outline-primary":
+          "border border-primary bg-transparent text-primary hover:bg-secondary hover:text-secondary-foreground active:bg-secondary active:border-primary-active active:text-secondary-foreground disabled:pointer-events-none disabled:bg-transparent disabled:border-border disabled:text-muted-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:

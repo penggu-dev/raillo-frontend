@@ -72,8 +72,8 @@ export default function IdentityVerificationPage({
                       </h3>
                       <Button
                         onClick={handleVerification}
-                        variant="outline"
-                        className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
+                        variant="outline-primary"
+                        className="px-8 py-2 rounded-full"
                       >
                         아이핀으로 확인하기
                       </Button>
@@ -90,8 +90,8 @@ export default function IdentityVerificationPage({
                       </h3>
                       <Button
                         onClick={handleVerification}
-                        variant="outline"
-                        className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
+                        variant="outline-primary"
+                        className="px-8 py-2 rounded-full"
                       >
                         휴대전화로 확인하기
                       </Button>

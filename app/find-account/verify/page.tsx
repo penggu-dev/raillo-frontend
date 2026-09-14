@@ -72,8 +72,8 @@ export default function FindPasswordVerifyPage() {
                     <h3 className="text-lg font-semibold mb-4">아이핀(I-PIN) 으로 인증</h3>
                     <Button
                       onClick={() => handleVerification("ipin")}
-                      variant="outline"
-                      className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
+                      variant="outline-primary"
+                      className="px-8 py-2 rounded-full"
                     >
                       아이핀으로 확인하기
                     </Button>
@@ -89,8 +89,8 @@ export default function FindPasswordVerifyPage() {
                     <h3 className="text-lg font-semibold mb-4">휴대전화로 인증</h3>
                     <Button
                       onClick={() => handleVerification("phone")}
-                      variant="outline"
-                      className="px-8 py-2 rounded-full border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
+                      variant="outline-primary"
+                      className="px-8 py-2 rounded-full"
                     >
                       휴대전화로 확인하기
                     </Button>
