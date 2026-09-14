@@ -12,7 +12,10 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground hover:bg-primary-active disabled:pointer-events-none disabled:bg-secondary disabled:text-primary-light",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive-active disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground",
+        // 위험 동작 보조 버튼 — 테두리는 글자색(text-destructive)을 따라감
+        "outline-destructive":
+          "border border-current bg-transparent text-destructive hover:bg-destructive/10 disabled:pointer-events-none disabled:border-border disabled:text-muted-foreground",
         outline:
           "border border-border bg-transparent text-foreground hover:bg-muted hover:border-primary hover:text-primary active:bg-secondary active:border-primary-active active:text-primary-active disabled:pointer-events-none disabled:bg-transparent disabled:border-border disabled:text-muted-foreground",
         // 브랜드 테두리 버튼 — 흰(카드) 배경 위 보조 CTA. hover는 secondary 틴트 + 전용 글자색(대비 5.49:1 · 다크 8.65:1)
