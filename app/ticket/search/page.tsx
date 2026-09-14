@@ -24,8 +24,8 @@ import type {
 } from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
 import { useToast } from "@/hooks/useToast";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { saveSearchHistory } from "@/lib/utils/searchHistory";
+import { TrainListSkeleton } from "@/components/ticket/search/TrainListSkeleton";
 
 function TrainSearchPage() {
   const router = useRouter();
@@ -580,12 +580,7 @@ function TrainSearchPage() {
   };
 
   if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-muted-foreground">열차 정보를 검색하고 있습니다...</p>
-      </div>
-    );
+    return <TrainListSkeleton />;
   }
 
   return (
@@ -691,12 +686,7 @@ function TrainSearchPage() {
 export default function TrainSearchPageWrapper() {
   return (
     <Suspense
-      fallback={
-        <div className="container mx-auto px-4 py-16 text-center">
-          <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-muted-foreground">열차 정보를 검색하고 있습니다...</p>
-        </div>
-      }
+      fallback={<TrainListSkeleton />}
     >
       <TrainSearchPage />
     </Suspense>

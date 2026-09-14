@@ -52,6 +52,9 @@ import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { CardListSkeleton } from "@/components/common/CardListSkeleton";
 
 function ReservationsPageContent() {
   const router = useRouter();
@@ -64,7 +67,7 @@ function ReservationsPageContent() {
   const [selectedCancelId, setSelectedCancelId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  const { data, isLoading, isError, error } = useGetPendingBookingList();
+  const { data, isLoading, isError, error, refetch } = useGetPendingBookingList();
   const reservations = data ?? [];
 
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
@@ -277,27 +280,37 @@ function ReservationsPageContent() {
     validReservations.length > 0 &&
     validReservations.every((item) => selectedIds.has(item.pendingBookingId));
 
-  if (isLoading) {
+  if (isLoading || isError) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-muted-foreground">예약 목록을 불러오고 있습니다...</p>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="text-red-600 dark:text-red-400 mb-4">
-          <p className="text-lg font-semibold">
-            예약 목록을 불러올 수 없습니다
-          </p>
-          <p className="text-sm">{error?.message}</p>
+      <div className="min-h-screen pb-24">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-foreground mb-2">
+                예약승차권 조회
+              </h2>
+              <p className="text-muted-foreground">
+                예약한 승차권을 확인하고 결제하거나 취소할 수 있습니다
+              </p>
+            </div>
+            {isLoading ? (
+              <CardListSkeleton label="예약 목록을 불러오는 중" />
+            ) : (
+              <ErrorState
+                title="예약 목록을 불러올 수 없습니다"
+                description={error?.message ?? "일시적인 오류로 조회하지 못했습니다. 잠시 후 다시 시도해주세요."}
+                action={
+                  <>
+                    <Button variant="outline" onClick={() => router.push("/")}>
+                      홈으로 돌아가기
+                    </Button>
+                    <Button onClick={() => refetch()}>다시 시도</Button>
+                  </>
+                }
+              />
+            )}
+          </div>
         </div>
-        <Button onClick={() => router.push("/")} variant="outline">
-          홈으로 돌아가기
-        </Button>
       </div>
     );
   }
@@ -343,39 +356,27 @@ function ReservationsPageContent() {
             </div>
 
             {reservations.length === 0 ? (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <Clock className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    예약 내역이 없습니다
-                  </h3>
-                  <p className="text-muted-foreground mb-6">
-                    새로운 예약을 진행하세요.
-                  </p>
-                  <Link href="/">
-                    <Button>
-                      승차권 예매하기
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={Clock}
+                title="예약 내역이 없습니다"
+                description="새로운 예약을 진행하세요."
+                action={
+                  <Button asChild>
+                    <Link href="/">승차권 예매하기</Link>
+                  </Button>
+                }
+              />
             ) : validReservations.length === 0 ? (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <Clock className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    유효한 예약이 없습니다
-                  </h3>
-                  <p className="text-muted-foreground mb-6">
-                    결제 기한이 지난 예약은 자동으로 삭제됩니다.
-                  </p>
-                  <Link href="/">
-                    <Button>
-                      승차권 예매하기
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={Clock}
+                title="유효한 예약이 없습니다"
+                description="결제 기한이 지난 예약은 자동으로 삭제됩니다."
+                action={
+                  <Button asChild>
+                    <Link href="/">승차권 예매하기</Link>
+                  </Button>
+                }
+              />
             ) : (
               validReservations.map((reservation) => (
                 <Card

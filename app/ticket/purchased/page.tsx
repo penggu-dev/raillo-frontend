@@ -4,13 +4,17 @@ import AuthGuard from "@/components/auth/AuthGuard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import { Train, MapPin, ArrowRight, User } from "lucide-react";
+import { Train, MapPin, ArrowRight, User, Ticket } from "lucide-react";
 import { useGetTickets } from "@/hooks/useBooking";
 import { differenceInMinutes, parse } from "date-fns";
 import { formatDate, formatTime } from "@/lib/utils/format";
 import { getCarTypeName } from "@/lib/utils/ticketUtils";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { CardListSkeleton } from "@/components/common/CardListSkeleton";
 
 interface Ticket {
   bookingId: number;
@@ -39,6 +43,7 @@ function PurchasedTicketsPageContent() {
     isLoading: loading,
     isError,
     error,
+    refetch,
   } = useGetTickets("UPCOMING");
 
   // 소요 시간 계산 함수
@@ -56,9 +61,17 @@ function PurchasedTicketsPageContent() {
   // 로딩 중인 경우
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-muted-foreground">승차권을 불러오고 있습니다...</p>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-foreground mb-2">
+                승차권 확인
+              </h2>
+            </div>
+            <CardListSkeleton label="승차권을 불러오는 중" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -82,59 +95,23 @@ function PurchasedTicketsPageContent() {
             </div>
 
             <div className="space-y-6">
-              {/* Error Message */}
-              {isError && (
-                <Card className="border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10">
-                  <CardContent className="p-4">
-                    <p className="text-sm text-red-700 dark:text-red-300">
-                      {error?.message ?? "오류가 발생했습니다."}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Ticket List or Empty State */}
-              {tickets.length === 0 ? (
-                <Card>
-                  <CardContent className="p-16 text-center">
-                    {/* Ticket Icon */}
-                    <div className="mx-auto mb-6 w-24 h-16 relative">
-                      <svg
-                        viewBox="0 0 100 60"
-                        className="w-full h-full text-muted-foreground"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        {/* Ticket outline */}
-                        <path
-                          d="M10 10 L90 10 L90 50 L10 50 Z"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeDasharray="3,2"
-                        />
-                        {/* Perforation line */}
-                        <line
-                          x1="50"
-                          y1="10"
-                          x2="50"
-                          y2="50"
-                          stroke="currentColor"
-                          strokeDasharray="2,2"
-                          strokeWidth="1"
-                        />
-                        {/* Small circles for perforation */}
-                        <circle cx="50" cy="15" r="1" fill="currentColor" />
-                        <circle cx="50" cy="25" r="1" fill="currentColor" />
-                        <circle cx="50" cy="35" r="1" fill="currentColor" />
-                        <circle cx="50" cy="45" r="1" fill="currentColor" />
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">
-                      발권하신 승차권이 없습니다.
-                    </h3>
-                  </CardContent>
-                </Card>
+              {isError ? (
+                <ErrorState
+                  title="승차권을 불러오지 못했습니다"
+                  description={error?.message ?? "일시적인 오류로 조회하지 못했습니다. 잠시 후 다시 시도해주세요."}
+                  action={<Button onClick={() => refetch()}>다시 시도</Button>}
+                />
+              ) : tickets.length === 0 ? (
+                <EmptyState
+                  icon={Ticket}
+                  title="발권하신 승차권이 없습니다"
+                  description="승차권을 예매하면 여기에서 확인할 수 있어요."
+                  action={
+                    <Button asChild>
+                      <Link href="/">승차권 예매하기</Link>
+                    </Button>
+                  }
+                />
               ) : (
                 tickets.map((ticket) => {
                   return (

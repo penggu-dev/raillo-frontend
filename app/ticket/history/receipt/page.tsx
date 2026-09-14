@@ -19,6 +19,8 @@ import {
   getPaymentMethodName,
 } from "@/lib/utils/ticketUtils";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { ErrorState } from "@/components/common/ErrorState";
+import { CardListSkeleton } from "@/components/common/CardListSkeleton";
 
 type TicketReceiptDetail = TicketReceiptResponse["result"];
 
@@ -56,27 +58,31 @@ export default function TicketReceiptDetailPage() {
     );
   }
 
-  if (loading) {
+  if (loading || isError || !receipt) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <LoadingSpinner className="mx-auto mb-4" />
-        <p className="text-muted-foreground">영수증 상세를 불러오고 있습니다...</p>
-      </div>
-    );
-  }
-
-  if (isError || !receipt) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="text-red-600 dark:text-red-400 mb-4">
-          <p className="text-lg font-semibold">
-            영수증 정보를 불러올 수 없습니다
-          </p>
-          <p className="text-sm">{error?.message ?? "데이터가 없습니다."}</p>
+      <div className="min-h-screen">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-foreground mb-2">
+                영수증 상세
+              </h2>
+            </div>
+            {loading ? (
+              <CardListSkeleton label="영수증 상세를 불러오는 중" count={2} />
+            ) : (
+              <ErrorState
+                title="영수증 정보를 불러올 수 없습니다"
+                description={error?.message ?? "데이터가 없습니다."}
+                action={
+                  <Button variant="outline" asChild>
+                    <Link href="/ticket/history">내역으로 돌아가기</Link>
+                  </Button>
+                }
+              />
+            )}
+          </div>
         </div>
-        <Link href="/ticket/history">
-          <Button variant="outline">내역으로 돌아가기</Button>
-        </Link>
       </div>
     );
   }
