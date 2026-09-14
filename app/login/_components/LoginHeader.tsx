@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const LoginHeader = () => {
   const searchParams = useSearchParams();
@@ -18,9 +19,9 @@ const LoginHeader = () => {
         회원번호로 로그인하세요
       </CardDescription>
       {redirectMessage && (
-        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg">
-          <p className="text-sm text-blue-800 dark:text-blue-200">{redirectMessage}</p>
-        </div>
+        <Alert variant="info" className="mt-4 p-3">
+          <AlertDescription>{redirectMessage}</AlertDescription>
+        </Alert>
       )}
     </CardHeader>
   );
