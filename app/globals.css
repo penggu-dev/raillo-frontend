@@ -46,6 +46,10 @@
     --muted: 244 244 246; /* #f4f4f6 */
     --muted-foreground: 99 99 107; /* #63636b — 흰 배경 5.95:1 · muted 5.42:1 */
 
+    /* Skeleton — shimmer 바탕·하이라이트 (목업 상태 문서) */
+    --skeleton: 233 236 242; /* #e9ecf2 */
+    --skeleton-highlight: 243 245 250; /* #f3f5fa */
+
     /* Destructive — 채움(bg·border)과 글자(text) 분리 */
     --destructive: 220 38 38; /* #dc2626 — 흰 글자 4.83:1 */
     --destructive-foreground: 255 255 255; /* #ffffff */
@@ -103,6 +107,8 @@
     --accent-foreground: 255 255 255; /* #ffffff */
     --muted: 39 39 42; /* #27272a */
     --muted-foreground: 161 161 170; /* #a1a1aa */
+    --skeleton: 39 39 42; /* #27272a */
+    --skeleton-highlight: 52 52 58; /* #34343a */
     --destructive: 185 28 28; /* #b91c1c — 흰 글자 6.47:1 */
     --destructive-foreground: 255 255 255; /* #ffffff */
     --destructive-active: 153 27 27; /* #991b1b — hover 채움, 흰 글자 8.31:1 */
@@ -184,5 +190,36 @@
   }
   .caption-sm {
     @apply font-pretendard text-[11px] font-normal leading-[1.5];
+  }
+}
+
+/* 스켈레톤 shimmer — 좌→우로 밝은 띠가 지나감. 움직임 줄이기 설정이면 멈춘 바탕색만 표시 */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer components {
+  .skeleton-shimmer {
+    background-color: rgb(var(--skeleton));
+    background-image: linear-gradient(
+      90deg,
+      rgb(var(--skeleton)) 25%,
+      rgb(var(--skeleton-highlight)) 37%,
+      rgb(var(--skeleton)) 63%
+    );
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer {
+      animation: none;
+      background-image: none;
+    }
   }
 }
