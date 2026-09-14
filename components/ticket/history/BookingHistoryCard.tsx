@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { TicketResponse } from "@/types/bookingType";
 import { formatDate, formatTime } from "@/lib/utils/format";
-import { getTrainTypeColor, getCarTypeName, getPassengerTypeName } from "@/lib/utils/ticketUtils";
+import { getCarTypeName, getPassengerTypeName } from "@/lib/utils/ticketUtils";
+import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
 
 type BookingHistoryItem = TicketResponse["result"][number];
 
@@ -84,9 +85,7 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center flex-wrap gap-2 mb-2">
-              <Badge className={`${getTrainTypeColor(booking.trainName)} px-3 py-1`}>
-                {booking.trainName}
-              </Badge>
+              <TrainTypeBadge trainName={booking.trainName} />
               <Badge variant="outline" className="font-medium">
                 열차번호 {booking.trainNumber}
               </Badge>

@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Drawer,
   DrawerClose,
@@ -13,6 +12,7 @@ import {
 import { Clock, CreditCard, X, Train } from "lucide-react";
 import type { CarInfo, TrainSchedule, SeatType } from "@/types/trainType";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
 
 interface BookingPanelProps {
   isOpen: boolean;
@@ -23,7 +23,6 @@ interface BookingPanelProps {
   selectedCar: number;
   onSeatSelection: () => void;
   onBooking: () => void;
-  getTrainTypeColor: (trainType: string) => string;
   getSeatTypeName: (seatType: SeatType) => string;
   formatPrice: (price: number) => string;
   carList: CarInfo[];
@@ -40,7 +39,6 @@ export function BookingPanel({
   selectedCar,
   onSeatSelection,
   onBooking,
-  getTrainTypeColor,
   getSeatTypeName,
   formatPrice,
   carList,
@@ -85,11 +83,7 @@ export function BookingPanel({
             {/* 제목(열차 등급·번호)이 패널의 접근 가능한 이름이 됨 — 뱃지가 div라 heading 대신 div로 렌더링 */}
             <DrawerTitle asChild>
               <div className="flex items-center space-x-4 text-base font-normal leading-normal tracking-normal">
-                <Badge
-                  className={`${getTrainTypeColor(selectedTrain.trainName)} px-3 py-1`}
-                >
-                  {selectedTrain.trainName}
-                </Badge>
+                <TrainTypeBadge trainName={selectedTrain.trainName} />
                 <span className="text-xl font-bold">
                   {selectedTrain.trainNumber}
                 </span>

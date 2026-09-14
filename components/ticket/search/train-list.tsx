@@ -16,7 +16,6 @@ interface TrainListProps {
   hasMoreTrains: boolean;
   onSeatSelection: (train: TrainSchedule, seatType: SeatType) => void;
   onLoadMore: () => void;
-  getTrainTypeColor: (trainType: string) => string;
   formatPrice: (price: number) => string;
   getSeatTypeName: (seatType: SeatType) => string;
 }
@@ -29,7 +28,6 @@ export function TrainList({
   hasMoreTrains,
   onSeatSelection,
   onLoadMore,
-  getTrainTypeColor,
   formatPrice,
   getSeatTypeName,
 }: TrainListProps) {
@@ -62,7 +60,6 @@ export function TrainList({
           train={train}
           isSelected={selectedTrain?.trainScheduleId === train.trainScheduleId}
           onSeatSelection={onSeatSelection}
-          getTrainTypeColor={getTrainTypeColor}
           formatPrice={formatPrice}
           getSeatTypeName={getSeatTypeName}
         />
