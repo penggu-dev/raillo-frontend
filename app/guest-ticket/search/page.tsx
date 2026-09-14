@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -39,7 +38,7 @@ import {
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { User, Phone, Lock, Home, Printer } from "lucide-react";
+import { User, Phone, Lock } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 
 export default function GuestTicketSearchPage() {
@@ -64,24 +63,6 @@ export default function GuestTicketSearchPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Breadcrumb */}
-      <div className="bg-card border-b py-3">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-primary">
-              <Home className="h-4 w-4" />
-            </Link>
-            <span>/</span>
-            <span>비회원서비스</span>
-            <span>/</span>
-            <span className="text-primary">승차권 확인</span>
-          </div>
-          <Button variant="ghost" size="sm">
-            <Printer className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
