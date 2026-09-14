@@ -18,7 +18,7 @@ const SIDEBAR_NAV_ITEM_CONFIG: Record<SidebarNavItemType, SidebarNavItemConfig> 
   "ticket-purchased": {
     href: "/ticket/purchased",
     icon: CreditCard,
-    iconColor: "text-green-600",
+    iconColor: "text-green-700 dark:text-green-400",
     label: "승차권 확인",
   },
   "ticket-booking": {
@@ -30,7 +30,7 @@ const SIDEBAR_NAV_ITEM_CONFIG: Record<SidebarNavItemType, SidebarNavItemConfig> 
   "ticket-reservations": {
     href: "/ticket/reservations",
     icon: Search,
-    iconColor: "text-orange-600",
+    iconColor: "text-orange-700 dark:text-orange-400",
     label: "예약 승차권 조회",
   },
 };
