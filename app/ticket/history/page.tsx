@@ -4,13 +4,15 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Receipt } from "lucide-react";
 import type { TicketResponse } from "@/types/bookingType";
 import { useGetTickets } from "@/hooks/useBooking";
 import BookingHistoryCard from "@/components/ticket/history/BookingHistoryCard";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { CardListSkeleton } from "@/components/common/CardListSkeleton";
 
 type BookingHistoryItem = TicketResponse["result"][number];
 type HistoryTab = "all" | "issued" | "cancelled";
@@ -24,6 +26,7 @@ export default function PaymentHistoryPage() {
     isLoading: loading,
     isError,
     error,
+    refetch,
   } = useGetTickets();
   const [activeTab, setActiveTab] = useState<HistoryTab>("all");
 
@@ -62,9 +65,16 @@ export default function PaymentHistoryPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <div className="flex-1 container mx-auto px-4 py-16 text-center">
-          <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-muted-foreground">예매 내역을 불러오고 있습니다...</p>
+        <div className="flex-1 container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-foreground mb-2">예매 내역</h2>
+            <p className="text-muted-foreground">
+              예매번호와 영수증 상세를 확인할 수 있습니다
+            </p>
+          </div>
+            <CardListSkeleton label="예매 내역을 불러오는 중" />
+          </div>
         </div>
       </div>
     );
@@ -102,37 +112,25 @@ export default function PaymentHistoryPage() {
           </div>
 
           <div className="space-y-6">
-            {isError && (
-              <Card className="border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10">
-                <CardContent className="p-4">
-                  <p className="text-sm text-red-700 dark:text-red-300">
-                    {error?.message ?? "오류가 발생했습니다."}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            {filteredBookings.length === 0 ? (
-              <Card>
-                <CardContent className="p-16 text-center">
-                  <div className="mx-auto mb-6 w-16 h-16 relative">
-                    <Receipt className="w-full h-full text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-medium text-foreground mb-2">
-                    {activeTab === "all" && "예매 내역이 없습니다."}
-                    {activeTab === "issued" && "발권 완료된 내역이 없습니다."}
-                    {activeTab === "cancelled" && "취소/환불 내역이 없습니다."}
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    승차권을 예매하시면 내역이 여기에 표시됩니다.
-                  </p>
-                  <Link href="/ticket/search">
-                    <Button>
-                      승차권 예매하기
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+            {isError ? (
+              <ErrorState
+                title="예매 내역을 불러오지 못했습니다"
+                description={error?.message ?? "일시적인 오류로 조회하지 못했습니다. 잠시 후 다시 시도해주세요."}
+                action={<Button onClick={() => refetch()}>다시 시도</Button>}
+              />
+            ) : filteredBookings.length === 0 ? (
+              <EmptyState
+                icon={Receipt}
+                title={
+                  { all: "예매 내역이 없습니다", issued: "발권 완료된 내역이 없습니다", cancelled: "취소/환불 내역이 없습니다" }[activeTab]
+                }
+                description="승차권을 예매하시면 내역이 여기에 표시됩니다."
+                action={
+                  <Button asChild>
+                    <Link href="/ticket/search">승차권 예매하기</Link>
+                  </Button>
+                }
+              />
             ) : (
               filteredBookings.map((booking) => (
                 <BookingHistoryCard key={booking.bookingId} booking={booking} />
