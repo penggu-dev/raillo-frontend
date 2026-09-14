@@ -1,8 +1,8 @@
 name: PR check
 
 on:
+  # 대상 브랜치 제한 없음 — 앞 PR 브랜치를 대상으로 하는 연결(스택) PR도 검사
   pull_request:
-    branches: [main]
 
 # 같은 PR에 새 커밋이 올라오면 이전 실행은 취소
 concurrency:
