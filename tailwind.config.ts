@@ -85,6 +85,13 @@ const config: Config = {
   				'accent-foreground': 'rgb(var(--sidebar-accent-foreground) / <alpha-value>)',
   				border: 'rgb(var(--sidebar-border) / <alpha-value>)',
   				ring: 'rgb(var(--sidebar-ring) / <alpha-value>)'
+  			},
+  			footer: {
+  				DEFAULT: 'rgb(var(--footer) / <alpha-value>)',
+  				foreground: 'rgb(var(--footer-foreground) / <alpha-value>)',
+  				muted: 'rgb(var(--footer-muted) / <alpha-value>)',
+  				subtle: 'rgb(var(--footer-subtle) / <alpha-value>)',
+  				border: 'rgb(var(--footer-border) / <alpha-value>)'
   			}
   		},
   		// 텍스트 전용 primary: 배경용 --primary와 분리 (bg-/border-/ring-primary는 colors 그대로)
