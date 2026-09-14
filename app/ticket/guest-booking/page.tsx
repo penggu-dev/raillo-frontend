@@ -146,7 +146,7 @@ export default function GuestBookingPage() {
                 {/* Name Field */}
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-base font-medium">
-                    이름<span className="text-red-500 dark:text-red-400">*</span>
+                    이름<span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <Input
                     id="name"
@@ -161,7 +161,7 @@ export default function GuestBookingPage() {
                 {/* Phone Number Field */}
                 <div className="space-y-2">
                   <Label htmlFor="phoneNumber" className="text-base font-medium">
-                    전화번호<span className="text-red-500 dark:text-red-400">*</span>
+                    전화번호<span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <Input
                     id="phoneNumber"
@@ -177,7 +177,7 @@ export default function GuestBookingPage() {
                 {/* Password Field */}
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-base font-medium">
-                    비밀번호<span className="text-red-500 dark:text-red-400">*</span>
+                    비밀번호<span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <Input
                     id="password"
@@ -193,7 +193,7 @@ export default function GuestBookingPage() {
                 {/* Password Confirmation Field */}
                 <div className="space-y-2">
                   <Label htmlFor="passwordConfirm" className="text-base font-medium">
-                    비밀번호 확인<span className="text-red-500 dark:text-red-400">*</span>
+                    비밀번호 확인<span className="text-red-600 dark:text-red-400">*</span>
                   </Label>
                   <Input
                     id="passwordConfirm"

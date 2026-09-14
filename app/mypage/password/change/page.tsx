@@ -207,7 +207,7 @@ function PasswordChangePageContent() {
                     )}
                     {watchConfirm && !errors.confirmPassword && (
                       <p
-                        className={`text-xs ${watchNew === watchConfirm ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                        className={`text-xs ${watchNew === watchConfirm ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                       >
                         {watchNew === watchConfirm
                           ? "비밀번호가 일치합니다."
