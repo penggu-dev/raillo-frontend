@@ -344,13 +344,17 @@ function ReservationsPageContent() {
               {validReservations.length > 0 && (
                 <div className="flex items-center space-x-2">
                   <Checkbox
+                    id="select-all-reservations"
                     checked={allSelected}
                     onCheckedChange={toggleAllSelection}
                     className="data-[state=checked]:bg-primary"
                   />
-                  <span className="text-sm text-muted-foreground">
+                  <label
+                    htmlFor="select-all-reservations"
+                    className="cursor-pointer text-sm text-muted-foreground"
+                  >
                     전체선택 ({selectedItems.length}/{validReservations.length})
-                  </span>
+                  </label>
                 </div>
               )}
             </div>
@@ -390,6 +394,7 @@ function ReservationsPageContent() {
                         onCheckedChange={() =>
                           toggleItemSelection(reservation.pendingBookingId)
                         }
+                        aria-label={`${reservation.trainName} ${reservation.trainNumber} ${formatDate(reservation.operationDate)} ${reservation.departureStationName} 출발 ${reservation.arrivalStationName} 도착 예약 선택`}
                         className="mt-1 data-[state=checked]:bg-primary"
                       />
                       <div className="flex-1">
