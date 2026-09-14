@@ -57,8 +57,10 @@
     --input: 228 228 231; /* #e4e4e7 */
     --ring: 37 99 235; /* #2563eb */
 
-    /* Radius */
+    /* Radius — 컨트롤(버튼·입력·셀렉트) 12px · 카드 16px (--radius는 기존 rounded-lg/md/sm 기준값) */
     --radius: 0.75rem;
+    --radius-control: 0.75rem;
+    --radius-card: 1rem;
 
     /* Elevation */
     --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
