@@ -15,7 +15,7 @@ const SidebarTrigger = () => {
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" aria-label="전체 메뉴 열기">
           <Menu className="h-5 w-5" />
         </Button>
       </DrawerTrigger>
