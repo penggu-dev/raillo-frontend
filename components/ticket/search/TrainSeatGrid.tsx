@@ -67,7 +67,7 @@ export function TrainSeatGrid({
       </span>
       <div className="flex items-center space-x-1">
         {Array.from({ length: 6 }, (_, i) => (
-          <span key={i} className="text-blue-500 dark:text-blue-400 text-lg font-bold">→</span>
+          <span key={i} className="text-blue-600 dark:text-blue-400 text-lg font-bold">→</span>
         ))}
       </div>
       <span className="font-semibold text-blue-700 dark:text-blue-300 text-sm">

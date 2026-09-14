@@ -220,7 +220,7 @@ export default function ResetPasswordPage() {
                 {watchNew && watchConfirm && !errors.confirmPassword && (
                   <div className="text-sm">
                     {watchNew === watchConfirm ? (
-                      <p className="text-green-600 dark:text-green-400">✓ 비밀번호가 일치합니다.</p>
+                      <p className="text-green-700 dark:text-green-400">✓ 비밀번호가 일치합니다.</p>
                     ) : (
                       <p className="text-red-600 dark:text-red-400">
                         ✗ 비밀번호가 일치하지 않습니다.

@@ -35,7 +35,7 @@ export function TrainCard({
             <div className="flex items-center space-x-3 mb-2">
               <TrainTypeBadge trainName={train.trainName} />
               <span className="font-semibold text-lg">{train.trainNumber}</span>
-              <Zap className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
+              <Zap className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span>{train.departureStationName}</span>

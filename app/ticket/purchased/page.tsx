@@ -190,7 +190,7 @@ function PurchasedTicketsPageContent() {
                                 </div>
                                 <div className="flex items-center mx-4">
                                   <div className="w-16 h-0.5 bg-primary-light"></div>
-                                  <ArrowRight className="h-4 w-4 text-primary-light mx-1" />
+                                  <ArrowRight className="h-4 w-4 text-muted-foreground mx-1" />
                                   <div className="w-16 h-0.5 bg-primary-light"></div>
                                 </div>
                                 <div className="text-center flex-1">
