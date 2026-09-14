@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Monitor, Smartphone, ChevronUp } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useGetMemberInfo } from "@/hooks/useUser";
 import MyPageSidebar from "@/components/layout/MyPageSidebar";
 import LoadingSpinner from "../common/LoadingSpinner";
 
@@ -17,6 +18,7 @@ export default function IdentityVerificationPage({
 }: IdentityVerificationPageProps) {
   const router = useRouter();
   const { isChecking, isAuthenticated } = useAuth();
+  const { data: memberInfo = null } = useGetMemberInfo();
 
   const handleVerification = () => {
     router.push(redirectPath);
@@ -41,7 +43,7 @@ export default function IdentityVerificationPage({
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <MyPageSidebar />
+          <MyPageSidebar memberInfo={memberInfo || undefined} />
 
           <div className="flex-1">
             <Card>
