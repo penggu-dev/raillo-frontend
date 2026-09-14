@@ -88,22 +88,13 @@ export default function PaymentHistoryPage() {
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger
-                  value="all"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
+                <TabsTrigger value="all">
                   전체
                 </TabsTrigger>
-                <TabsTrigger
-                  value="issued"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
+                <TabsTrigger value="issued">
                   발권완료
                 </TabsTrigger>
-                <TabsTrigger
-                  value="cancelled"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
+                <TabsTrigger value="cancelled">
                   취소/환불
                 </TabsTrigger>
               </TabsList>
