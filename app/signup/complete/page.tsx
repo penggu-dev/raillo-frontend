@@ -172,8 +172,8 @@ export default function SignupCompletePage() {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
                     asChild
-                    variant="outline"
-                    className="flex-1 border-primary text-primary hover:bg-secondary hover:text-secondary-foreground"
+                    variant="outline-primary"
+                    className="flex-1"
                   >
                     <Link href="/">홈으로 이동</Link>
                   </Button>
