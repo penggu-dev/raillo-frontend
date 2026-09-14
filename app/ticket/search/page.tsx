@@ -5,7 +5,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { formatPrice } from "@/lib/utils/format";
-import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
 import { searchTrains, searchCars, searchSeats } from "@/lib/api/trains";
 import { stationUtils } from "@/constants/stations";
 import { createPendingBooking } from "@/lib/api/pendingBookings";
@@ -637,7 +636,6 @@ function TrainSearchPage() {
             hasMoreTrains={hasNext}
             onSeatSelection={handleSeatSelection}
             onLoadMore={handleLoadMore}
-            getTrainTypeColor={getTrainTypeColor}
             formatPrice={formatPrice}
             getSeatTypeName={getSeatTypeName}
           />
@@ -689,7 +687,6 @@ function TrainSearchPage() {
           }, 100);
         }}
         onBooking={handleBooking}
-        getTrainTypeColor={getTrainTypeColor}
         getSeatTypeName={getSeatTypeName}
         formatPrice={formatPrice}
         carList={carList}

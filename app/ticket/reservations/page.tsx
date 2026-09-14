@@ -9,7 +9,6 @@ import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import AuthGuard from "@/components/auth/AuthGuard";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   MapPin,
@@ -21,7 +20,6 @@ import {
   CreditCard,
 } from "lucide-react";
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format";
-import { getTrainTypeColor } from "@/lib/utils/ticketUtils";
 import { deletePendingBookings } from "@/lib/api/pendingBookings";
 import {
   useGetPendingBookingList,
@@ -53,6 +51,7 @@ import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
 
 function ReservationsPageContent() {
   const router = useRouter();
@@ -395,11 +394,7 @@ function ReservationsPageContent() {
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center space-x-3">
-                            <Badge
-                              className={`${getTrainTypeColor(reservation.trainName)} px-3 py-1`}
-                            >
-                              {reservation.trainName}
-                            </Badge>
+                            <TrainTypeBadge trainName={reservation.trainName} />
                             <span className="text-lg font-bold">
                               {reservation.trainNumber}
                             </span>

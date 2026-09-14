@@ -8,8 +8,9 @@ import { Train, MapPin, ArrowRight, User } from "lucide-react";
 import { useGetTickets } from "@/hooks/useBooking";
 import { differenceInMinutes, parse } from "date-fns";
 import { formatDate, formatTime } from "@/lib/utils/format";
-import { getTrainTypeColor, getCarTypeName } from "@/lib/utils/ticketUtils";
+import { getCarTypeName } from "@/lib/utils/ticketUtils";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
 
 interface Ticket {
   bookingId: number;
@@ -151,11 +152,7 @@ function PurchasedTicketsPageContent() {
                               </div>
                               <div>
                                 <div className="flex items-center space-x-2">
-                                  <Badge
-                                    className={`${getTrainTypeColor(ticket.trainName)} px-3 py-1 text-sm font-bold`}
-                                  >
-                                    {ticket.trainName}
-                                  </Badge>
+                                  <TrainTypeBadge trainName={ticket.trainName} className="text-sm font-bold" />
                                   <span className="text-xl font-bold text-foreground">
                                     {ticket.trainNumber}
                                   </span>
