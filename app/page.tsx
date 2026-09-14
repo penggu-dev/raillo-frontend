@@ -151,7 +151,6 @@ export default function HomePage() {
                     onValueChange={handleDepartureStationChange}
                     placeholder="출발역 선택"
                     label="출발역"
-                    variant="white"
                     otherStation={arrivalStation}
                     onBothStationsChange={handleBothStationsChange}
                   />
@@ -177,7 +176,6 @@ export default function HomePage() {
                     onValueChange={handleArrivalStationChange}
                     placeholder="도착역 선택"
                     label="도착역"
-                    variant="white"
                     otherStation={departureStation}
                     onBothStationsChange={handleBothStationsChange}
                   />
@@ -192,7 +190,6 @@ export default function HomePage() {
                     }}
                     placeholder="날짜 선택"
                     label="출발일"
-                    variant="white"
                   />
                 </div>
 
@@ -203,7 +200,6 @@ export default function HomePage() {
                     onValueChange={setPassengers}
                     placeholder="인원 선택"
                     label="인원"
-                    variant="white"
                     simple={false}
                   />
                 </div>
