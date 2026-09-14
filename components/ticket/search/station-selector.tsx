@@ -15,7 +15,6 @@ interface StationSelectorProps {
   onValueChange: (value: string) => void;
   placeholder: string;
   label: string;
-  variant?: "blue" | "white";
   otherStation?: string; // 다른 역 (출발역이면 도착역, 도착역이면 출발역)
   onBothStationsChange?: (departure: string, arrival: string) => void; // 두 역을 동시에 변경할 때
   disabled?: boolean; // 비활성화 여부
@@ -27,7 +26,6 @@ export function StationSelector({
   onValueChange,
   placeholder,
   label,
-  variant = "blue",
   onBothStationsChange,
   disabled,
   hideHistory = false,
@@ -73,7 +71,7 @@ export function StationSelector({
     <>
       <div>
         <label
-          className={`block text-sm font-medium mb-2 ${variant === "blue" ? "text-white" : "text-foreground"}`}
+          className="block text-sm font-medium mb-2 text-foreground"
         >
           {label}
         </label>

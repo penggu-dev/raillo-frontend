@@ -25,7 +25,6 @@ interface DateTimeSelectorProps {
   onValueChange: (date: Date) => void;
   placeholder: string;
   label: string;
-  variant?: "blue" | "white";
 }
 
 export function DateTimeSelector({
@@ -33,7 +32,6 @@ export function DateTimeSelector({
   onValueChange,
   placeholder,
   label,
-  variant = "blue",
 }: DateTimeSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [tempDate, setTempDate] = useState<Date>(value || new Date());
@@ -171,11 +169,7 @@ export function DateTimeSelector({
   return (
     <>
       <div>
-        <label
-          className={`block text-sm font-medium mb-2 ${
-            variant === "blue" ? "text-white" : "text-foreground"
-          }`}
-        >
+        <label className="block text-sm font-medium mb-2 text-foreground">
           {label}
         </label>
         <Button
