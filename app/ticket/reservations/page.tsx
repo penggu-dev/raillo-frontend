@@ -305,7 +305,7 @@ function ReservationsPageContent() {
 
   return (
     <div className="min-h-screen pb-24">
-      <main className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-8">
@@ -498,7 +498,7 @@ function ReservationsPageContent() {
             </AlertDescription>
           </Alert>
         </div>
-      </main>
+      </div>
 
       {/* Bottom Payment Bar */}
       {selectedItems.length > 0 && (

@@ -65,7 +65,7 @@ function PurchasedTicketsPageContent() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-8">
@@ -286,7 +286,7 @@ function PurchasedTicketsPageContent() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
