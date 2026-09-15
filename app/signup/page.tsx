@@ -16,6 +16,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Eye, EyeOff, User, Mail, Lock, Phone } from "lucide-react";
 import { signup } from "@/lib/api/authentication";
 import type { SignupRequest } from "@/types/authType";
@@ -77,6 +84,7 @@ export default function SignupPage() {
     ).getDate();
     return Array.from({ length: daysInMonth }, (_, i) => i + 1);
   };
+  const dayOptions = getDayOptions();
 
   const handleBirthDateChange = (
     type: "year" | "month" | "day",
@@ -327,52 +335,74 @@ export default function SignupPage() {
                   </Label>
                   <div className="flex space-x-2">
                     <div className="flex-1">
-                      <select
+                      <Select
                         value={birthYear}
-                        onChange={(e) =>
-                          handleBirthDateChange("year", e.target.value)
+                        onValueChange={(value) =>
+                          handleBirthDateChange("year", value)
                         }
-                        className={`w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ${errors.birthDate ? "border-red-500 dark:border-red-400" : ""}`}
                       >
-                        <option value="">년도</option>
-                        {yearOptions.map((year) => (
-                          <option key={year} value={year.toString()}>
-                            {year}년
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger
+                          aria-label="출생 연도"
+                          aria-invalid={!!errors.birthDate}
+                          className={errors.birthDate ? "border-red-500 dark:border-red-400" : ""}
+                        >
+                          <SelectValue placeholder="년도" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {yearOptions.map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}년
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="flex-1">
-                      <select
+                      <Select
                         value={birthMonth}
-                        onChange={(e) =>
-                          handleBirthDateChange("month", e.target.value)
+                        onValueChange={(value) =>
+                          handleBirthDateChange("month", value)
                         }
-                        className={`w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ${errors.birthDate ? "border-red-500 dark:border-red-400" : ""}`}
                       >
-                        <option value="">월</option>
-                        {monthOptions.map((month) => (
-                          <option key={month} value={month.toString()}>
-                            {month}월
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger
+                          aria-label="출생 월"
+                          aria-invalid={!!errors.birthDate}
+                          className={errors.birthDate ? "border-red-500 dark:border-red-400" : ""}
+                        >
+                          <SelectValue placeholder="월" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {monthOptions.map((month) => (
+                            <SelectItem key={month} value={month.toString()}>
+                              {month}월
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="flex-1">
-                      <select
+                      <Select
                         value={birthDay}
-                        onChange={(e) =>
-                          handleBirthDateChange("day", e.target.value)
+                        onValueChange={(value) =>
+                          handleBirthDateChange("day", value)
                         }
-                        className={`w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ${errors.birthDate ? "border-red-500 dark:border-red-400" : ""}`}
+                        disabled={dayOptions.length === 0}
                       >
-                        <option value="">일</option>
-                        {getDayOptions().map((day) => (
-                          <option key={day} value={day.toString()}>
-                            {day}일
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger
+                          aria-label="출생 일"
+                          aria-invalid={!!errors.birthDate}
+                          className={errors.birthDate ? "border-red-500 dark:border-red-400" : ""}
+                        >
+                          <SelectValue placeholder="일" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {dayOptions.map((day) => (
+                            <SelectItem key={day} value={day.toString()}>
+                              {day}일
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   {errors.birthDate && (
