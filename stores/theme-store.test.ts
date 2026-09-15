@@ -130,6 +130,21 @@ describe("theme-store", () => {
     expect(store.getState().theme).toBe("light")
   })
 
+  it("기존 setTheme은 라이트·다크를 직접 선택으로 저장·적용한다", async () => {
+    const media = mockMatchMedia(false)
+    const store = await loadStore()
+    store.getState().initializeTheme()
+    store.getState().setTheme("dark")
+    expect(store.getState().preference).toBe("dark")
+    expect(store.getState().theme).toBe("dark")
+    expect(localStorage.getItem("raillo-theme")).toBe("dark")
+    expect(document.documentElement.classList.contains("dark")).toBe(true)
+    // 직접 선택이므로 운영체제 설정 변경은 따르지 않는다
+    media.setDark(true)
+    media.setDark(false)
+    expect(store.getState().theme).toBe("dark")
+  })
+
   it("토글은 라이트와 다크를 번갈아 저장한다", async () => {
     mockMatchMedia(false)
     localStorage.setItem("raillo-theme", "light")
