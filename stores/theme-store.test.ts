@@ -93,6 +93,35 @@ describe("theme-store", () => {
     expect(store.getState().theme).toBe("dark")
   })
 
+  it("시스템 설정 모드에서 토글하면 지금 보이는 테마의 반대를 직접 선택으로 저장한다", async () => {
+    const media = mockMatchMedia(true)
+    const store = await loadStore()
+    store.getState().initializeTheme()
+    expect(store.getState().preference).toBe("system")
+    store.getState().toggleTheme()
+    expect(store.getState().preference).toBe("light")
+    expect(store.getState().theme).toBe("light")
+    expect(localStorage.getItem("raillo-theme")).toBe("light")
+    expect(document.documentElement.classList.contains("dark")).toBe(false)
+    // 직접 선택이 되었으므로 이후 운영체제 설정 변경은 따르지 않는다
+    media.setDark(false)
+    media.setDark(true)
+    expect(store.getState().theme).toBe("light")
+  })
+
+  it("토글은 라이트와 다크를 번갈아 저장한다", async () => {
+    mockMatchMedia(false)
+    localStorage.setItem("raillo-theme", "light")
+    const store = await loadStore()
+    store.getState().initializeTheme()
+    store.getState().toggleTheme()
+    expect(store.getState().theme).toBe("dark")
+    expect(localStorage.getItem("raillo-theme")).toBe("dark")
+    store.getState().toggleTheme()
+    expect(store.getState().theme).toBe("light")
+    expect(localStorage.getItem("raillo-theme")).toBe("light")
+  })
+
   it("정리 함수는 운영체제 설정 구독을 해제한다", async () => {
     const media = mockMatchMedia(false)
     const store = await loadStore()
