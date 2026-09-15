@@ -11,6 +11,8 @@ interface ThemeState {
   theme: Theme;
   initialized: boolean;
   setPreference: (preference: ThemePreference) => void;
+  /** 라이트·다크를 직접 선택으로 저장·적용한다 (기존 API — `setPreference(theme)`과 같음) */
+  setTheme: (theme: Theme) => void;
   /** 지금 적용된 테마의 반대를 직접 선택으로 저장한다. 시스템 설정 모드였다면 이후 운영체제 설정 변경은 따르지 않음 */
   toggleTheme: () => void;
   /** 저장된 설정으로 동기화하고, 시스템 설정 변경 구독을 시작한다. 반환값은 구독 해제 함수 */
@@ -59,8 +61,11 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     applyTheme(theme);
     set({ preference, theme });
   },
+  setTheme: (theme) => {
+    get().setPreference(theme);
+  },
   toggleTheme: () => {
-    get().setPreference(get().theme === "dark" ? "light" : "dark");
+    get().setTheme(get().theme === "dark" ? "light" : "dark");
   },
   // 클라이언트 마운트 후 저장된 설정으로 스토어 상태 동기화 (FOUC 스크립트가 class는 이미 반영)
   initializeTheme: () => {
