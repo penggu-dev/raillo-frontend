@@ -23,6 +23,27 @@ const mockMatchMedia = (initialDark: boolean) => {
   }
 }
 
+// Safari 13 이하처럼 MediaQueryList에 addEventListener 없이 addListener만 있는 환경
+const mockLegacyMatchMedia = (initialDark: boolean) => {
+  let dark = initialDark
+  const listeners = new Set<Listener>()
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    get matches() {
+      return query === "(prefers-color-scheme: dark)" ? dark : false
+    },
+    media: query,
+    addListener: (listener: Listener) => listeners.add(listener),
+    removeListener: (listener: Listener) => listeners.delete(listener),
+  })) as unknown as typeof window.matchMedia
+  return {
+    setDark: (next: boolean) => {
+      dark = next
+      listeners.forEach((listener) => listener())
+    },
+    listenerCount: () => listeners.size,
+  }
+}
+
 const loadStore = async () => {
   vi.resetModules()
   return (await import("./theme-store")).useThemeStore
@@ -120,6 +141,18 @@ describe("theme-store", () => {
     store.getState().toggleTheme()
     expect(store.getState().theme).toBe("light")
     expect(localStorage.getItem("raillo-theme")).toBe("light")
+  })
+
+  it("addEventListener가 없는 구형 브라우저에서도 운영체제 설정 변경을 구독·해제한다", async () => {
+    const media = mockLegacyMatchMedia(false)
+    const store = await loadStore()
+    const cleanup = store.getState().initializeTheme()
+    expect(media.listenerCount()).toBe(1)
+    media.setDark(true)
+    expect(store.getState().theme).toBe("dark")
+    expect(document.documentElement.classList.contains("dark")).toBe(true)
+    cleanup()
+    expect(media.listenerCount()).toBe(0)
   })
 
   it("정리 함수는 운영체제 설정 구독을 해제한다", async () => {
