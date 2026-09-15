@@ -77,7 +77,12 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
       applyTheme(next);
       set({ theme: next });
     };
-    media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", handleChange);
+      return () => media.removeEventListener("change", handleChange);
+    }
+    // Safari 13 이하는 MediaQueryList에 addEventListener가 없음 (Next.js 기본 지원 범위 Safari 12+)
+    media.addListener(handleChange);
+    return () => media.removeListener(handleChange);
   },
 }));
