@@ -1,12 +1,10 @@
 import { create } from "zustand";
+import { DARK_THEME_QUERY, THEME_STORAGE_KEY } from "@/lib/theme";
 
 /** 사용자가 고른 테마 설정 */
 export type ThemePreference = "light" | "dark" | "system";
 /** 실제로 화면에 적용되는 테마 */
 export type Theme = "light" | "dark";
-
-export const THEME_STORAGE_KEY = "raillo-theme";
-const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 interface ThemeState {
   preference: ThemePreference;
@@ -22,7 +20,7 @@ const isPreference = (value: string | null): value is ThemePreference =>
 
 const systemTheme = (): Theme => {
   if (typeof window === "undefined" || typeof window.matchMedia !== "function") return "light";
-  return window.matchMedia(DARK_QUERY).matches ? "dark" : "light";
+  return window.matchMedia(DARK_THEME_QUERY).matches ? "dark" : "light";
 };
 
 export const resolveTheme = (preference: ThemePreference): Theme =>
@@ -67,7 +65,7 @@ export const useThemeStore = create<ThemeState>((set, get) => ({
     set({ preference, theme, initialized: true });
 
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") return () => {};
-    const media = window.matchMedia(DARK_QUERY);
+    const media = window.matchMedia(DARK_THEME_QUERY);
     const handleChange = () => {
       if (get().preference !== "system") return;
       const next = systemTheme();

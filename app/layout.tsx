@@ -5,6 +5,7 @@ import Footer from '@/components/layout/Footer'
 import { QueryProvider } from '@/components/providers/QueryProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { Toaster } from '@/components/ui/toaster'
+import { THEME_INIT_SCRIPT } from '@/lib/theme'
 
 export const metadata: Metadata = {
   title: 'Raillo',
@@ -21,10 +22,8 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body>
         <script
-          dangerouslySetInnerHTML={{
-            // 첫 페인트 전 테마 적용: 저장값 dark, 또는 light·dark가 아닌 값(없음·system)이면서 운영체제가 다크 모드 (stores/theme-store.ts와 같은 규칙)
-            __html: `(function(){try{var t=localStorage.getItem('raillo-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d){document.documentElement.classList.add('dark')}}catch(e){}})()`,
-          }}
+          // 첫 페인트 전 테마 적용 (규칙은 lib/theme.ts)
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
         />
         <ThemeProvider>
           <QueryProvider>
