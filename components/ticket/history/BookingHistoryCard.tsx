@@ -79,7 +79,7 @@ const getTicketStatusColor = (status: string) => {
 
 export default function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
   return (
-    <Card className="border-l-4 border-l-primary shadow-elev-sm">
+    <Card className="border-l-4 border-l-primary">
       <CardContent className="p-6 space-y-4">
         <div className="flex items-start justify-between">
           <div>

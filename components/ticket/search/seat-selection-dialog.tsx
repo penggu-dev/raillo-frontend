@@ -235,7 +235,7 @@ export function SeatSelectionDialog({
       }}
     >
       <DialogContent
-        className="block w-[calc(100%-2rem)] max-w-7xl max-h-[95vh] gap-0 overflow-hidden rounded-2xl p-0 shadow-elev-lg sm:rounded-2xl [&>button:last-child]:right-6 [&>button:last-child]:top-7"
+        className="block w-[calc(100%-2rem)] max-w-7xl max-h-[95vh] gap-0 overflow-hidden p-0 shadow-elev-lg [&>button:last-child]:right-6 [&>button:last-child]:top-7"
         // 바깥 클릭으로는 닫지 않음(기존 동작) — 고르던 좌석이 실수로 초기화되지 않도록
         onInteractOutside={(event) => event.preventDefault()}
         // 트리거 없이 상태로 여닫는 모달 — 페이지가 기억한 열차 카드의 선택 버튼으로 포커스 복귀
