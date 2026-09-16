@@ -88,6 +88,8 @@ function TrainSearchPage() {
 
   // 중복 호출 방지 플래그
   const didFetchTrains = useRef(false);
+  // 예매 패널·좌석 선택 다이얼로그를 닫은 뒤 포커스를 돌려줄 요소
+  const overlayReturnFocusRef = useRef<HTMLElement | null>(null);
 
   const updateSearchParams = (updates: Record<string, string | undefined>) => {
     const current = new URLSearchParams(urlSearchParams.toString());
@@ -245,6 +247,8 @@ function TrainSearchPage() {
   };
 
   const handleSeatSelection = (train: TrainSchedule, seatType: SeatType) => {
+    // 오버레이(예매 패널·좌석 선택)를 닫은 뒤 돌아갈 대상 = 지금 누른 열차 카드의 선택 버튼
+    overlayReturnFocusRef.current = document.activeElement as HTMLElement | null;
     const seatInfo = train[seatType];
     if (!seatInfo?.canReserve) {
       toast({
@@ -663,6 +667,7 @@ function TrainSearchPage() {
           }
         }}
         onRefreshSeats={handleRefreshSeats}
+        returnFocusRef={overlayReturnFocusRef}
       />
 
       {/* Booking Panel */}
@@ -686,6 +691,7 @@ function TrainSearchPage() {
         carList={carList}
         loadingCars={loadingCars}
         onRefreshSeats={handleRefreshSeats}
+        returnFocusRef={overlayReturnFocusRef}
       />
     </div>
   );

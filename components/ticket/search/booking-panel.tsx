@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -13,6 +12,7 @@ import {
 import { Clock, CreditCard, X, Train } from "lucide-react";
 import type { CarInfo, TrainSchedule, SeatType } from "@/types/trainType";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
 
 interface BookingPanelProps {
   isOpen: boolean;
@@ -29,6 +29,8 @@ interface BookingPanelProps {
   carList: CarInfo[];
   loadingCars: boolean;
   onRefreshSeats: () => void;
+  /** 닫힌 뒤 포커스를 돌려줄 요소 (열차 카드의 선택 버튼) */
+  returnFocusRef: ReturnFocusRef;
 }
 
 export function BookingPanel({
@@ -46,9 +48,8 @@ export function BookingPanel({
   carList,
   loadingCars,
   onRefreshSeats,
+  returnFocusRef,
 }: BookingPanelProps) {
-  // 트리거 없이 상태로 여닫는 모달이라 Radix가 포커스를 돌려줄 대상이 없음 → 연 요소를 기억했다가 복귀
-  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   if (!selectedTrain) return null;
 
@@ -71,12 +72,10 @@ export function BookingPanel({
     >
       <DrawerContent
         className="rounded-t-2xl border-x-0 border-b-0 border-t shadow-elev-lg"
-        onOpenAutoFocus={() => {
-          returnFocusRef.current = document.activeElement as HTMLElement | null;
-        }}
+        // 페이지가 기억한 열차 카드의 선택 버튼으로 복귀 (좌석 선택으로 전환 중이면 건너뜀)
         onCloseAutoFocus={(event) => {
           event.preventDefault();
-          if (returnFocusRef.current?.isConnected) returnFocusRef.current.focus();
+          restoreFocus(returnFocusRef.current);
         }}
       >
         <div className="container mx-auto px-4 py-6 max-w-6xl">

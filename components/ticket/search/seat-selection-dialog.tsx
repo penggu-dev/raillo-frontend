@@ -21,6 +21,7 @@ import {
   type SeatGridItem,
 } from "@/components/ticket/search/TrainSeatGrid";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
 
 interface SeatSelectionDialogProps {
   isOpen: boolean;
@@ -40,6 +41,8 @@ interface SeatSelectionDialogProps {
   onCarSelect: (carId: string) => void;
   // 좌석 정보 새로고침 함수 추가
   onRefreshSeats: () => void;
+  /** 닫힌 뒤 포커스를 돌려줄 요소 (열차 카드의 선택 버튼) */
+  returnFocusRef: ReturnFocusRef;
 }
 
 export function SeatSelectionDialog({
@@ -58,8 +61,8 @@ export function SeatSelectionDialog({
   loadingSeats,
   onCarSelect,
   onRefreshSeats,
+  returnFocusRef,
 }: SeatSelectionDialogProps) {
-  const returnFocusRef = useRef<HTMLElement | null>(null);
   const [selectedCar, setSelectedCar] = useState<CarInfo | null>(null);
   const [selectionError, setSelectionError] = useState<string | null>(null);
   const onCarSelectRef = useRef(onCarSelect);
@@ -235,13 +238,11 @@ export function SeatSelectionDialog({
         className="block w-[calc(100%-2rem)] max-w-7xl max-h-[95vh] gap-0 overflow-hidden rounded-2xl p-0 shadow-elev-lg sm:rounded-2xl [&>button:last-child]:right-6 [&>button:last-child]:top-7"
         // 바깥 클릭으로는 닫지 않음(기존 동작) — 고르던 좌석이 실수로 초기화되지 않도록
         onInteractOutside={(event) => event.preventDefault()}
-        // 트리거 없이 상태로 여닫는 모달 — 연 요소가 화면에 남아 있으면 그 요소로 포커스 복귀
-        onOpenAutoFocus={() => {
-          returnFocusRef.current = document.activeElement as HTMLElement | null;
-        }}
+        // 트리거 없이 상태로 여닫는 모달 — 페이지가 기억한 열차 카드의 선택 버튼으로 포커스 복귀
+        // (예매 패널 안의 버튼은 전환 뒤 사라지므로 복귀 대상으로 쓰지 않는다)
         onCloseAutoFocus={(event) => {
           event.preventDefault();
-          if (returnFocusRef.current?.isConnected) returnFocusRef.current.focus();
+          restoreFocus(returnFocusRef.current);
         }}
       >
         {/* Dialog Header */}
