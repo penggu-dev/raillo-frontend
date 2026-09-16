@@ -129,7 +129,7 @@ export default function GuestBookingPage() {
       </div>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           {/* Information Text */}
           <div className="text-center mb-8">
@@ -265,7 +265,7 @@ export default function GuestBookingPage() {
             </Button>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

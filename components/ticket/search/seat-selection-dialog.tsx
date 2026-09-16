@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type {
   CarInfo,
   SeatDetail,
@@ -21,6 +21,7 @@ import {
   type SeatGridItem,
 } from "@/components/ticket/search/TrainSeatGrid";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
 
 interface SeatSelectionDialogProps {
   isOpen: boolean;
@@ -40,6 +41,8 @@ interface SeatSelectionDialogProps {
   onCarSelect: (carId: string) => void;
   // 좌석 정보 새로고침 함수 추가
   onRefreshSeats: () => void;
+  /** 닫힌 뒤 포커스를 돌려줄 요소 (열차 카드의 선택 버튼) */
+  returnFocusRef: ReturnFocusRef;
 }
 
 export function SeatSelectionDialog({
@@ -58,6 +61,7 @@ export function SeatSelectionDialog({
   loadingSeats,
   onCarSelect,
   onRefreshSeats,
+  returnFocusRef,
 }: SeatSelectionDialogProps) {
   const [selectedCar, setSelectedCar] = useState<CarInfo | null>(null);
   const [selectionError, setSelectionError] = useState<string | null>(null);
@@ -220,18 +224,34 @@ export function SeatSelectionDialog({
     onSeatClick(seatNumber);
   };
 
-  if (!isOpen || !selectedTrain) return null;
+  if (!selectedTrain) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-card rounded-2xl border shadow-elev-lg w-full max-w-7xl max-h-[95vh] overflow-hidden">
+    // Dialog(Radix): role="dialog"·aria-modal, 포커스 트랩, Esc 닫기, 닫힌 뒤 포커스 복귀, 우측 상단 닫기 버튼 제공
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent
+        className="block w-[calc(100%-2rem)] max-w-7xl max-h-[95vh] gap-0 overflow-hidden rounded-2xl p-0 shadow-elev-lg sm:rounded-2xl [&>button:last-child]:right-6 [&>button:last-child]:top-7"
+        // 바깥 클릭으로는 닫지 않음(기존 동작) — 고르던 좌석이 실수로 초기화되지 않도록
+        onInteractOutside={(event) => event.preventDefault()}
+        // 트리거 없이 상태로 여닫는 모달 — 페이지가 기억한 열차 카드의 선택 버튼으로 포커스 복귀
+        // (예매 패널 안의 버튼은 전환 뒤 사라지므로 복귀 대상으로 쓰지 않는다)
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          restoreFocus(returnFocusRef.current);
+        }}
+      >
         {/* Dialog Header */}
-        <div className="flex items-center justify-between p-6 border-b bg-card">
+        <div className="flex items-center justify-between p-6 pr-16 border-b bg-card">
           <div className="flex items-center space-x-3">
-            <div className="w-3 h-3 bg-primary rounded-full"></div>
-            <h2 className="text-xl font-bold text-foreground">
+            <div className="w-3 h-3 bg-primary rounded-full" aria-hidden="true"></div>
+            <DialogTitle className="text-xl font-bold text-foreground">
               좌석선택 - {selectedTrain.trainName} {selectedTrain.trainNumber}
-            </h2>
+            </DialogTitle>
             {selectedCar && (
               <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
                 {selectedCar.carNumber}호차 (
@@ -239,9 +259,6 @@ export function SeatSelectionDialog({
               </span>
             )}
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
         </div>
 
         {/* Car Selection */}
@@ -367,7 +384,7 @@ export function SeatSelectionDialog({
             </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

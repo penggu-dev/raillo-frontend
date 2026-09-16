@@ -2,9 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import { Clock, CreditCard, X, Train } from "lucide-react";
 import type { CarInfo, TrainSchedule, SeatType } from "@/types/trainType";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
 
 interface BookingPanelProps {
   isOpen: boolean;
@@ -21,6 +29,8 @@ interface BookingPanelProps {
   carList: CarInfo[];
   loadingCars: boolean;
   onRefreshSeats: () => void;
+  /** 닫힌 뒤 포커스를 돌려줄 요소 (열차 카드의 선택 버튼) */
+  returnFocusRef: ReturnFocusRef;
 }
 
 export function BookingPanel({
@@ -38,8 +48,10 @@ export function BookingPanel({
   carList,
   loadingCars,
   onRefreshSeats,
+  returnFocusRef,
 }: BookingPanelProps) {
-  if (!isOpen || !selectedTrain) return null;
+
+  if (!selectedTrain) return null;
 
   const selectedCarInfo = carList.find(
     (car) => parseInt(car.carNumber) === selectedCar,
@@ -48,32 +60,49 @@ export function BookingPanel({
   const price = selectedSeatInfo?.fare ?? 0;
 
   return (
-    <>
-      {/* Overlay */}
-      <div
-        className="fixed inset-0 bg-black/50 z-40"
-        onClick={onClose}
-      />
-
-      {/* Bottom Panel */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card rounded-t-2xl border-t shadow-elev-lg z-50 transform transition-transform duration-300 ease-in-out">
+    // Drawer(vaul · Radix Dialog 기반): 포커스 트랩, Esc·바깥 클릭 닫기, 닫힌 뒤 포커스 복귀
+    <Drawer
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+      shouldScaleBackground={false}
+      // vaul은 기본적으로 열릴 때 포커스를 옮기지 않아(autoFocus=false) 포커스 트랩이 동작하지 않음
+      autoFocus
+    >
+      <DrawerContent
+        className="rounded-t-2xl border-x-0 border-b-0 border-t shadow-elev-lg"
+        // 페이지가 기억한 열차 카드의 선택 버튼으로 복귀 (좌석 선택으로 전환 중이면 건너뜀)
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          restoreFocus(returnFocusRef.current);
+        }}
+      >
         <div className="container mx-auto px-4 py-6 max-w-6xl">
           {/* Panel Header */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <Badge
-                className={`${getTrainTypeColor(selectedTrain.trainName)} px-3 py-1`}
-              >
-                {selectedTrain.trainName}
-              </Badge>
-              <span className="text-xl font-bold">
-                {selectedTrain.trainNumber}
-              </span>
-              <span className="text-muted-foreground">열차 예매</span>
-            </div>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-5 w-5" />
-            </Button>
+            {/* 제목(열차 등급·번호)이 패널의 접근 가능한 이름이 됨 — 뱃지가 div라 heading 대신 div로 렌더링 */}
+            <DrawerTitle asChild>
+              <div className="flex items-center space-x-4 text-base font-normal leading-normal tracking-normal">
+                <Badge
+                  className={`${getTrainTypeColor(selectedTrain.trainName)} px-3 py-1`}
+                >
+                  {selectedTrain.trainName}
+                </Badge>
+                <span className="text-xl font-bold">
+                  {selectedTrain.trainNumber}
+                </span>
+                <span className="text-muted-foreground">열차 예매</span>
+              </div>
+            </DrawerTitle>
+            <DrawerDescription className="sr-only">
+              열차 시각·객차·운임을 확인하고 좌석을 선택해 예매합니다.
+            </DrawerDescription>
+            <DrawerClose asChild>
+              <Button variant="ghost" size="sm" aria-label="예매 패널 닫기">
+                <X className="h-5 w-5" />
+              </Button>
+            </DrawerClose>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -239,7 +268,7 @@ export function BookingPanel({
             </div>
           </div>
         </div>
-      </div>
-    </>
+      </DrawerContent>
+    </Drawer>
   );
 }

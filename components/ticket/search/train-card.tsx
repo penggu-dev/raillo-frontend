@@ -9,7 +9,8 @@ import type { TrainSchedule, SeatType } from "@/types/trainType"
 interface TrainCardProps {
   train: TrainSchedule
   isSelected: boolean
-  onSeatSelection: (train: TrainSchedule, seatType: SeatType) => void
+  /** trigger: 닫은 뒤 포커스를 돌려줄 버튼 (Safari는 클릭해도 버튼에 포커스를 주지 않아 activeElement로 추정하지 않는다) */
+  onSeatSelection: (train: TrainSchedule, seatType: SeatType, trigger: HTMLElement) => void
   getTrainTypeColor: (trainType: string) => string
   formatPrice: (price: number) => string
   getSeatTypeName: (seatType: SeatType) => string
@@ -70,7 +71,7 @@ export function TrainCard({
                   size="sm"
                   className="w-full"
                   disabled={!train.standardSeat.canReserve}
-                  onClick={() => onSeatSelection(train, "standardSeat")}
+                  onClick={(event) => onSeatSelection(train, "standardSeat", event.currentTarget)}
                 >
                   {train.standardSeat.canReserve ? "선택" : "매진"}
                 </Button>
@@ -86,7 +87,7 @@ export function TrainCard({
                   size="sm"
                   className="w-full"
                   disabled={!train.firstClassSeat?.canReserve}
-                  onClick={() => onSeatSelection(train, "firstClassSeat")}
+                  onClick={(event) => onSeatSelection(train, "firstClassSeat", event.currentTarget)}
                 >
                   {train.firstClassSeat?.canReserve ? "선택" : "매진"}
                 </Button>
