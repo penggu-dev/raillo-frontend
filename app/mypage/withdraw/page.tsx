@@ -124,7 +124,7 @@ function WithdrawPageContent() {
           </div>
 
           {/* 경고 알림 */}
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" role="note" className="mb-6">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               회원탈퇴는 되돌릴 수 없습니다. 신중하게 결정해 주세요.

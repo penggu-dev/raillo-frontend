@@ -19,7 +19,7 @@ const LoginHeader = () => {
         회원번호로 로그인하세요
       </CardDescription>
       {redirectMessage && (
-        <Alert variant="info" className="mt-4 p-3">
+        <Alert variant="info" role="note" className="mt-4 p-3">
           <AlertDescription>{redirectMessage}</AlertDescription>
         </Alert>
       )}
