@@ -18,7 +18,10 @@ export default function IdentityVerificationPage({
 }: IdentityVerificationPageProps) {
   const router = useRouter();
   const { isChecking, isAuthenticated } = useAuth();
-  const { data: memberInfo = null } = useGetMemberInfo();
+  // 인증 확인 전에는 토큰 없이 요청이 나가 불필요한 401·토큰 갱신을 유발하므로 확인 후에만 조회
+  const { data: memberInfo = null } = useGetMemberInfo({
+    enabled: isAuthenticated && !isChecking,
+  });
 
   const handleVerification = () => {
     router.push(redirectPath);
