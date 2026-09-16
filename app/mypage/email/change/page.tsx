@@ -17,6 +17,8 @@ import { useToast } from "@/hooks/useToast";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import { AUTH_CODE_LENGTH } from "@/constants/validation";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 const emailSchema = z.object({
   email: z
@@ -241,19 +243,24 @@ function EmailChangePageContent() {
                 )}
 
                 {/* 주의사항 */}
-                <div className="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-lg p-4">
-                  <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-2">주의사항</h4>
-                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                    <li>
-                      • 이메일 변경 후 기존 이메일로는 로그인할 수 없습니다.
-                    </li>
-                    <li>
-                      • 변경된 이메일로 인증 메일이 발송되므로 정확히
-                      입력해주세요.
-                    </li>
-                    <li>• 인증 메일을 확인하여 변경을 완료해주세요.</li>
-                  </ul>
-                </div>
+                <Alert variant="warning" role="note">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle asChild>
+                    <h4 className="mb-2">주의사항</h4>
+                  </AlertTitle>
+                  <AlertDescription>
+                    <ul className="space-y-1">
+                      <li>
+                        • 이메일 변경 후 기존 이메일로는 로그인할 수 없습니다.
+                      </li>
+                      <li>
+                        • 변경된 이메일로 인증 메일이 발송되므로 정확히
+                        입력해주세요.
+                      </li>
+                      <li>• 인증 메일을 확인하여 변경을 완료해주세요.</li>
+                    </ul>
+                  </AlertDescription>
+                </Alert>
               </CardContent>
             </Card>
           </div>

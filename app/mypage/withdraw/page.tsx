@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertTriangle, ChevronLeft, UserX } from "lucide-react";
 import { deleteAccount } from "@/lib/api/members";
@@ -124,9 +124,9 @@ function WithdrawPageContent() {
           </div>
 
           {/* 경고 알림 */}
-          <Alert className="mb-6 border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10">
-            <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
-            <AlertDescription className="text-red-800 dark:text-red-200">
+          <Alert variant="destructive" role="note" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
               회원탈퇴는 되돌릴 수 없습니다. 신중하게 결정해 주세요.
             </AlertDescription>
           </Alert>
@@ -146,17 +146,20 @@ function WithdrawPageContent() {
                 }}
               >
                 {/* 주의사항 */}
-                <div className="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/30 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-                    회원탈퇴 시 주의사항
-                  </h3>
-                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                    <li>• 모든 개인정보가 영구적으로 삭제됩니다</li>
-                    <li>• 구매 내역, 마일리지 등 모든 데이터가 소멸됩니다</li>
-                    <li>• 탈퇴 후에는 복구가 불가능합니다</li>
-                    <li>• 진행 중인 예약이나 결제가 있다면 취소됩니다</li>
-                  </ul>
-                </div>
+                <Alert variant="warning" role="note">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle asChild>
+                    <h3 className="mb-2 font-semibold">회원탈퇴 시 주의사항</h3>
+                  </AlertTitle>
+                  <AlertDescription>
+                    <ul className="space-y-1">
+                      <li>• 모든 개인정보가 영구적으로 삭제됩니다</li>
+                      <li>• 구매 내역, 마일리지 등 모든 데이터가 소멸됩니다</li>
+                      <li>• 탈퇴 후에는 복구가 불가능합니다</li>
+                      <li>• 진행 중인 예약이나 결제가 있다면 취소됩니다</li>
+                    </ul>
+                  </AlertDescription>
+                </Alert>
 
                 {/* 확인 텍스트 */}
                 <div className="space-y-2">
@@ -234,9 +237,9 @@ function WithdrawPageContent() {
 
                 {/* 에러 메시지 */}
                 {error && (
-                  <Alert className="border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10">
-                    <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
-                    <AlertDescription className="text-red-800 dark:text-red-200">
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
                       {error}
                     </AlertDescription>
                   </Alert>
