@@ -246,9 +246,13 @@ function TrainSearchPage() {
     }
   };
 
-  const handleSeatSelection = (train: TrainSchedule, seatType: SeatType) => {
+  const handleSeatSelection = (
+    train: TrainSchedule,
+    seatType: SeatType,
+    trigger: HTMLElement,
+  ) => {
     // 오버레이(예매 패널·좌석 선택)를 닫은 뒤 돌아갈 대상 = 지금 누른 열차 카드의 선택 버튼
-    overlayReturnFocusRef.current = document.activeElement as HTMLElement | null;
+    overlayReturnFocusRef.current = trigger;
     const seatInfo = train[seatType];
     if (!seatInfo?.canReserve) {
       toast({
