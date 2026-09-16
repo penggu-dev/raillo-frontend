@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import AuthGuard from "@/components/auth/AuthGuard";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -459,14 +459,13 @@ function ReservationsPageContent() {
 
                         <div className="flex justify-end pt-4 border-t">
                           <Button
-                            variant="outline"
+                            variant="outline-destructive"
                             size="sm"
                             onClick={() =>
                               handleCancelReservation(
                                 reservation.pendingBookingId,
                               )
                             }
-                            className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-700 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300 dark:hover:border-red-300"
                           >
                             <X className="h-4 w-4 mr-1" />
                             예약취소
@@ -563,7 +562,7 @@ function ReservationsPageContent() {
             <AlertDialogCancel>취소</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmCancelReservation}
-              className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+              className={buttonVariants({ variant: "destructive" })}
             >
               확인
             </AlertDialogAction>

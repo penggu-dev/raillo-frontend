@@ -63,7 +63,8 @@ const config: Config = {
   			},
   			destructive: {
   				DEFAULT: 'rgb(var(--destructive) / <alpha-value>)',
-  				foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)'
+  				foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)',
+  				active: 'rgb(var(--destructive-active) / <alpha-value>)'
   			},
   			border: 'rgb(var(--border) / <alpha-value>)',
   			input: 'rgb(var(--input) / <alpha-value>)',
@@ -93,6 +94,11 @@ const config: Config = {
   				foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
   				active: 'rgb(var(--primary-active-text) / <alpha-value>)',
   				light: 'rgb(var(--primary-light) / <alpha-value>)',
+  			},
+  			// 텍스트 전용 destructive: 채움용 --destructive와 분리 (bg-/border-destructive는 colors 그대로)
+  			destructive: {
+  				DEFAULT: 'rgb(var(--destructive-text) / <alpha-value>)',
+  				foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)'
   			},
   		},
   		borderRadius: {
