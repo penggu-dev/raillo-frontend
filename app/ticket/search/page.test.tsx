@@ -1,14 +1,17 @@
 import { act, render, screen, waitFor } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import type { SeatInfo, TrainSchedule, TrainSearchResponse } from "@/types/trainType"
-import { searchTrains } from "@/lib/api/trains"
+import type { CarInfo, SeatDetail, SeatInfo, TrainSchedule, TrainSearchResponse } from "@/types/trainType"
+import { searchCars, searchSeats, searchTrains } from "@/lib/api/trains"
+import { createPendingBooking } from "@/lib/api/pendingBookings"
+import { useAuthStore } from "@/stores/auth-store"
 import TrainSearchPage from "./page"
 
+// 오늘 이후 날짜여야 다시 조회가 허용된다
+const DEFAULT_QUERY = "departure=서울&arrival=부산&date=2099-12-31&hour=00&adult=1"
 const navigation = vi.hoisted(() => ({
   router: { push: vi.fn(), replace: vi.fn() },
-  // 오늘 이후 날짜여야 다시 조회가 허용된다
-  params: new URLSearchParams("departure=서울&arrival=부산&date=2099-12-31&hour=00&adult=1"),
+  params: new URLSearchParams(),
 }))
 
 vi.mock("next/navigation", () => ({
@@ -32,14 +35,46 @@ vi.mock("@/components/ticket/search/search-form", () => ({
 }))
 // 좌석 선택 다이얼로그 모듈을 불러온 횟수 — clearAllMocks에 초기화되지 않도록 숫자로 센다
 const seatDialogModule = vi.hoisted(() => ({ imports: 0 }))
-vi.mock("@/components/ticket/search/seat-selection-dialog", () => {
+// 예매 흐름용: 좌석 다이얼로그는 열리면 3호차 좌석을 조회하고 "적용 확인"으로 dialogApply.seats를 적용,
+// 예매 패널은 열려 있을 때 적용된 좌석과 "좌석 고르기"·"예매하기"만 보여 준다
+const dialogApply = vi.hoisted(() => ({ seats: [] as string[] }))
+vi.mock("@/components/ticket/search/seat-selection-dialog", async () => {
   seatDialogModule.imports += 1
-  return { SeatSelectionDialog: () => null }
+  const { useEffect } = await import("react")
+  return {
+    SeatSelectionDialog: ({ isOpen, onApply, onCarSelect }: { isOpen: boolean; onApply: (seats: string[], car: number) => void; onCarSelect: (carId: string) => void }) => {
+      useEffect(() => {
+        if (isOpen) onCarSelect("13")
+      }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
+      return isOpen ? (
+        <button type="button" onClick={() => onApply(dialogApply.seats, 3)}>
+          적용 확인
+        </button>
+      ) : null
+    },
+  }
 })
-vi.mock("@/components/ticket/search/booking-panel", () => ({ BookingPanel: () => null }))
+vi.mock("@/components/ticket/search/booking-panel", () => ({
+  BookingPanel: ({ isOpen, selectedSeats, onSeatSelection, onBooking }: { isOpen: boolean; selectedSeats: string[]; onSeatSelection: () => void; onBooking: () => void }) =>
+    isOpen ? (
+      <div>
+        <span>적용 좌석:{selectedSeats.join(",")}</span>
+        <button type="button" onClick={onSeatSelection}>좌석 고르기</button>
+        <button type="button" onClick={onBooking}>예매하기</button>
+      </div>
+    ) : null,
+}))
+vi.mock("@/lib/api/pendingBookings", () => ({
+  createPendingBooking: vi.fn(),
+  getReservationList: vi.fn(),
+  deletePendingBookings: vi.fn(),
+}))
 vi.mock("@/components/common/usage-info", () => ({ UsageInfo: () => null }))
 
 const searchTrainsMock = vi.mocked(searchTrains)
+const searchCarsMock = vi.mocked(searchCars)
+const searchSeatsMock = vi.mocked(searchSeats)
+const createPendingBookingMock = vi.mocked(createPendingBooking)
 
 const seat: SeatInfo = {
   availableSeats: 10,
@@ -98,6 +133,8 @@ const skeleton = () => screen.queryAllByText(/열차를 조회하는 중/)
 
 beforeEach(() => {
   searchTrainsMock.mockReset()
+  navigation.params = new URLSearchParams(DEFAULT_QUERY)
+  useAuthStore.setState({ accessToken: null, tokenExpiresIn: null, isAuthenticated: false, initialize: vi.fn(async () => {}) })
 })
 
 afterEach(() => {
@@ -247,5 +284,84 @@ describe("열차 조회 캐시·오류", () => {
     expect(await screen.findByText("검색 결과가 없습니다")).toBeInTheDocument()
     expect(requestedPages()).toEqual([0])
     expect(skeleton()).toHaveLength(0)
+  })
+})
+
+const car: CarInfo = { id: 13, carNumber: "3", carType: "STANDARD", totalSeats: 40, remainingSeats: 30, seatArrangement: "2+2" }
+const seatDetail = (seatId: number, seatNumber: string): SeatDetail => ({
+  seatId, seatNumber, isAvailable: true, seatDirection: "FORWARD", seatType: "WINDOW", remarks: "",
+})
+
+describe("예매 흐름", () => {
+  beforeEach(() => {
+    searchTrainsMock.mockResolvedValue(slicePage("N", 0, 100, 20, false))
+    searchCarsMock.mockResolvedValue({ recommendedCarNumber: "3", totalCarCount: 1, trainClassificationCode: "KTX", trainNumber: "N100", carInfos: [car] })
+    searchSeatsMock.mockResolvedValue({ carNumber: "3", carType: "STANDARD", totalSeatCount: 2, remainingSeatCount: 2, layoutType: 2, seatList: [seatDetail(7, "1A"), seatDetail(8, "1B")] })
+    createPendingBookingMock.mockResolvedValue({ pendingBookingId: "pb-1" })
+  })
+
+  // 첫 열차 선택 → 좌석 고르기 → 좌석 조회 → 적용
+  const chooseSeats = async (seats: string[]) => {
+    dialogApply.seats = seats
+    renderPage()
+    await screen.findByText("N100")
+    act(() => screen.getAllByRole("button", { name: "선택" })[0].click())
+    act(() => screen.getByRole("button", { name: "좌석 고르기" }).click())
+    const apply = await screen.findByRole("button", { name: "적용 확인" })
+    await waitFor(() => expect(searchSeatsMock).toHaveBeenCalled())
+    await act(async () => {})
+    act(() => apply.click())
+  }
+
+  it("로그인 상태에서 고른 좌석과 승객 유형으로 대기 예약을 만들고 예약 목록으로 이동한다", async () => {
+    navigation.params = new URLSearchParams("departure=서울&arrival=부산&date=2099-12-31&hour=09&adult=1&child=1")
+    useAuthStore.setState({ accessToken: "token", tokenExpiresIn: Date.now() + 60_000, isAuthenticated: true })
+
+    await chooseSeats(["1B", "1A"])
+    expect(await screen.findByText("적용 좌석:1B,1A")).toBeInTheDocument()
+    expect(searchCarsMock).toHaveBeenCalledWith({ trainScheduleId: 100, departureStationId: 2, arrivalStationId: 18, passengerCount: 2 })
+    expect(searchSeatsMock).toHaveBeenCalledWith({ trainCarId: "13", trainScheduleId: 100, departureStationId: 2, arrivalStationId: 18 })
+
+    await act(async () => screen.getByRole("button", { name: "예매하기" }).click())
+
+    expect(createPendingBookingMock).toHaveBeenCalledWith({
+      trainScheduleId: 100,
+      departureStationId: 2,
+      arrivalStationId: 18,
+      passengerTypes: ["ADULT", "CHILD"],
+      seatIds: [8, 7],
+    })
+    await waitFor(() => expect(navigation.router.push).toHaveBeenCalledWith("/ticket/reservations"))
+    expect(screen.queryByRole("button", { name: "예매하기" })).toBeNull()
+  })
+
+  it("로그인하지 않았으면 인증을 한 번 확인한 뒤 로그인 화면으로 보내고 예약하지 않는다", async () => {
+    await chooseSeats(["1A"])
+    await act(async () => (await screen.findByRole("button", { name: "예매하기" })).click())
+
+    expect(useAuthStore.getState().initialize).toHaveBeenCalledTimes(1)
+    expect(navigation.router.push).toHaveBeenCalledWith(`/login?redirectTo=${encodeURIComponent("/")}`)
+    expect(createPendingBookingMock).not.toHaveBeenCalled()
+  })
+
+  it("대기 예약에 실패하면 예매 패널을 유지하고 이동하지 않는다", async () => {
+    useAuthStore.setState({ accessToken: "token", tokenExpiresIn: Date.now() + 60_000, isAuthenticated: true })
+    createPendingBookingMock.mockRejectedValue(new Error("mock"))
+
+    await chooseSeats(["1A"])
+    await act(async () => (await screen.findByRole("button", { name: "예매하기" })).click())
+
+    expect(createPendingBookingMock).toHaveBeenCalledTimes(1)
+    expect(navigation.router.push).not.toHaveBeenCalled()
+    expect(screen.getByRole("button", { name: "예매하기" })).toBeInTheDocument()
+  })
+
+  it("승객 수와 다른 개수를 적용하면 좌석 선택을 유지하고 예매 패널로 돌아가지 않는다", async () => {
+    navigation.params = new URLSearchParams("departure=서울&arrival=부산&date=2099-12-31&hour=00&adult=2")
+
+    await chooseSeats(["1A"])
+
+    expect(screen.getByRole("button", { name: "적용 확인" })).toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "예매하기" })).toBeNull()
   })
 })
