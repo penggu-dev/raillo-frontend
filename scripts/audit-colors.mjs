@@ -234,9 +234,15 @@ function parseArgs(args) {
       byFile = true;
     } else if (arg === "--max" || arg.startsWith("--max=")) {
       const value = arg === "--max" ? args[(index += 1)] : arg.slice("--max=".length);
-      if (value === undefined || !/^\d+$/.test(value)) return { error: `--max 값이 올바르지 않음: ${value ?? "(없음)"}` };
-      max = Number(value);
-    } else if (arg.startsWith("--")) {
+      const parsedMax = Number(value);
+      // 너무 큰 수는 정밀도를 잃거나 Infinity가 되어 게이트가 사실상 꺼지므로 안전한 정수만 허용
+      if (value === undefined || !/^\d+$/.test(value) || !Number.isSafeInteger(parsedMax)) {
+        return { error: `--max 값이 올바르지 않음: ${value ?? "(없음)"}` };
+      }
+      max = parsedMax;
+    } else if (arg.startsWith("-")) {
+      // -max 같은 오타가 경로로 해석돼 게이트가 조용히 통과하지 않도록 하이픈으로 시작하는 인자는 모두 거부
+      // (검사 경로는 app·components 등이라 하이픈으로 시작하는 경로는 없음)
       return { error: `알 수 없는 옵션: ${arg}` };
     } else {
       scopes.push(toPosix(arg).replace(/^\.\//, "").replace(/\/$/, ""));
