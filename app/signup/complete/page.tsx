@@ -181,7 +181,7 @@ export default function SignupCompletePage() {
                   <Button
                     asChild
                     variant="outline"
-                    className="flex-1 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-500/10"
+                    className="flex-1 border-green-700 text-green-700 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-500/10"
                   >
                     <Link href="/">기차표 예매</Link>
                   </Button>

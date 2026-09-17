@@ -315,7 +315,7 @@ export function SeatSelectionDialog({
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-5 h-5 border bg-orange-100 border-orange-300 dark:bg-orange-500/15 dark:border-orange-400/40 rounded flex items-center justify-center">
-                <span className="text-xs text-orange-600 dark:text-orange-300">→</span>
+                <span className="text-xs text-orange-700 dark:text-orange-300">→</span>
               </div>
               <span className="text-foreground">순방향</span>
             </div>

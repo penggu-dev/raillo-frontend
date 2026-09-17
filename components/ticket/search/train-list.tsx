@@ -17,7 +17,6 @@ interface TrainListProps {
   /** trigger: 닫은 뒤 포커스를 돌려줄 버튼 (Safari는 클릭해도 버튼에 포커스를 주지 않아 activeElement로 추정하지 않는다) */
   onSeatSelection: (train: TrainSchedule, seatType: SeatType, trigger: HTMLElement) => void;
   onLoadMore: () => void;
-  getTrainTypeColor: (trainType: string) => string;
   formatPrice: (price: number) => string;
   getSeatTypeName: (seatType: SeatType) => string;
 }
@@ -30,7 +29,6 @@ export function TrainList({
   hasMoreTrains,
   onSeatSelection,
   onLoadMore,
-  getTrainTypeColor,
   formatPrice,
   getSeatTypeName,
 }: TrainListProps) {
@@ -63,7 +61,6 @@ export function TrainList({
           train={train}
           isSelected={selectedTrain?.trainScheduleId === train.trainScheduleId}
           onSeatSelection={onSeatSelection}
-          getTrainTypeColor={getTrainTypeColor}
           formatPrice={formatPrice}
           getSeatTypeName={getSeatTypeName}
         />
