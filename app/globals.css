@@ -87,6 +87,13 @@
     --sidebar-accent-foreground: 24 24 27; /* #18181b */
     --sidebar-border: 228 228 231; /* #e4e4e7 */
     --sidebar-ring: 37 99 235; /* #2563eb */
+
+    /* Footer — 테마와 무관한 고정 다크 밴드 (.dark에서 재정의하지 않음) */
+    --footer: 31 41 55; /* #1f2937 */
+    --footer-foreground: 255 255 255; /* #ffffff — 14.68:1 */
+    --footer-muted: 209 213 219; /* #d1d5db — 9.96:1 */
+    --footer-subtle: 156 163 175; /* #9ca3af — 5.78:1 */
+    --footer-border: 55 65 81; /* #374151 */
   }
   .dark {
     --background: 9 9 11; /* #09090b */
