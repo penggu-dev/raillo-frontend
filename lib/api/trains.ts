@@ -13,15 +13,20 @@ import type {
 /** 열차 조회 페이지 크기 — 백엔드 기본값(20)과 같은 값을 요청에 명시한다 */
 export const TRAIN_SEARCH_PAGE_SIZE = 20;
 
+interface SearchTrainsOptions extends PageRequest {
+  /** 조건이 바뀌거나 화면을 떠나 필요 없어진 요청을 취소한다 */
+  signal?: AbortSignal;
+}
+
 export const searchTrains = async (
   request: TrainSearchRequest,
-  { page = 0, size = TRAIN_SEARCH_PAGE_SIZE }: PageRequest = {},
+  { page = 0, size = TRAIN_SEARCH_PAGE_SIZE, signal }: SearchTrainsOptions = {},
 ): Promise<TrainSearchResponse> => {
   // 검색 조건은 본문, 페이지는 쿼리(Spring Pageable)로 보낸다
   const params = new URLSearchParams({ page: String(page), size: String(size) });
-  const response = await api.post<TrainSearchResponse>(
+  const response = await api.request<TrainSearchResponse>(
     `/api/v1/trains/search?${params}`,
-    request,
+    { method: "POST", body: JSON.stringify(request), signal },
   );
   return requireResult(response.result, "열차 조회에 실패했습니다.");
 };
