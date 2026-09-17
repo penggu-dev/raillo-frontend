@@ -77,6 +77,15 @@ describe("searchTrains", () => {
     expect(url.searchParams.get("size")).toBe("10")
   })
 
+  it("취소 신호를 요청에 넘긴다", async () => {
+    respond({ result: slice })
+    const controller = new AbortController()
+
+    await searchTrains(request, { page: 0, signal: controller.signal })
+
+    expect(lastCall().init.signal).toBe(controller.signal)
+  })
+
   it("응답의 Slice 페이지 정보를 그대로 돌려준다", async () => {
     const page = { ...slice, currentPage: 2, numberOfElements: 13, hasPrevious: true, first: false }
     respond({ result: page })
