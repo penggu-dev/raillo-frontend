@@ -4,13 +4,6 @@ import { Card, CardContent } from "@/components/ui/card"
 export default function GuestTicketSearchLoading() {
   return (
     <div className="min-h-screen">
-      {/* Header Skeleton */}
-      <div className="bg-primary py-6">
-        <div className="container mx-auto px-4">
-          <Skeleton className="h-8 w-48 mx-auto bg-primary-light" />
-        </div>
-      </div>
-
       {/* Breadcrumb Skeleton */}
       <div className="bg-card border-b py-3">
         <div className="container mx-auto px-4 flex items-center justify-between">
@@ -27,7 +20,7 @@ export default function GuestTicketSearchLoading() {
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
             <Skeleton className="h-8 w-64 mb-2" />
-            <Skeleton className="h-4 w-96" />
+            <Skeleton className="h-4 w-full max-w-96" />
           </div>
 
           <Card>

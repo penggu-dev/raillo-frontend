@@ -41,7 +41,7 @@ export default function ContactChangeLoading() {
           <div className="flex-1">
             <Card>
               <CardContent className="p-8">
-                <Skeleton className="h-6 w-80 mb-4" />
+                <Skeleton className="h-6 w-full max-w-80 mb-4" />
                 <div className="space-y-2 mb-8">
                   {Array.from({ length: 4 }).map((_, i) => (
                     <Skeleton key={i} className="h-4 w-full" />

@@ -1,38 +1,18 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Home, Printer } from "lucide-react"
 
 export default function SignupCompleteLoading() {
   return (
     <div className="min-h-screen">
-      {/* Page Header */}
-      <div className="bg-primary text-primary-foreground py-6">
-        <div className="container mx-auto px-4">
-          <Skeleton className="h-8 w-32 mx-auto bg-primary-light" />
-        </div>
-      </div>
-
-      {/* Breadcrumb */}
-      <div className="bg-card border-b">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Home className="h-4 w-4 text-muted-foreground" />
-              <Skeleton className="h-4 w-8" />
-              <span>/</span>
-              <Skeleton className="h-4 w-20" />
-            </div>
-            <div className="flex items-center space-x-1">
-              <Printer className="h-4 w-4 text-muted-foreground" />
-              <Skeleton className="h-4 w-8" />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
+          {/* Page Title Skeleton */}
+          <div className="text-center mb-8">
+            <Skeleton className="h-9 w-48 mx-auto mb-2" />
+            <Skeleton className="h-5 w-full max-w-72 mx-auto" />
+          </div>
+
           <Card className="shadow-elev-md border-0">
             <CardContent className="p-12 text-center">
               {/* Success Icon */}
@@ -42,7 +22,7 @@ export default function SignupCompleteLoading() {
 
               {/* Success Message */}
               <div className="mb-8">
-                <Skeleton className="h-8 w-80 mx-auto mb-4" />
+                <Skeleton className="h-8 w-full max-w-80 mx-auto mb-4" />
                 <Skeleton className="h-6 w-64 mx-auto" />
               </div>
 

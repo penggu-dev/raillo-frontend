@@ -4,26 +4,15 @@ import { Card, CardContent } from "@/components/ui/card"
 export default function FindAccountLoading() {
   return (
     <div className="min-h-screen">
-      {/* Page Header Skeleton */}
-      <div className="bg-primary text-primary-foreground py-6">
-        <div className="container mx-auto px-4">
-          <Skeleton className="h-8 w-64 mx-auto bg-primary-light" />
-        </div>
-      </div>
-
-      {/* Breadcrumb Skeleton */}
-      <div className="bg-card border-b">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-8 w-16" />
-          </div>
-        </div>
-      </div>
-
       {/* Main Content Skeleton */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          {/* Page Title Skeleton */}
+          <div className="text-center mb-8">
+            <Skeleton className="h-9 w-full max-w-72 mx-auto mb-2" />
+            <Skeleton className="h-5 w-full max-w-80 mx-auto" />
+          </div>
+
           <Card className="shadow-elev-md">
             <CardContent className="p-8">
               {/* Tabs Skeleton */}
