@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
@@ -10,7 +11,6 @@ import { stationUtils } from "@/constants/stations";
 import { createPendingBooking } from "@/lib/api/pendingBookings";
 import { PENDING_BOOKINGS_QUERY_KEY } from "@/hooks/usePendingBooking";
 import { handleError } from "@/lib/utils/errorHandler";
-import { SeatSelectionDialog } from "@/components/ticket/search/seat-selection-dialog";
 import { BookingPanel } from "@/components/ticket/search/booking-panel";
 import { SearchForm } from "@/components/ticket/search/search-form";
 import { TrainList } from "@/components/ticket/search/train-list";
@@ -26,6 +26,15 @@ import type { PassengerCounts } from "@/types/passengerType";
 import { useToast } from "@/hooks/useToast";
 import { saveSearchHistory } from "@/lib/utils/searchHistory";
 import { TrainListSkeleton } from "@/components/ticket/search/TrainListSkeleton";
+
+// 좌석 선택 다이얼로그는 호차 선택(Radix Select)까지 포함해 무겁고 예매 패널에서만 열리므로 필요할 때 받는다
+const SeatSelectionDialog = dynamic(
+  () =>
+    import("@/components/ticket/search/seat-selection-dialog").then(
+      (mod) => mod.SeatSelectionDialog,
+    ),
+  { ssr: false },
+);
 
 function TrainSearchPage() {
   const router = useRouter();
@@ -75,6 +84,8 @@ function TrainSearchPage() {
 
   // Seat selection state
   const [showSeatSelection, setShowSeatSelection] = useState(false);
+  // 예매 패널을 처음 열 때 좌석 선택 다이얼로그를 마운트해 미리 받아 둔다 (닫힌 뒤에도 유지)
+  const [seatDialogMounted, setSeatDialogMounted] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [selectedCar, setSelectedCar] = useState(1);
 
@@ -280,6 +291,7 @@ function TrainSearchPage() {
       fetchCars(train.trainScheduleId);
     }
 
+    setSeatDialogMounted(true);
     setShowBookingPanel(true);
   };
 
@@ -658,31 +670,33 @@ function TrainSearchPage() {
       </div>
 
       {/* Seat Selection Dialog */}
-      <SeatSelectionDialog
-        isOpen={showSeatSelection}
-        onClose={() => {
-          setShowSeatSelection(false);
-          setSelectedSeats([]);
-        }}
-        selectedTrain={selectedTrain}
-        selectedSeatType={selectedSeatType}
-        selectedSeats={selectedSeats}
-        onSeatClick={handleSeatClick}
-        onApply={handleSeatSelectionApply}
-        getSeatTypeName={getSeatTypeName}
-        getTotalPassengers={getTotalPassengers}
-        carList={carList}
-        seatList={seatList}
-        loadingCars={loadingCars}
-        loadingSeats={loadingSeats}
-        onCarSelect={(carId: string) => {
-          if (selectedTrain && selectedTrain.trainScheduleId) {
-            fetchSeats(carId, selectedTrain.trainScheduleId);
-          }
-        }}
-        onRefreshSeats={handleRefreshSeats}
-        returnFocusRef={overlayReturnFocusRef}
-      />
+      {seatDialogMounted && (
+        <SeatSelectionDialog
+          isOpen={showSeatSelection}
+          onClose={() => {
+            setShowSeatSelection(false);
+            setSelectedSeats([]);
+          }}
+          selectedTrain={selectedTrain}
+          selectedSeatType={selectedSeatType}
+          selectedSeats={selectedSeats}
+          onSeatClick={handleSeatClick}
+          onApply={handleSeatSelectionApply}
+          getSeatTypeName={getSeatTypeName}
+          getTotalPassengers={getTotalPassengers}
+          carList={carList}
+          seatList={seatList}
+          loadingCars={loadingCars}
+          loadingSeats={loadingSeats}
+          onCarSelect={(carId: string) => {
+            if (selectedTrain && selectedTrain.trainScheduleId) {
+              fetchSeats(carId, selectedTrain.trainScheduleId);
+            }
+          }}
+          onRefreshSeats={handleRefreshSeats}
+          returnFocusRef={overlayReturnFocusRef}
+        />
+      )}
 
       {/* Booking Panel */}
       <BookingPanel
