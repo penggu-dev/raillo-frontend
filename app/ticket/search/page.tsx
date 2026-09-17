@@ -86,6 +86,10 @@ function TrainSearchPage() {
 
   // 중복 호출 방지 플래그
   const didFetchTrains = useRef(false);
+  // 조회 차수 — 다시 조회할 때마다 올려, 이전 조회·더보기의 늦은 응답을 버린다
+  const searchGenerationRef = useRef(0);
+  // 더보기 진행 여부 — 버튼 비활성화가 렌더되기 전의 연속 클릭을 막는다
+  const loadingMoreRef = useRef(false);
   // 예매 패널·좌석 선택 다이얼로그를 닫은 뒤 포커스를 돌려줄 요소
   const overlayReturnFocusRef = useRef<HTMLElement | null>(null);
 
@@ -100,6 +104,10 @@ function TrainSearchPage() {
 
   // 실제 API 호출 함수
   const fetchTrainsFromAPI = async () => {
+    const generation = ++searchGenerationRef.current;
+    // 진행 중이던 더보기는 이전 조회의 요청이므로 더보기 상태를 풀어 둔다
+    loadingMoreRef.current = false;
+    setLoadingMore(false);
     setLoading(true);
 
     // 검색 기록 저장
@@ -133,6 +141,7 @@ function TrainSearchPage() {
       };
 
       const result = await searchTrains(searchRequest, { page: 0 });
+      if (generation !== searchGenerationRef.current) return;
       const resultArray: TrainSchedule[] = Array.isArray(result.content)
         ? result.content
         : [];
@@ -141,6 +150,7 @@ function TrainSearchPage() {
       setCurrentPage(result.currentPage);
       setHasNext(result.hasNext ?? false);
     } catch (error) {
+      if (generation !== searchGenerationRef.current) return;
       toast({
         title: "오류",
         description: handleError(error, "열차 검색에 실패했습니다."),
@@ -150,7 +160,9 @@ function TrainSearchPage() {
       setCurrentPage(0);
       setHasNext(false);
     } finally {
-      setLoading(false);
+      if (generation === searchGenerationRef.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -273,6 +285,9 @@ function TrainSearchPage() {
 
   const handleLoadMore = async () => {
     if (!departureStation || !arrivalStation) return;
+    if (loadingMoreRef.current) return;
+    loadingMoreRef.current = true;
+    const generation = searchGenerationRef.current;
 
     setLoadingMore(true);
 
@@ -300,6 +315,8 @@ function TrainSearchPage() {
       };
 
       const result = await searchTrains(searchRequest, { page: nextPage });
+      // 응답 전에 다시 조회했다면 이전 조건의 페이지이므로 붙이지 않는다
+      if (generation !== searchGenerationRef.current) return;
       const newTrains: TrainSchedule[] = Array.isArray(result.content)
         ? result.content
         : [];
@@ -308,6 +325,7 @@ function TrainSearchPage() {
       setCurrentPage(result.currentPage);
       setHasNext(result.hasNext ?? false);
     } catch (error) {
+      if (generation !== searchGenerationRef.current) return;
       toast({
         title: "오류",
         description: handleError(
@@ -318,7 +336,10 @@ function TrainSearchPage() {
       });
       setHasNext(false);
     } finally {
-      setLoadingMore(false);
+      if (generation === searchGenerationRef.current) {
+        loadingMoreRef.current = false;
+        setLoadingMore(false);
+      }
     }
   };
 
