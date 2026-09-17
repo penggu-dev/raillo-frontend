@@ -1,11 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
-import { formatPrice } from "@/lib/utils/format";
 import { searchCars, searchSeats } from "@/lib/api/trains";
 import { stationUtils } from "@/constants/stations";
 import { createPendingBooking } from "@/lib/api/pendingBookings";
@@ -262,17 +261,6 @@ function TrainSearchPage() {
     setSearchConditionsChanged(true);
   };
 
-  const getSeatTypeName = (seatType: SeatType) => {
-    switch (seatType) {
-      case "standardSeat":
-        return "일반실";
-      case "firstClassSeat":
-        return "특실";
-      default:
-        return "";
-    }
-  };
-
   const handleSeatSelection = (
     train: TrainSchedule,
     seatType: SeatType,
@@ -300,6 +288,17 @@ function TrainSearchPage() {
     setSeatDialogMounted(true);
     setShowBookingPanel(true);
   };
+
+  // 열차 카드(memo)에 넘기는 선택 핸들러는 참조를 고정한다 — 최신 핸들러는 ref로 호출
+  const handleSeatSelectionRef = useRef(handleSeatSelection);
+  useEffect(() => {
+    handleSeatSelectionRef.current = handleSeatSelection;
+  });
+  const onSeatSelection = useCallback(
+    (train: TrainSchedule, seatType: SeatType, trigger: HTMLElement) =>
+      handleSeatSelectionRef.current(train, seatType, trigger),
+    [],
+  );
 
   const handleLoadMore = () => {
     if (!hasNextPage || isFetchingNextPage) return;
@@ -445,16 +444,6 @@ function TrainSearchPage() {
     setSelectedCar(1);
     setCarList([]);
     setSeatList([]);
-  };
-
-  const handleSeatClick = (seatNumber: string) => {
-    setSelectedSeats((prev) => {
-      if (prev.includes(seatNumber)) {
-        return prev.filter((seat) => seat !== seatNumber);
-      } else {
-        return [...prev, seatNumber];
-      }
-    });
   };
 
   const handleSeatSelectionApply = (seats: string[], car: number) => {
@@ -611,10 +600,8 @@ function TrainSearchPage() {
             loadingMore={isFetchingNextPage}
             // 더보기가 실패해도 버튼을 남긴다 — 다시 누르면 같은 페이지를 다시 요청한다
             hasMoreTrains={Boolean(hasNextPage)}
-            onSeatSelection={handleSeatSelection}
+            onSeatSelection={onSeatSelection}
             onLoadMore={handleLoadMore}
-            formatPrice={formatPrice}
-            getSeatTypeName={getSeatTypeName}
           />
         </div>
 
@@ -632,11 +619,9 @@ function TrainSearchPage() {
           }}
           selectedTrain={selectedTrain}
           selectedSeatType={selectedSeatType}
-          selectedSeats={selectedSeats}
-          onSeatClick={handleSeatClick}
+          appliedSeats={selectedSeats}
           onApply={handleSeatSelectionApply}
-          getSeatTypeName={getSeatTypeName}
-          getTotalPassengers={getTotalPassengers}
+          maxSeats={getTotalPassengers()}
           carList={carList}
           seatList={seatList}
           loadingCars={loadingCars}
@@ -666,8 +651,6 @@ function TrainSearchPage() {
           }, 100);
         }}
         onBooking={handleBooking}
-        getSeatTypeName={getSeatTypeName}
-        formatPrice={formatPrice}
         carList={carList}
         loadingCars={loadingCars}
         onRefreshSeats={handleRefreshSeats}
