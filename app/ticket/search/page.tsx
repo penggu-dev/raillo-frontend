@@ -71,7 +71,6 @@ function TrainSearchPage() {
   const [selectedSeatType, setSelectedSeatType] =
     useState<SeatType>("standardSeat");
   const [showBookingPanel, setShowBookingPanel] = useState(false);
-  const [totalResults, setTotalResults] = useState(0);
   const [searchConditionsChanged, setSearchConditionsChanged] = useState(false);
 
   // Seat selection state
@@ -133,13 +132,13 @@ function TrainSearchPage() {
         departureHour: hour.replace("시", ""),
       };
 
-      const result = await searchTrains(searchRequest);
+      const result = await searchTrains(searchRequest, { page: 0 });
       const resultArray: TrainSchedule[] = Array.isArray(result.content)
         ? result.content
         : [];
 
       setDisplayedTrains(resultArray);
-      setTotalResults(result.totalElements || resultArray.length);
+      setCurrentPage(result.currentPage);
       setHasNext(result.hasNext ?? false);
     } catch (error) {
       toast({
@@ -148,7 +147,7 @@ function TrainSearchPage() {
         variant: "destructive",
       });
       setDisplayedTrains([]);
-      setTotalResults(0);
+      setCurrentPage(0);
       setHasNext(false);
     } finally {
       setLoading(false);
@@ -300,17 +299,14 @@ function TrainSearchPage() {
         departureHour: hour.replace("시", ""),
       };
 
-      const result = await searchTrains(searchRequest);
+      const result = await searchTrains(searchRequest, { page: nextPage });
       const newTrains: TrainSchedule[] = Array.isArray(result.content)
         ? result.content
         : [];
 
       setDisplayedTrains((prev) => [...prev, ...newTrains]);
-      setCurrentPage(nextPage);
+      setCurrentPage(result.currentPage);
       setHasNext(result.hasNext ?? false);
-      if (newTrains.length === 0) {
-        setTotalResults(displayedTrains.length);
-      }
     } catch (error) {
       toast({
         title: "오류",
@@ -625,7 +621,6 @@ function TrainSearchPage() {
 
           <TrainList
             displayedTrains={displayedTrains}
-            totalResults={totalResults}
             selectedTrain={selectedTrain}
             loadingMore={loadingMore}
             hasMoreTrains={hasNext}
