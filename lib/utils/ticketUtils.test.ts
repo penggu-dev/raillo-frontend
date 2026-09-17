@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest"
 import {
   getTrainTypeColor,
+  getSeatTypeName,
   getCarTypeName,
   getPassengerTypeName,
   getPaymentMethodName,
@@ -85,5 +86,12 @@ describe("getPaymentMethodName", () => {
 
   it("알 수 없는 값은 그대로 반환한다", () => {
     expect(getPaymentMethodName("BITCOIN")).toBe("BITCOIN")
+  })
+})
+
+describe("getSeatTypeName", () => {
+  it("일반실·특실 이름을 반환한다", () => {
+    expect(getSeatTypeName("standardSeat")).toBe("일반실")
+    expect(getSeatTypeName("firstClassSeat")).toBe("특실")
   })
 })
