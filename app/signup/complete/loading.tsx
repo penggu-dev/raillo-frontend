@@ -10,7 +10,7 @@ export default function SignupCompleteLoading() {
           {/* Page Title Skeleton */}
           <div className="text-center mb-8">
             <Skeleton className="h-9 w-48 mx-auto mb-2" />
-            <Skeleton className="h-5 w-72 mx-auto" />
+            <Skeleton className="h-5 w-full max-w-72 mx-auto" />
           </div>
 
           <Card className="shadow-elev-md border-0">
@@ -22,7 +22,7 @@ export default function SignupCompleteLoading() {
 
               {/* Success Message */}
               <div className="mb-8">
-                <Skeleton className="h-8 w-80 mx-auto mb-4" />
+                <Skeleton className="h-8 w-full max-w-80 mx-auto mb-4" />
                 <Skeleton className="h-6 w-64 mx-auto" />
               </div>
 

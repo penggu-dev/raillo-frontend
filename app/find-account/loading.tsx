@@ -9,8 +9,8 @@ export default function FindAccountLoading() {
         <div className="max-w-4xl mx-auto">
           {/* Page Title Skeleton */}
           <div className="text-center mb-8">
-            <Skeleton className="h-9 w-72 mx-auto mb-2" />
-            <Skeleton className="h-5 w-80 mx-auto" />
+            <Skeleton className="h-9 w-full max-w-72 mx-auto mb-2" />
+            <Skeleton className="h-5 w-full max-w-80 mx-auto" />
           </div>
 
           <Card className="shadow-elev-md">
