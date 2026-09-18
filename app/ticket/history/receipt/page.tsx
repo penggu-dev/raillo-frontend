@@ -102,9 +102,11 @@ export default function TicketReceiptDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Receipt className="h-5 w-5 text-primary" />
-                <span>승차권 정보</span>
+              <CardTitle asChild className="flex items-center gap-2">
+                <h3>
+                  <Receipt className="h-5 w-5 text-primary" />
+                  <span>승차권 정보</span>
+                </h3>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -136,9 +138,11 @@ export default function TicketReceiptDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                <span>운행 정보</span>
+              <CardTitle asChild className="flex items-center gap-2">
+                <h3>
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <span>운행 정보</span>
+                </h3>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -169,9 +173,11 @@ export default function TicketReceiptDetailPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                <span>결제 정보</span>
+              <CardTitle asChild className="flex items-center gap-2">
+                <h3>
+                  <Calendar className="h-5 w-5 text-primary" />
+                  <span>결제 정보</span>
+                </h3>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

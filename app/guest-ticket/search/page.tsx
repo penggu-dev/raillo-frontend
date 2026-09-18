@@ -173,8 +173,8 @@ export default function GuestTicketSearchPage() {
           {/* Benefits Section */}
           <Card className="bg-muted">
             <CardHeader>
-              <CardTitle className="text-lg font-bold text-foreground">
-                RAILLO 회원에게만 제공되는 특별한 혜택
+              <CardTitle asChild className="text-lg font-bold text-foreground">
+                <h3>RAILLO 회원에게만 제공되는 특별한 혜택</h3>
               </CardTitle>
             </CardHeader>
             <CardContent>

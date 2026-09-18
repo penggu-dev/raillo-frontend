@@ -247,8 +247,8 @@ export default function HomePage() {
                         <CreditCard className="h-7 w-7" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-foreground">
-                          승차권 확인
+                        <CardTitle asChild className="text-xl text-foreground">
+                          <h3>승차권 확인</h3>
                         </CardTitle>
                         <CardDescription className="text-muted-foreground">
                           예매한 승차권 정보를 확인하세요
@@ -278,8 +278,8 @@ export default function HomePage() {
                         <CalendarIcon className="h-7 w-7" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-foreground">
-                          예약승차권 조회
+                        <CardTitle asChild className="text-xl text-foreground">
+                          <h3>예약승차권 조회</h3>
                         </CardTitle>
                         <CardDescription className="text-muted-foreground">
                           예약한 승차권을 조회하고 취소할 수 있습니다
@@ -308,8 +308,8 @@ export default function HomePage() {
                         <Search className="h-7 w-7" />
                       </div>
                       <div>
-                        <CardTitle className="text-xl text-foreground">
-                          승차권 예매
+                        <CardTitle asChild className="text-xl text-foreground">
+                          <h3>승차권 예매</h3>
                         </CardTitle>
                         <CardDescription className="text-muted-foreground">
                           원하는 열차를 검색하고 예매하세요

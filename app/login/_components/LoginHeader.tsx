@@ -14,7 +14,9 @@ const LoginHeader = () => {
     searchParams.get("redirectTo") && "로그인이 필요한 서비스입니다.";
   return (
     <CardHeader className="text-center">
-      <CardTitle className="text-2xl font-bold text-foreground">로그인</CardTitle>
+      <CardTitle asChild className="text-2xl font-bold text-foreground">
+        <h1>로그인</h1>
+      </CardTitle>
       <CardDescription className="text-muted-foreground">
         회원번호로 로그인하세요
       </CardDescription>

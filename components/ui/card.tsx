@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
 
 import { cn } from "@/lib/utils"
 
@@ -31,17 +32,21 @@ CardHeader.displayName = "CardHeader"
 
 const CardTitle = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "heading-h3 leading-none",
-      className
-    )}
-    {...props}
-  />
-))
+  React.HTMLAttributes<HTMLDivElement> & { asChild?: boolean }
+>(({ className, asChild = false, ...props }, ref) => {
+  // asChild: 화면 구조에 맞는 제목 요소(h1·h2 등)를 그대로 쓰면서 카드 제목 스타일만 적용
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      ref={ref}
+      className={cn(
+        "heading-h3 leading-none",
+        className
+      )}
+      {...props}
+    />
+  )
+})
 CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<

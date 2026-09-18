@@ -144,8 +144,8 @@ export default function SignupPage() {
         <div className="max-w-2xl mx-auto">
           <Card className="shadow-elev-md">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-foreground">
-                회원가입
+              <CardTitle asChild className="text-2xl font-bold text-foreground">
+                <h1>회원가입</h1>
               </CardTitle>
               <CardDescription className="text-muted-foreground">
                 RAILLO 회원이 되어 더 많은 혜택을 누리세요
