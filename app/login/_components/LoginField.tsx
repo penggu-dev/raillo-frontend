@@ -31,7 +31,7 @@ const LoginField = () => {
     register,
     handleSubmit,
     setValue,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { memberNumber: "", password: "" },
@@ -81,11 +81,18 @@ const LoginField = () => {
             type="text"
             placeholder="회원번호를 입력하세요"
             {...register("memberNumber")}
-            className="pl-10"
+            className={`pl-10 ${errors.memberNumber ? "border-red-500 dark:border-red-400" : ""}`}
             disabled={isSubmitting}
+            aria-invalid={!!errors.memberNumber}
+            aria-describedby={errors.memberNumber ? "memberNumber-error" : undefined}
             autoFocus
           />
         </div>
+        {errors.memberNumber && (
+          <p id="memberNumber-error" className="text-xs text-red-600 dark:text-red-400">
+            {errors.memberNumber.message}
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -99,8 +106,10 @@ const LoginField = () => {
             type={showPassword ? "text" : "password"}
             placeholder="비밀번호를 입력하세요"
             {...register("password")}
-            className="pl-10 pr-10"
+            className={`pl-10 pr-10 ${errors.password ? "border-red-500 dark:border-red-400" : ""}`}
             disabled={isSubmitting}
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
           />
           <button
             type="button"
@@ -116,6 +125,11 @@ const LoginField = () => {
             )}
           </button>
         </div>
+        {errors.password && (
+          <p id="password-error" className="text-xs text-red-600 dark:text-red-400">
+            {errors.password.message}
+          </p>
+        )}
       </div>
 
       <Button
