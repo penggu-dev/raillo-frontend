@@ -4,12 +4,12 @@ import Link from "next/link";
 
 const CartBtn = () => {
   return (
-    <Link href="/cart">
-      <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+    <Button variant="ghost" size="sm" className="flex items-center space-x-2" asChild>
+      <Link href="/cart">
         <ShoppingCart className="h-4 w-4" />
         <span>장바구니</span>
-      </Button>
-    </Link>
+      </Link>
+    </Button>
   );
 };
 

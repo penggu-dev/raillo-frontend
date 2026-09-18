@@ -203,11 +203,11 @@ export default function TicketReceiptDetailPage() {
           </Card>
 
           <div className="text-center">
-            <Link href="/ticket/history">
-              <Button variant="outline" className="px-8">
+            <Button variant="outline" className="px-8" asChild>
+              <Link href="/ticket/history">
                 내역으로 돌아가기
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

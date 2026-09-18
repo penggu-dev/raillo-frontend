@@ -212,11 +212,11 @@ export default function GuestTicketsPage() {
 
           {/* Back Button */}
           <div className="mt-8 text-center">
-            <Link href="/guest-ticket/search">
-              <Button variant="outline" className="px-6">
+            <Button variant="outline" className="px-6" asChild>
+              <Link href="/guest-ticket/search">
                 다시 조회하기
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

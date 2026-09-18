@@ -97,9 +97,9 @@ function WithdrawPageContent() {
                 <p className="text-sm text-muted-foreground mb-4">
                   잠시 후 홈페이지로 이동합니다...
                 </p>
-                <Link href="/">
-                  <Button className="w-full">홈으로 이동</Button>
-                </Link>
+                <Button className="w-full" asChild>
+                  <Link href="/">홈으로 이동</Link>
+                </Button>
               </CardContent>
             </Card>
           </div>
