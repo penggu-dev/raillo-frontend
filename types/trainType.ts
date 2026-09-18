@@ -36,23 +36,25 @@ export interface TrainSchedule {
   expressTrain: boolean;
 }
 
+/** 페이지 요청 — Spring Pageable 쿼리 (page는 0부터) */
+export interface PageRequest {
+  page?: number;
+  size?: number;
+}
+
+/** Slice 페이지 정보 — 백엔드는 전체 개수·전체 페이지 수를 주지 않는다 */
 export interface PageInfo {
   currentPage: number;
   pageSize: number;
-  totalElements: number;
-  totalPages: number;
+  numberOfElements: number;
   hasNext: boolean;
   hasPrevious: boolean;
+  first: boolean;
+  last: boolean;
 }
 
-export interface TrainSearchResponse {
+export interface TrainSearchResponse extends PageInfo {
   content: TrainSchedule[];
-  currentPage: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrevious: boolean;
 }
 
 export interface TrainSearchRequest {

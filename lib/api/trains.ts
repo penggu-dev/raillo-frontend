@@ -1,5 +1,6 @@
 import { api, requireResult } from "../api";
 import type {
+  PageRequest,
   TrainSearchResponse,
   TrainSearchRequest,
   CalendarInfo,
@@ -9,12 +10,17 @@ import type {
   SeatSearchRequest,
 } from "@/types/trainType";
 
+/** 열차 조회 페이지 크기 — 백엔드 기본값(20)과 같은 값을 요청에 명시한다 */
+export const TRAIN_SEARCH_PAGE_SIZE = 20;
 
 export const searchTrains = async (
   request: TrainSearchRequest,
+  { page = 0, size = TRAIN_SEARCH_PAGE_SIZE }: PageRequest = {},
 ): Promise<TrainSearchResponse> => {
+  // 검색 조건은 본문, 페이지는 쿼리(Spring Pageable)로 보낸다
+  const params = new URLSearchParams({ page: String(page), size: String(size) });
   const response = await api.post<TrainSearchResponse>(
-    `/api/v1/trains/search`,
+    `/api/v1/trains/search?${params}`,
     request,
   );
   return requireResult(response.result, "열차 조회에 실패했습니다.");

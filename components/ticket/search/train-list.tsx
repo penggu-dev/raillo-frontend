@@ -10,7 +10,6 @@ import { EmptyState } from "@/components/common/EmptyState";
 
 interface TrainListProps {
   displayedTrains: TrainSchedule[];
-  totalResults: number;
   selectedTrain: TrainSchedule | null;
   loadingMore: boolean;
   hasMoreTrains: boolean;
@@ -23,7 +22,6 @@ interface TrainListProps {
 
 export function TrainList({
   displayedTrains,
-  totalResults,
   selectedTrain,
   loadingMore,
   hasMoreTrains,
