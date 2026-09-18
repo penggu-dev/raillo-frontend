@@ -163,6 +163,7 @@ export default function HomePage() {
                     variant="secondary"
                     size="sm"
                     onClick={swapStations}
+                    aria-label="출발역과 도착역 바꾸기"
                     className="p-3 h-12 w-12 rounded-full transition-all duration-200"
                   >
                     <ArrowLeftRight className="h-5 w-5" />

@@ -140,6 +140,7 @@ function PasswordChangePageContent() {
                         variant="ghost"
                         size="sm"
                         className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        aria-label={showPasswords.new ? "새 비밀번호 숨기기" : "새 비밀번호 보기"}
                         onClick={() =>
                           setShowPasswords((prev) => ({
                             ...prev,
@@ -186,6 +187,7 @@ function PasswordChangePageContent() {
                         variant="ghost"
                         size="sm"
                         className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        aria-label={showPasswords.confirm ? "새 비밀번호 확인 숨기기" : "새 비밀번호 확인 보기"}
                         onClick={() =>
                           setShowPasswords((prev) => ({
                             ...prev,
