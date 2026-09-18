@@ -11,7 +11,7 @@
  *   pnpm audit:colors components/ticket/search   경로 범위 필터 (여러 개 지정 가능)
  *   pnpm audit:colors --max 0                    미해결이 0건을 넘으면 exit 1 (--max=0도 가능)
  *
- * 종료 코드: 0 통과(또는 리포트) · 1 --max 초과 · 2 잘못된 옵션
+ * 종료 코드: 0 통과(또는 리포트) · 1 --max 초과 · 2 잘못된 옵션·검사 대상 파일이 없는 경로
  *
  * 집계 규칙
  *   - 팔레트 shade(bg-blue-600), white/black(bg-white, bg-black/80), 임의 HEX(bg-[#fff])를 variant 포함해 감지
@@ -245,7 +245,9 @@ function parseArgs(args) {
       // (검사 경로는 app·components 등이라 하이픈으로 시작하는 경로는 없음)
       return { error: `알 수 없는 옵션: ${arg}` };
     } else {
-      scopes.push(toPosix(arg).replace(/^\.\//, "").replace(/\/$/, ""));
+      const scope = toPosix(arg).replace(/\/+$/, "").replace(/^(\.\/)+/, "");
+      // "."·"./"는 저장소 전체(범위 필터 없음)
+      if (scope !== "" && scope !== ".") scopes.push(scope);
     }
   }
 
@@ -260,11 +262,21 @@ function main() {
   }
   const { byFile, max, scopes } = parsed;
 
-  /** @param {string} file */
-  const inScope = (file) =>
-    scopes.length === 0 || scopes.some((scope) => file === scope || file.startsWith(`${scope}/`));
+  /**
+   * @param {string} file
+   * @param {string} scope
+   */
+  const matches = (file, scope) => file === scope || file.startsWith(`${scope}/`);
 
-  const files = SCAN_DIRS.flatMap(collectFiles).filter(inScope);
+  const allFiles = SCAN_DIRS.flatMap(collectFiles);
+  // 오타·검사 대상 밖 경로는 파일 0개로 "미해결 0건"이 되어 게이트가 조용히 통과하므로 오류로 처리
+  const unmatched = scopes.filter((scope) => !allFiles.some((file) => matches(file, scope)));
+  if (unmatched.length > 0) {
+    console.error(`검사 대상 파일이 없는 경로: ${unmatched.join(", ")} (검사 범위: ${SCAN_DIRS.join(", ")})\n${USAGE}`);
+    process.exit(2);
+  }
+
+  const files = allFiles.filter((file) => scopes.length === 0 || scopes.some((scope) => matches(file, scope)));
 
   /** @type {Map<string, Counts>} */
   const groups = new Map();
