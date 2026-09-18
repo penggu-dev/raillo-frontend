@@ -172,3 +172,25 @@ describe("열차 조회 더보기", () => {
     expect(cardLabels().every((label) => label?.startsWith("N"))).toBe(true)
   })
 })
+
+describe("더보기 실패", () => {
+  it("실패해도 더보기 버튼을 남겨 같은 페이지를 다시 요청할 수 있다", async () => {
+    searchTrainsMock
+      .mockResolvedValueOnce(slicePage("T", 0, 0, 20, true))
+      .mockRejectedValueOnce(new Error("mock"))
+      .mockResolvedValueOnce(slicePage("T", 1, 20, 20, false))
+
+    renderPage()
+    await screen.findByText("T000")
+
+    act(() => moreButton()!.click())
+    // 실패 후에도 버튼이 다시 활성화되고 받아 둔 목록은 그대로
+    await waitFor(() => expect(moreButton()).toBeEnabled())
+    expect(cardLabels()).toHaveLength(20)
+
+    act(() => moreButton()!.click())
+    await waitFor(() => expect(cardLabels()).toHaveLength(40))
+    expect(requestedPages()).toEqual([0, 1, 1])
+    expect(moreButton()).toBeNull()
+  })
+})
