@@ -346,7 +346,7 @@ export function FindPasswordTab() {
                 placeholder="인증 코드 6자리를 입력하세요"
                 value={passwordAuthCode}
                 onChange={handlePasswordAuthCodeChange}
-                className={`pl-10 ${passwordAuthCode.length === AUTH_CODE_LENGTH ? "border-green-500 focus:border-green-500 dark:border-green-400 dark:focus:border-green-400" : ""}`}
+                className={`pl-10 ${passwordAuthCode.length === AUTH_CODE_LENGTH ? "border-green-600 focus:border-green-600 dark:border-green-400 dark:focus:border-green-400" : ""}`}
                 maxLength={AUTH_CODE_LENGTH}
                 disabled={isLoading}
                 autoComplete="one-time-code"
