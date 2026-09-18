@@ -3,12 +3,15 @@
  * 하드코딩 색상 감사
  *
  * 시맨틱 토큰(bg-card, text-muted-foreground 등) 대신 Tailwind 팔레트 색을 직접 쓴 곳을 영역별로 집계한다.
- * 다크모드 마이그레이션 진행 확인용 리포트로, 결과와 관계없이 exit 0으로 끝난다.
+ * 기본은 리포트로 결과와 관계없이 exit 0, --max를 주면 허용 건수 초과 시 실패한다(PR 검사는 --max 0).
  *
  * 사용법
  *   pnpm audit:colors                            영역별 요약
  *   pnpm audit:colors --files                    파일별 상세
  *   pnpm audit:colors components/ticket/search   경로 범위 필터 (여러 개 지정 가능)
+ *   pnpm audit:colors --max 0                    미해결이 0건을 넘으면 exit 1 (--max=0도 가능)
+ *
+ * 종료 코드: 0 통과(또는 리포트) · 1 --max 초과 · 2 잘못된 옵션·검사 대상 파일이 없는 경로
  *
  * 집계 규칙
  *   - 팔레트 shade(bg-blue-600), white/black(bg-white, bg-black/80), 임의 HEX(bg-[#fff])를 variant 포함해 감지
@@ -208,18 +211,72 @@ function printTable(heading, rows) {
   console.log(format("합계", cellsOf(total)));
 }
 
+const USAGE = "사용법: pnpm audit:colors [--files] [--max <0 이상 정수>] [경로 ...]";
+
+/**
+ * --files·--max 옵션과 경로 범위를 분리한다. --max 값("--max 0"의 "0")이 경로로 해석되지 않도록 함께 소비
+ * @param {string[]} args
+ * @returns {{ byFile: boolean, max: number | null, scopes: string[] } | { error: string }}
+ */
+function parseArgs(args) {
+  let byFile = false;
+  /** @type {number | null} */
+  let max = null;
+  /** @type {string[]} */
+  const scopes = [];
+
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--") {
+      // pnpm audit:colors -- --files 처럼 넘어온 구분자는 무시
+      continue;
+    } else if (arg === "--files") {
+      byFile = true;
+    } else if (arg === "--max" || arg.startsWith("--max=")) {
+      const value = arg === "--max" ? args[(index += 1)] : arg.slice("--max=".length);
+      const parsedMax = Number(value);
+      // 너무 큰 수는 정밀도를 잃거나 Infinity가 되어 게이트가 사실상 꺼지므로 안전한 정수만 허용
+      if (value === undefined || !/^\d+$/.test(value) || !Number.isSafeInteger(parsedMax)) {
+        return { error: `--max 값이 올바르지 않음: ${value ?? "(없음)"}` };
+      }
+      max = parsedMax;
+    } else if (arg.startsWith("-")) {
+      // -max 같은 오타가 경로로 해석돼 게이트가 조용히 통과하지 않도록 하이픈으로 시작하는 인자는 모두 거부
+      // (검사 경로는 app·components 등이라 하이픈으로 시작하는 경로는 없음)
+      return { error: `알 수 없는 옵션: ${arg}` };
+    } else {
+      const scope = toPosix(arg).replace(/\/+$/, "").replace(/^(\.\/)+/, "");
+      // "."·"./"는 저장소 전체(범위 필터 없음)
+      if (scope !== "" && scope !== ".") scopes.push(scope);
+    }
+  }
+
+  return { byFile, max, scopes };
+}
+
 function main() {
-  const args = process.argv.slice(2);
-  const byFile = args.includes("--files");
-  const scopes = args
-    .filter((arg) => !arg.startsWith("--"))
-    .map((arg) => toPosix(arg).replace(/^\.\//, "").replace(/\/$/, ""));
+  const parsed = parseArgs(process.argv.slice(2));
+  if ("error" in parsed) {
+    console.error(`${parsed.error}\n${USAGE}`);
+    process.exit(2);
+  }
+  const { byFile, max, scopes } = parsed;
 
-  /** @param {string} file */
-  const inScope = (file) =>
-    scopes.length === 0 || scopes.some((scope) => file === scope || file.startsWith(`${scope}/`));
+  /**
+   * @param {string} file
+   * @param {string} scope
+   */
+  const matches = (file, scope) => file === scope || file.startsWith(`${scope}/`);
 
-  const files = SCAN_DIRS.flatMap(collectFiles).filter(inScope);
+  const allFiles = SCAN_DIRS.flatMap(collectFiles);
+  // 오타·검사 대상 밖 경로는 파일 0개로 "미해결 0건"이 되어 게이트가 조용히 통과하므로 오류로 처리
+  const unmatched = scopes.filter((scope) => !allFiles.some((file) => matches(file, scope)));
+  if (unmatched.length > 0) {
+    console.error(`검사 대상 파일이 없는 경로: ${unmatched.join(", ")} (검사 범위: ${SCAN_DIRS.join(", ")})\n${USAGE}`);
+    process.exit(2);
+  }
+
+  const files = allFiles.filter((file) => scopes.length === 0 || scopes.some((scope) => matches(file, scope)));
 
   /** @type {Map<string, Counts>} */
   const groups = new Map();
@@ -257,6 +314,15 @@ function main() {
     console.log("\n허용 예외");
     allowed.forEach((hit) => console.log(`  ${hit.file}  ${hit.token} ×${hit.count}  ${hit.reason}`));
   }
+
+  if (max === null) return;
+  if (unresolvedTotal > max) {
+    const hint = byFile ? "" : " (파일별 위치: pnpm audit:colors --files)";
+    console.error(`\n✗ 미해결 ${unresolvedTotal}건이 허용 ${max}건을 넘음 — 시맨틱 토큰으로 바꾸거나, 도메인 색이면 같은 줄에 dark: 짝을 추가하세요${hint}`);
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`\n✓ 미해결 ${unresolvedTotal}건 (허용 ${max}건 이하)`);
 }
 
 main();
