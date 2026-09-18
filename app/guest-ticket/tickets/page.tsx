@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Train, MapPin, Clock, Calendar, User, ArrowRight, ChevronLeft, Download, QrCode } from "lucide-react"
+import { Train, MapPin, Clock, User, Download, QrCode } from "lucide-react"
 import { TRAIN_TYPE } from "@/constants/trainType"
 
 export default function GuestTicketsPage() {

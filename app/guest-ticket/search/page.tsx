@@ -5,39 +5,11 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  CalendarIcon,
-  Search,
-  Train,
-  MapPin,
-  Users,
-  ArrowRight,
-  Clock,
-  ChevronLeft,
-} from "lucide-react";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
-import { cn } from "@/lib/utils";
 import { User, Phone, Lock } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 
