@@ -334,7 +334,7 @@ function TrainSearchPage() {
         ),
         variant: "destructive",
       });
-      setHasNext(false);
+      // hasNext·currentPage는 그대로 둔다 — 더보기를 다시 누르면 같은 페이지를 다시 요청한다
     } finally {
       if (generation === searchGenerationRef.current) {
         loadingMoreRef.current = false;
