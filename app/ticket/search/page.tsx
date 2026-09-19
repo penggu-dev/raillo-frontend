@@ -609,8 +609,8 @@ function TrainSearchPage() {
             displayedTrains={displayedTrains}
             selectedTrain={selectedTrain}
             loadingMore={isFetchingNextPage}
-            // 더보기가 실패하면 버튼을 숨긴다 (다시 조회로 복구)
-            hasMoreTrains={Boolean(hasNextPage) && !isFetchNextPageError}
+            // 더보기가 실패해도 버튼을 남긴다 — 다시 누르면 같은 페이지를 다시 요청한다
+            hasMoreTrains={Boolean(hasNextPage)}
             onSeatSelection={handleSeatSelection}
             onLoadMore={handleLoadMore}
             formatPrice={formatPrice}
