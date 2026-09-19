@@ -239,7 +239,7 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* 승차권 확인 */}
-              <Link href="/ticket/purchased">
+              <Link href="/ticket/purchased" className="rounded-card">
                 <Card className="group h-full cursor-pointer transition-all duration-200 hover:shadow-elev-md hover:-translate-y-0.5">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4">
@@ -270,7 +270,7 @@ export default function HomePage() {
               </Link>
 
               {/* 예약 승차권 조회 및 취소 */}
-              <Link href="/ticket/reservations">
+              <Link href="/ticket/reservations" className="rounded-card">
                 <Card className="group h-full cursor-pointer transition-all duration-200 hover:shadow-elev-md hover:-translate-y-0.5">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4">
@@ -300,7 +300,7 @@ export default function HomePage() {
               </Link>
 
               {/* 열차 조회 */}
-              <Link href="/">
+              <Link href="/" className="rounded-card">
                 <Card className="group h-full cursor-pointer transition-all duration-200 hover:shadow-elev-md hover:-translate-y-0.5">
                   <CardHeader className="pb-4">
                     <div className="flex items-center space-x-4">

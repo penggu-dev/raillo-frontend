@@ -152,6 +152,16 @@
   body {
     @apply bg-background text-foreground font-pretendard;
   }
+  /* 자체 포커스 스타일이 없는 링크·버튼: 브라우저 기본 표시 대신 앱 공통 링 색·두께·간격으로 통일
+     (공용 컴포넌트의 focus-visible:ring·outline-none 유틸리티가 이 규칙보다 우선) */
+  :focus-visible {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: 2px;
+  }
+  /* 고정 다크 푸터 띠 위에서는 --ring이 3:1에 못 미쳐 푸터 글자색으로 */
+  footer :focus-visible {
+    outline-color: rgb(var(--footer-foreground));
+  }
 }
 
 @layer components {
