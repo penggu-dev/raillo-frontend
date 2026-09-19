@@ -84,9 +84,9 @@ const deferred = <T,>() => {
   return { promise, resolve }
 }
 
-const renderPage = () =>
+const renderPage = (client = new QueryClient()) =>
   render(
-    <QueryClientProvider client={new QueryClient()}>
+    <QueryClientProvider client={client}>
       <TrainSearchPage />
     </QueryClientProvider>,
   )
@@ -94,6 +94,7 @@ const renderPage = () =>
 const cardLabels = () => screen.queryAllByText(/^[TN]\d{3}$/).map((el) => el.textContent)
 const moreButton = () => screen.queryByRole("button", { name: "더보기" })
 const requestedPages = () => searchTrainsMock.mock.calls.map(([, pageRequest]) => pageRequest?.page)
+const skeleton = () => screen.queryAllByText(/열차를 조회하는 중/)
 
 beforeEach(() => {
   searchTrainsMock.mockReset()
@@ -159,10 +160,14 @@ describe("열차 조회 더보기", () => {
     await screen.findByText("T000")
 
     act(() => moreButton()!.click())
-    expect(screen.getByRole("button", { name: "로딩 중..." })).toBeDisabled()
+    // 조회 상태 반영은 비동기 — 로딩 표시가 뜰 때까지 기다린다
+    expect(await screen.findByRole("button", { name: "로딩 중..." })).toBeDisabled()
 
     act(() => screen.getByRole("button", { name: "조회" }).click())
     await screen.findByText("N100")
+
+    // 다시 조회하면 진행 중이던 더보기 요청은 취소된다
+    expect(searchTrainsMock.mock.calls[1][1]?.signal?.aborted).toBe(true)
 
     // 이전 조건의 2페이지가 뒤늦게 도착
     await act(async () => stale.resolve(slicePage("T", 1, 20, 20, true)))
@@ -210,5 +215,37 @@ describe("좌석 선택 다이얼로그 지연 로딩", () => {
 
     act(() => screen.getAllByRole("button", { name: "선택" })[0].click())
     await waitFor(() => expect(seatDialogModule.imports).toBe(1))
+  })
+})
+
+describe("열차 조회 캐시·오류", () => {
+  it("같은 조건으로 다시 들어오면 받아 둔 목록을 바로 보여 주고 다시 조회한다", async () => {
+    const pages = [slicePage("T", 0, 0, 20, true), slicePage("T", 1, 20, 20, true)]
+    searchTrainsMock.mockImplementation(async (_request, pageRequest) => pages[pageRequest?.page ?? 0])
+    const client = new QueryClient()
+
+    const first = renderPage(client)
+    await screen.findByText("T000")
+    act(() => moreButton()!.click())
+    await waitFor(() => expect(cardLabels()).toHaveLength(40))
+    first.unmount()
+
+    renderPage(client)
+    // 첫 렌더부터 캐시된 두 페이지가 보이고 스켈레톤은 나오지 않는다
+    expect(cardLabels()).toHaveLength(40)
+    expect(skeleton()).toHaveLength(0)
+    // 좌석·운임 최신성을 위해 받아 둔 페이지를 다시 조회한다
+    await waitFor(() => expect(requestedPages()).toEqual([0, 1, 0, 1]))
+    expect(cardLabels()).toHaveLength(40)
+  })
+
+  it("조회에 실패하면 재시도하지 않고 빈 결과를 보여 준다", async () => {
+    searchTrainsMock.mockRejectedValue(new Error("mock"))
+
+    renderPage()
+
+    expect(await screen.findByText("검색 결과가 없습니다")).toBeInTheDocument()
+    expect(requestedPages()).toEqual([0])
+    expect(skeleton()).toHaveLength(0)
   })
 })
