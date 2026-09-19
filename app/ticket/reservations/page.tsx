@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
 import { preparePayment } from "@/lib/api/payments";
+import { getPaymentFailNotice } from "@/lib/utils/paymentRedirect";
 import { useAuth } from "@/hooks/useAuth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
@@ -77,6 +78,21 @@ function ReservationsPageContent() {
     amount: number;
   } | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
+
+  // 결제 실패·취소로 돌아온 경우(failUrl의 code·message) 안내 후 주소에서 제거
+  const searchParams = useSearchParams();
+  const failNoticeShownRef = useRef(false);
+  useEffect(() => {
+    const notice = getPaymentFailNotice(searchParams);
+    if (!notice || failNoticeShownRef.current) return;
+    failNoticeShownRef.current = true;
+    toast({
+      title: notice.title,
+      description: notice.description,
+      variant: notice.canceled ? "default" : "destructive",
+    });
+    router.replace("/ticket/reservations");
+  }, [searchParams, toast, router]);
 
   // Toss 위젯 초기화
   useEffect(() => {
