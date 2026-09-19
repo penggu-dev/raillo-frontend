@@ -133,9 +133,11 @@ function WithdrawPageContent() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center text-xl font-bold text-foreground">
-                <UserX className="h-6 w-6 mr-2 text-red-600 dark:text-red-400" />
-                회원탈퇴
+              <CardTitle asChild className="flex items-center text-xl font-bold text-foreground">
+                <h1>
+                  <UserX className="h-6 w-6 mr-2 text-red-600 dark:text-red-400" />
+                  회원탈퇴
+                </h1>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">

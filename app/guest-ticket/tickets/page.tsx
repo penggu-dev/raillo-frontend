@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Train, MapPin, Clock, Calendar, User, ArrowRight, ChevronLeft, Download, QrCode } from "lucide-react"
+import { Train, MapPin, Clock, User, Download, QrCode } from "lucide-react"
 import { TRAIN_TYPE } from "@/constants/trainType"
 
 export default function GuestTicketsPage() {
@@ -101,8 +99,8 @@ export default function GuestTicketsPage() {
                     <div className="flex items-center space-x-3">
                       <Train className="h-6 w-6 text-primary" />
                       <div>
-                        <CardTitle className="text-xl font-bold text-foreground">
-                          {ticket.trainType} {ticket.trainNumber}호
+                        <CardTitle asChild className="text-xl font-bold text-foreground">
+                          <h3>{ticket.trainType} {ticket.trainNumber}호</h3>
                         </CardTitle>
                         <p className="text-sm text-blue-700 dark:text-blue-300">예매번호: {ticket.id}</p>
                       </div>
@@ -115,10 +113,10 @@ export default function GuestTicketsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* 운행 정보 */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-foreground flex items-center">
+                      <h4 className="font-semibold text-foreground flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
                         운행 정보
-                      </h3>
+                      </h4>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div>
@@ -146,7 +144,7 @@ export default function GuestTicketsPage() {
 
                     {/* 좌석 정보 */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-foreground">좌석 정보</h3>
+                      <h4 className="font-semibold text-foreground">좌석 정보</h4>
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">좌석등급</span>
@@ -165,10 +163,10 @@ export default function GuestTicketsPage() {
 
                     {/* 승객 및 구매 정보 */}
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-foreground flex items-center">
+                      <h4 className="font-semibold text-foreground flex items-center">
                         <User className="h-4 w-4 mr-2" />
                         승객 정보
-                      </h3>
+                      </h4>
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">이름</span>

@@ -80,9 +80,11 @@ export default function PaymentCompletePage() {
             {/* 편도 승차권 정보 */}
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Train className="w-5 h-5" />
-                  승차권 정보
+                <CardTitle asChild className="flex items-center gap-2">
+                  <h2>
+                    <Train className="w-5 h-5" />
+                    승차권 정보
+                  </h2>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -138,9 +140,11 @@ export default function PaymentCompletePage() {
             {/* 승객 정보 */}
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  승객 정보
+                <CardTitle asChild className="flex items-center gap-2">
+                  <h2>
+                    <User className="w-5 h-5" />
+                    승객 정보
+                  </h2>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -164,9 +168,11 @@ export default function PaymentCompletePage() {
             {/* 결제 정보 */}
             <Card className="mb-8">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  결제 정보
+                <CardTitle asChild className="flex items-center gap-2">
+                  <h2>
+                    <CreditCard className="w-5 h-5" />
+                    결제 정보
+                  </h2>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
