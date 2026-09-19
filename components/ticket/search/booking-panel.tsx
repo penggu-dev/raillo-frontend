@@ -13,6 +13,8 @@ import type { CarInfo, TrainSchedule, SeatType } from "@/types/trainType";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
+import { formatPrice } from "@/lib/utils/format";
+import { getSeatTypeName } from "@/lib/utils/ticketUtils";
 
 interface BookingPanelProps {
   isOpen: boolean;
@@ -23,8 +25,6 @@ interface BookingPanelProps {
   selectedCar: number;
   onSeatSelection: () => void;
   onBooking: () => void;
-  getSeatTypeName: (seatType: SeatType) => string;
-  formatPrice: (price: number) => string;
   carList: CarInfo[];
   loadingCars: boolean;
   onRefreshSeats: () => void;
@@ -41,8 +41,6 @@ export function BookingPanel({
   selectedCar,
   onSeatSelection,
   onBooking,
-  getSeatTypeName,
-  formatPrice,
   carList,
   loadingCars,
   onRefreshSeats,

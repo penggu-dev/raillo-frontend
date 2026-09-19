@@ -28,11 +28,11 @@ interface SeatSelectionDialogProps {
   onClose: () => void;
   selectedTrain: TrainSchedule | null;
   selectedSeatType: SeatType;
-  selectedSeats: string[];
-  onSeatClick: (seatNumber: string) => void;
+  /** 이미 적용된 좌석 — 열 때 고르는 중인 좌석의 시작값 */
+  appliedSeats: string[];
   onApply: (selectedSeats: string[], selectedCar: number) => void;
-  getSeatTypeName: (seatType: SeatType) => string;
-  getTotalPassengers: () => number;
+  /** 고를 수 있는 좌석 수 (총 승객 수) */
+  maxSeats: number;
   // 새로운 props 추가
   carList: CarInfo[];
   seatList: SeatDetail[];
@@ -50,11 +50,9 @@ export function SeatSelectionDialog({
   onClose,
   selectedTrain,
   selectedSeatType,
-  selectedSeats,
-  onSeatClick,
+  appliedSeats,
   onApply,
-  getSeatTypeName,
-  getTotalPassengers,
+  maxSeats,
   carList,
   seatList,
   loadingCars,
@@ -65,6 +63,14 @@ export function SeatSelectionDialog({
 }: SeatSelectionDialogProps) {
   const [selectedCar, setSelectedCar] = useState<CarInfo | null>(null);
   const [selectionError, setSelectionError] = useState<string | null>(null);
+  // 고르는 중인 좌석은 다이얼로그가 가진다 — 좌석을 누를 때 페이지(열차 목록)가 다시 렌더되지 않도록.
+  // 열릴 때마다 적용된 좌석으로 시작하고, 선택적용을 눌러야 페이지에 반영된다.
+  const [selectedSeats, setSelectedSeats] = useState<string[]>(appliedSeats);
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
+    if (isOpen) setSelectedSeats(appliedSeats);
+  }
   const onCarSelectRef = useRef(onCarSelect);
 
   // onCarSelect 함수를 ref에 저장
@@ -138,9 +144,7 @@ export function SeatSelectionDialog({
       setSelectedCar(car);
       setSelectionError(null);
       // 객차 변경 시 선택된 좌석 초기화
-      selectedSeats.forEach((seat) => {
-        onSeatClick(seat);
-      });
+      setSelectedSeats([]);
     }
   };
 
@@ -182,7 +186,6 @@ export function SeatSelectionDialog({
 
   const seatGrid = generateSeatGrid();
   const filteredCars = getFilteredCars();
-  const maxSeats = getTotalPassengers();
 
   // 좌석 버튼 스타일링 함수
   const getSeatButtonStyle = (
@@ -221,7 +224,11 @@ export function SeatSelectionDialog({
     }
 
     setSelectionError(null);
-    onSeatClick(seatNumber);
+    setSelectedSeats((prev) =>
+      prev.includes(seatNumber)
+        ? prev.filter((seat) => seat !== seatNumber)
+        : [...prev, seatNumber],
+    );
   };
 
   if (!selectedTrain) return null;

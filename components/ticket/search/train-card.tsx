@@ -1,26 +1,25 @@
 "use client"
 
+import { memo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Zap } from "lucide-react"
 import type { TrainSchedule, SeatType } from "@/types/trainType"
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
+import { formatPrice } from "@/lib/utils/format"
 
 interface TrainCardProps {
   train: TrainSchedule
   isSelected: boolean
   /** trigger: 닫은 뒤 포커스를 돌려줄 버튼 (Safari는 클릭해도 버튼에 포커스를 주지 않아 activeElement로 추정하지 않는다) */
   onSeatSelection: (train: TrainSchedule, seatType: SeatType, trigger: HTMLElement) => void
-  formatPrice: (price: number) => string
-  getSeatTypeName: (seatType: SeatType) => string
 }
 
-export function TrainCard({
+// 목록이 다시 렌더돼도 이 열차의 props(열차·선택 여부·고정된 핸들러)가 같으면 건너뛴다
+export const TrainCard = memo(function TrainCard({
   train,
   isSelected,
   onSeatSelection,
-  formatPrice,
-  getSeatTypeName,
 }: TrainCardProps) {
   return (
     <Card
@@ -94,4 +93,4 @@ export function TrainCard({
       </CardContent>
     </Card>
   )
-}
+})

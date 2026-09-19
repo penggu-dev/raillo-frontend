@@ -1,4 +1,5 @@
 import { TRAIN_TYPE } from "@/constants/trainType";
+import type { SeatType } from "@/types/trainType";
 
 export const getTrainTypeColor = (trainName: string): string => {
   switch (trainName) {
@@ -15,6 +16,17 @@ export const getTrainTypeColor = (trainName: string): string => {
       return "bg-purple-600 text-white dark:bg-purple-600"
     default:
       return "bg-gray-600 text-white dark:bg-gray-500"
+  }
+}
+
+export const getSeatTypeName = (seatType: SeatType): string => {
+  switch (seatType) {
+    case "standardSeat":
+      return "일반실"
+    case "firstClassSeat":
+      return "특실"
+    default:
+      return ""
   }
 }
 
