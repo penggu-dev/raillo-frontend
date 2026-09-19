@@ -68,16 +68,16 @@ export default function SignupCompletePage() {
               회원가입 완료 후 이 페이지에 접근할 수 있습니다.
             </p>
             <div className="space-y-4">
-              <Link href="/signup">
-                <Button className="w-full">
+              <Button className="w-full" asChild>
+                <Link href="/signup">
                   회원가입하기
-                </Button>
-              </Link>
-              <Link href="/">
-                <Button variant="outline" className="w-full">
+                </Link>
+              </Button>
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/">
                   홈으로 돌아가기
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

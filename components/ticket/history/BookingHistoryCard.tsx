@@ -145,11 +145,11 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
                 </div>
               </div>
 
-              <Link href={`/ticket/history/receipt?ticketId=${ticket.ticketId}`}>
-                <Button size="sm" variant="outline" className="w-full md:w-auto">
+              <Button size="sm" variant="outline" className="w-full md:w-auto" asChild>
+                <Link href={`/ticket/history/receipt?ticketId=${ticket.ticketId}`}>
                   영수증 상세보기
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           ))}
         </div>

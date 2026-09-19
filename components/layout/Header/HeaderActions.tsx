@@ -10,16 +10,16 @@ const HeaderActions = () => {
     <div className="flex items-center space-x-4 ml-auto">
       <nav className="hidden md:flex items-center space-x-4">
         <HeaderAuthBtn />
-        <Link href="/ticket/reservations">
-          <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/ticket/reservations">
             예약 승차권 조회
-          </Button>
-        </Link>
-        <Link href="/ticket/purchased">
-          <Button variant="ghost" size="sm">
+          </Link>
+        </Button>
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/ticket/purchased">
             승차권 조회
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         <MyPageBtn />
         <SidebarTrigger />
       </nav>

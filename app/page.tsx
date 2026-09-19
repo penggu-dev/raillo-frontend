@@ -257,11 +257,13 @@ export default function HomePage() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
+                    {/* 카드 전체가 링크라서 버튼 모양만 쓰고 따로 포커스를 받지 않게 함 */}
                     <Button
+                      asChild
                       variant="outline"
                       className="w-full transition-all duration-200 font-medium"
                     >
-                      확인하기
+                      <span>확인하기</span>
                     </Button>
                   </CardContent>
                 </Card>
@@ -287,10 +289,11 @@ export default function HomePage() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <Button
+                      asChild
                       variant="outline"
                       className="w-full transition-all duration-200 font-medium"
                     >
-                      조회하기
+                      <span>조회하기</span>
                     </Button>
                   </CardContent>
                 </Card>
@@ -316,10 +319,11 @@ export default function HomePage() {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <Button
+                      asChild
                       variant="outline"
                       className="w-full transition-all duration-200 font-medium"
                     >
-                      예매하기
+                      <span>예매하기</span>
                     </Button>
                   </CardContent>
                 </Card>

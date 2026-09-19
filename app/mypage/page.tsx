@@ -67,16 +67,17 @@ function MyPageContent() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-border">
                     <div className="font-medium text-foreground">비밀번호</div>
                     <div className="md:col-span-2">
-                      <Link href="/mypage/password/change">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 px-4 text-sm rounded-full"
-                        >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 px-4 text-sm rounded-full"
+                        asChild
+                      >
+                        <Link href="/mypage/password/change">
                           <Lock className="h-4 w-4 mr-2" />
                           비밀번호 변경
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     </div>
                   </div>
 
@@ -84,16 +85,17 @@ function MyPageContent() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5 border-b border-border">
                     <div className="font-medium text-foreground">이메일</div>
                     <div className="md:col-span-2">
-                      <Link href="/mypage/email/change">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 px-4 text-sm rounded-full"
-                        >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 px-4 text-sm rounded-full"
+                        asChild
+                      >
+                        <Link href="/mypage/email/change">
                           <Mail className="h-4 w-4 mr-2" />
                           이메일 변경
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     </div>
                   </div>
 
@@ -101,16 +103,17 @@ function MyPageContent() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-5">
                     <div className="font-medium text-foreground">휴대폰 번호</div>
                     <div className="md:col-span-2">
-                      <Link href="/mypage/phone/change">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 px-4 text-sm rounded-full"
-                        >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 px-4 text-sm rounded-full"
+                        asChild
+                      >
+                        <Link href="/mypage/phone/change">
                           <Smartphone className="h-4 w-4 mr-2" />
                           휴대폰 번호 변경
-                        </Button>
-                      </Link>
+                        </Link>
+                      </Button>
                     </div>
                   </div>
                 </div>

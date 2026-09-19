@@ -50,12 +50,12 @@ const HeaderAuthBtn = () => {
     );
   }
   return (
-    <Link href="/login">
-      <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+    <Button variant="ghost" size="sm" className="flex items-center space-x-2" asChild>
+      <Link href="/login">
         <LogIn className="h-4 w-4" />
         <span>로그인</span>
-      </Button>
-    </Link>
+      </Link>
+    </Button>
   );
 };
 
