@@ -30,6 +30,7 @@ const PATH_MAP: { [key: string]: string } = {
   "find-account": "계정찾기",
   "reset-password": "비밀번호 재설정",
   result: "결과",
+  success: "결제 확인",
   contact: "연락처",
   change: "변경",
   password: "비밀번호",
