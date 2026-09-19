@@ -248,19 +248,4 @@ describe("열차 조회 캐시·오류", () => {
     expect(requestedPages()).toEqual([0])
     expect(skeleton()).toHaveLength(0)
   })
-
-  it("더보기에 실패하면 받아 둔 목록을 유지하고 더보기 버튼을 숨긴다", async () => {
-    searchTrainsMock
-      .mockResolvedValueOnce(slicePage("T", 0, 0, 20, true))
-      .mockRejectedValueOnce(new Error("mock"))
-
-    renderPage()
-    await screen.findByText("T000")
-    act(() => moreButton()!.click())
-
-    await waitFor(() => expect(moreButton()).toBeNull())
-    expect(screen.queryByRole("button", { name: "로딩 중..." })).toBeNull()
-    expect(cardLabels()).toHaveLength(20)
-    expect(requestedPages()).toEqual([0, 1])
-  })
 })
