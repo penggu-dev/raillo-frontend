@@ -236,7 +236,7 @@ function EmailVerificationPageContent() {
                       onClick={handleSendVerificationCode}
                       disabled={isSubmitting}
                       variant="outline"
-                      className="px-6 py-2 border-input text-foreground hover:bg-muted disabled:opacity-50"
+                      className="px-6 py-2 text-foreground hover:bg-muted disabled:opacity-50"
                     >
                       재발송
                     </Button>

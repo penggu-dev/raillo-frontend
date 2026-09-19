@@ -58,7 +58,7 @@
 
     /* Border / Input / Ring */
     --border: 228 228 231; /* #e4e4e7 */
-    --input: 228 228 231; /* #e4e4e7 */
+    --input: 138 138 147; /* #8a8a93 — 입력·셀렉트 경계, 흰 3.42:1 · muted 3.11:1 (비텍스트 3:1) */
     --ring: 37 99 235; /* #2563eb */
 
     /* Radius — 컨트롤(버튼·입력·셀렉트) 12px · 카드 16px (--radius는 기존 rounded-lg/md/sm 기준값) */
@@ -121,7 +121,7 @@
     --destructive-active: 153 27 27; /* #991b1b — hover 채움, 흰 글자 8.31:1 */
     --destructive-text: 248 113 113; /* #f87171 — card 6.69:1 · muted 5.38:1 */
     --border: 39 39 42; /* #27272a */
-    --input: 39 39 42; /* #27272a */
+    --input: 103 103 111; /* #67676f — card 3.30:1 · popover 3.05:1 */
     --ring: 59 130 246; /* #3b82f6 */
 
     /* Elevation */
