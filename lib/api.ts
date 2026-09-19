@@ -15,7 +15,7 @@ const resolveApiBaseUrl = (): string => {
 };
 
 // API 응답 타입 정의
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   message?: string;
   result?: T;
 }
@@ -25,21 +25,21 @@ export interface ApiErrorResponse {
   timestamp: string;
   errorCode: string;
   errorMessage: string;
-  details: any;
+  details: unknown;
 }
 
 // 커스텀 API 에러 클래스
 export class ApiError extends Error {
   public timestamp: string;
   public errorCode: string;
-  public details: any;
+  public details: unknown;
   public status: number;
 
   constructor(
     message: string,
     errorCode: string,
     timestamp: string,
-    details: any,
+    details: unknown,
     status: number,
   ) {
     super(message);
@@ -95,11 +95,14 @@ async function apiRequest<T>(
 
     // 204 No Content 처리
     if (response.status === 204) {
-      return {} as ApiResponse<T>;
+      return {};
     }
 
     const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
+    // 성공이면 ApiResponse, 실패면 서버 오류 형식(또는 message만) — 어느 쪽이든 필드는 모두 선택적으로 다룬다
+    const data: ApiResponse<T> & Partial<ApiErrorResponse> = text
+      ? JSON.parse(text)
+      : {};
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
 
@@ -124,14 +127,12 @@ async function apiRequest<T>(
       }
 
       // 서버 에러 응답 형식에 맞게 처리
-      const errorData = data as ApiErrorResponse;
-
-      if (errorData.errorMessage) {
+      if (data.errorMessage) {
         throw new ApiError(
-          errorData.errorMessage,
-          errorData.errorCode || "UNKNOWN_ERROR",
-          errorData.timestamp || new Date().toISOString(),
-          errorData.details || null,
+          data.errorMessage,
+          data.errorCode || "UNKNOWN_ERROR",
+          data.timestamp || new Date().toISOString(),
+          data.details || null,
           response.status,
         );
       } else if (data.message) {
@@ -153,7 +154,7 @@ async function apiRequest<T>(
       }
     }
 
-    return data as ApiResponse<T>;
+    return data;
   } catch (error: unknown) {
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
