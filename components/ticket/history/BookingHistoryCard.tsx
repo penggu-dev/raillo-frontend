@@ -82,7 +82,7 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
   return (
     <Card className="border-l-4 border-l-primary">
       <CardContent className="p-6 space-y-4">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <div className="flex items-center flex-wrap gap-2 mb-2">
               <TrainTypeBadge trainName={booking.trainName} />
@@ -101,9 +101,10 @@ export default function BookingHistoryCard({ booking }: BookingHistoryCardProps)
               </div>
             </div>
           </div>
-          <div className="text-right text-sm">
-            <span className="text-muted-foreground mr-1">예매번호:</span>
-            <span className="font-mono">{booking.bookingCode}</span>
+          {/* 좁은 화면에서는 아래 줄로 내리고, 라벨은 줄바꿈하지 않음(번호만 필요할 때 줄바꿈) */}
+          <div className="text-sm sm:text-right">
+            <span className="text-muted-foreground mr-1 whitespace-nowrap">예매번호:</span>
+            <span className="font-mono break-all">{booking.bookingCode}</span>
           </div>
         </div>
 
