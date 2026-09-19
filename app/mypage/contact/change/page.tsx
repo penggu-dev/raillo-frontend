@@ -34,7 +34,7 @@ type PhoneFormValues = z.infer<typeof phoneSchema>;
 function ContactChangePageContent() {
   const router = useRouter();
   const { toast } = useToast();
-  const { data: memberInfo = null } = useGetMemberInfo();
+  const { data: memberInfo = null, isLoading: isMemberInfoLoading } = useGetMemberInfo();
 
   const [phoneNumber1, setPhoneNumber1] = useState("");
   const [phoneNumber2, setPhoneNumber2] = useState("");
@@ -89,7 +89,10 @@ function ContactChangePageContent() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar */}
-          <MyPageSidebar memberInfo={memberInfo || undefined} />
+          <MyPageSidebar
+            memberInfo={memberInfo || undefined}
+            isLoading={isMemberInfoLoading}
+          />
 
           {/* Main Content */}
           <div className="flex-1">

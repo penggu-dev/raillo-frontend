@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   ChevronDown,
   Settings,
@@ -16,9 +17,11 @@ interface MyPageSidebarProps {
   memberInfo?: {
     name: string
   }
+  /** 회원 정보를 불러오는 중이면 이름 자리에 스켈레톤을 보여 줌 */
+  isLoading?: boolean
 }
 
-export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
+export default function MyPageSidebar({ memberInfo, isLoading = false }: MyPageSidebarProps) {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
     ticketInfo: false,
     memberInfoManagement: false,
@@ -31,7 +34,8 @@ export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
     }))
   }
 
-  const displayName = memberInfo?.name || "회원"
+  // 이름을 못 받았을 때(조회 실패 등) "회원 회원님"이 되지 않게 이름 없이 표시
+  const greeting = memberInfo?.name ? `${memberInfo.name} 회원님` : "회원님"
 
   return (
     <div className="lg:w-80">
@@ -49,7 +53,14 @@ export default function MyPageSidebar({ memberInfo }: MyPageSidebarProps) {
       {/* User Info Card */}
       <Card className="mb-6">
         <CardContent className="p-4">
-          <h3 className="font-bold text-lg">{displayName} 회원님</h3>
+          {isLoading ? (
+            <div role="status">
+              <span className="sr-only">회원 정보를 불러오는 중</span>
+              <Skeleton className="h-7 w-32" />
+            </div>
+          ) : (
+            <h3 className="font-bold text-lg">{greeting}</h3>
+          )}
         </CardContent>
       </Card>
 

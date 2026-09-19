@@ -19,7 +19,7 @@ export default function IdentityVerificationPage({
   const router = useRouter();
   const { isChecking, isAuthenticated } = useAuth();
   // 인증 확인 전에는 토큰 없이 요청이 나가 불필요한 401·토큰 갱신을 유발하므로 확인 후에만 조회
-  const { data: memberInfo = null } = useGetMemberInfo({
+  const { data: memberInfo = null, isLoading: isMemberInfoLoading } = useGetMemberInfo({
     enabled: isAuthenticated && !isChecking,
   });
 
@@ -46,7 +46,10 @@ export default function IdentityVerificationPage({
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <MyPageSidebar memberInfo={memberInfo || undefined} />
+          <MyPageSidebar
+            memberInfo={memberInfo || undefined}
+            isLoading={isMemberInfoLoading}
+          />
 
           <div className="flex-1">
             <Card>
