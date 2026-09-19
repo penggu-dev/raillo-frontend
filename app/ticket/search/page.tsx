@@ -609,7 +609,8 @@ function TrainSearchPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    // 로딩 스켈레톤과 같은 최소 높이 — 결과 수(빈 결과 포함)에 따라 푸터 위치가 바뀌지 않게 한다
+    <div className="container mx-auto min-h-screen px-4 py-8">
       <div className="max-w-6xl mx-auto">
         {/* Search Form */}
         <SearchForm
