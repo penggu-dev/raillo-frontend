@@ -1,22 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { sendEmailVerificationCode, updateEmail } from "@/lib/api/authMembers";
-import MyPageSidebar from "@/components/layout/MyPageSidebar";
-import { useGetMemberInfo } from "@/hooks/useUser";
 import AuthGuard from "@/components/auth/AuthGuard";
+import { VerifiedChangeFlow } from "@/components/mypage/VerifiedChangeFlow";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
-import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import { AUTH_CODE_LENGTH } from "@/constants/validation";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 
@@ -36,25 +32,10 @@ const codeSchema = z.object({
 type EmailFormValues = z.infer<typeof emailSchema>;
 type CodeFormValues = z.infer<typeof codeSchema>;
 
-function EmailChangePageContent() {
+function EmailChangeForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [showVerification, setShowVerification] = useState(false);
-
-  useEffect(() => {
-    const emailVerified = sessionStorage.getItem(
-      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED,
-    );
-    const emailVerifiedFor = sessionStorage.getItem(
-      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR,
-    );
-
-    if (!emailVerified || emailVerifiedFor !== "email_change") {
-      router.push("/mypage/verify?purpose=email_change");
-    }
-  }, [router]);
-
-  const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo();
 
   const emailForm = useForm<EmailFormValues>({
     resolver: zodResolver(emailSchema),
@@ -65,17 +46,6 @@ function EmailChangePageContent() {
     resolver: zodResolver(codeSchema),
     defaultValues: { authCode: "" },
   });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4 py-16 text-center">
-          <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-muted-foreground">페이지를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
 
   const onSendCode = async (data: EmailFormValues) => {
     try {
@@ -98,8 +68,6 @@ function EmailChangePageContent() {
     try {
       await updateEmail(emailForm.getValues("email"), data.authCode);
       toast({ description: "이메일 변경이 성공적으로 처리되었습니다." });
-      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED);
-      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR);
       router.push("/mypage");
     } catch (error: unknown) {
       toast({
@@ -114,158 +82,141 @@ function EmailChangePageContent() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Sidebar */}
-          <MyPageSidebar memberInfo={memberInfo || undefined} />
-
-          {/* Main Content */}
-          <div className="flex-1">
-            <Card>
-              <CardContent className="p-8">
-                {/* 서비스 안내 */}
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-foreground mb-4">
-                    이메일 변경
-                  </h2>
-                  <div className="space-y-2 text-foreground">
-                    <p>• 로그인에 사용할 이메일 계정을 변경합니다.</p>
-                    <p>
-                      • 변경된 이메일 주소로 회원정보의 이메일주소가 자동
-                      변경됩니다.
-                    </p>
-                  </div>
-                </div>
-
-                {/* 이메일 변경 폼 */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-bold text-foreground mb-4">
-                    새 이메일 주소 입력
-                  </h3>
-                  <div className="space-y-3 text-sm text-foreground mb-6">
-                    <p>• 변경할 이메일 주소를 입력해주세요.</p>
-                    <p>• 입력하신 이메일로 인증 메일이 발송됩니다.</p>
-                  </div>
-
-                  <form
-                    onSubmit={emailForm.handleSubmit(onSendCode)}
-                    className="flex items-start space-x-4"
-                  >
-                    <div className="flex-1">
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        새 이메일 주소
-                      </label>
-                      <Input
-                        type="email"
-                        placeholder="새 이메일 주소를 입력하세요"
-                        {...emailForm.register("email")}
-                        className={`w-full ${emailForm.formState.errors.email ? "border-red-500 dark:border-red-400" : ""}`}
-                        disabled={showVerification}
-                        autoComplete="email"
-                      />
-                      {emailForm.formState.errors.email && (
-                        <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                          {emailForm.formState.errors.email.message}
-                        </p>
-                      )}
-                    </div>
-                    <Button
-                      type="submit"
-                      disabled={
-                        emailForm.formState.isSubmitting || showVerification
-                      }
-                      className="mt-7 px-6 py-2 rounded-full disabled:opacity-50"
-                    >
-                      {emailForm.formState.isSubmitting
-                        ? "처리 중..."
-                        : "인증코드 발송"}
-                    </Button>
-                  </form>
-                </div>
-
-                {/* 인증코드 입력 */}
-                {showVerification && (
-                  <div className="mb-8">
-                    <h3 className="text-lg font-bold text-foreground mb-4">
-                      인증코드 확인
-                    </h3>
-                    <div className="space-y-3 text-sm text-foreground mb-6">
-                      <p>• 입력하신 이메일로 발송된 인증코드를 입력해주세요.</p>
-                    </div>
-
-                    <form
-                      onSubmit={codeForm.handleSubmit(onChangeEmail)}
-                      className="flex items-start space-x-4"
-                    >
-                      <div className="flex-1">
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                          인증코드
-                        </label>
-                        <Controller
-                          name="authCode"
-                          control={codeForm.control}
-                          render={({ field }) => (
-                            <Input
-                              type="text"
-                              value={field.value}
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value
-                                    .replace(/[^0-9]/g, "")
-                                    .slice(0, AUTH_CODE_LENGTH),
-                                )
-                              }
-                              placeholder="인증코드 6자리 입력"
-                              maxLength={AUTH_CODE_LENGTH}
-                              className={`w-full ${codeForm.formState.errors.authCode ? "border-red-500 dark:border-red-400" : ""}`}
-                              autoComplete="one-time-code"
-                            />
-                          )}
-                        />
-                        {codeForm.formState.errors.authCode && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                            {codeForm.formState.errors.authCode.message}
-                          </p>
-                        )}
-                      </div>
-                      <Button
-                        type="submit"
-                        disabled={codeForm.formState.isSubmitting}
-                        className="mt-7 px-6 py-2 rounded-full disabled:opacity-50"
-                      >
-                        {codeForm.formState.isSubmitting
-                          ? "처리 중..."
-                          : "이메일 변경"}
-                      </Button>
-                    </form>
-                  </div>
-                )}
-
-                {/* 주의사항 */}
-                <Alert variant="warning" role="note">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle asChild>
-                    <h4 className="mb-2">주의사항</h4>
-                  </AlertTitle>
-                  <AlertDescription>
-                    <ul className="space-y-1">
-                      <li>
-                        • 이메일 변경 후 기존 이메일로는 로그인할 수 없습니다.
-                      </li>
-                      <li>
-                        • 변경된 이메일로 인증 메일이 발송되므로 정확히
-                        입력해주세요.
-                      </li>
-                      <li>• 인증 메일을 확인하여 변경을 완료해주세요.</li>
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </div>
+    <div>
+      {/* 서비스 안내 */}
+      <div className="mb-8">
+        <div className="space-y-2 text-foreground">
+          <p>• 로그인에 사용할 이메일 계정을 변경합니다.</p>
+          <p>
+            • 변경된 이메일 주소로 회원정보의 이메일주소가 자동
+            변경됩니다.
+          </p>
         </div>
       </div>
+
+      {/* 이메일 변경 폼 */}
+      <div className="mb-8">
+        <h3 className="text-lg font-bold text-foreground mb-4">
+          새 이메일 주소 입력
+        </h3>
+        <div className="space-y-3 text-sm text-foreground mb-6">
+          <p>• 변경할 이메일 주소를 입력해주세요.</p>
+          <p>• 입력하신 이메일로 인증 메일이 발송됩니다.</p>
+        </div>
+
+        <form
+          onSubmit={emailForm.handleSubmit(onSendCode)}
+          className="flex items-start space-x-4"
+        >
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-foreground mb-2">
+              새 이메일 주소
+            </label>
+            <Input
+              type="email"
+              placeholder="새 이메일 주소를 입력하세요"
+              {...emailForm.register("email")}
+              className={`w-full ${emailForm.formState.errors.email ? "border-red-500 dark:border-red-400" : ""}`}
+              disabled={showVerification}
+              autoComplete="email"
+            />
+            {emailForm.formState.errors.email && (
+              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                {emailForm.formState.errors.email.message}
+              </p>
+            )}
+          </div>
+          <Button
+            type="submit"
+            disabled={
+              emailForm.formState.isSubmitting || showVerification
+            }
+            className="mt-7 px-6 py-2 rounded-full disabled:opacity-50"
+          >
+            {emailForm.formState.isSubmitting
+              ? "처리 중..."
+              : "인증코드 발송"}
+          </Button>
+        </form>
+      </div>
+
+      {/* 인증코드 입력 */}
+      {showVerification && (
+        <div className="mb-8">
+          <h3 className="text-lg font-bold text-foreground mb-4">
+            인증코드 확인
+          </h3>
+          <div className="space-y-3 text-sm text-foreground mb-6">
+            <p>• 입력하신 이메일로 발송된 인증코드를 입력해주세요.</p>
+          </div>
+
+          <form
+            onSubmit={codeForm.handleSubmit(onChangeEmail)}
+            className="flex items-start space-x-4"
+          >
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-foreground mb-2">
+                인증코드
+              </label>
+              <Controller
+                name="authCode"
+                control={codeForm.control}
+                render={({ field }) => (
+                  <Input
+                    type="text"
+                    value={field.value}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value
+                          .replace(/[^0-9]/g, "")
+                          .slice(0, AUTH_CODE_LENGTH),
+                      )
+                    }
+                    placeholder="인증코드 6자리 입력"
+                    maxLength={AUTH_CODE_LENGTH}
+                    className={`w-full ${codeForm.formState.errors.authCode ? "border-red-500 dark:border-red-400" : ""}`}
+                    autoComplete="one-time-code"
+                  />
+                )}
+              />
+              {codeForm.formState.errors.authCode && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                  {codeForm.formState.errors.authCode.message}
+                </p>
+              )}
+            </div>
+            <Button
+              type="submit"
+              disabled={codeForm.formState.isSubmitting}
+              className="mt-7 px-6 py-2 rounded-full disabled:opacity-50"
+            >
+              {codeForm.formState.isSubmitting
+                ? "처리 중..."
+                : "이메일 변경"}
+            </Button>
+          </form>
+        </div>
+      )}
+
+      {/* 주의사항 */}
+      <Alert variant="warning" role="note">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle asChild>
+          <h4 className="mb-2">주의사항</h4>
+        </AlertTitle>
+        <AlertDescription>
+          <ul className="space-y-1">
+            <li>
+              • 이메일 변경 후 기존 이메일로는 로그인할 수 없습니다.
+            </li>
+            <li>
+              • 변경된 이메일로 인증 메일이 발송되므로 정확히
+              입력해주세요.
+            </li>
+            <li>• 인증 메일을 확인하여 변경을 완료해주세요.</li>
+          </ul>
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }
@@ -273,7 +224,9 @@ function EmailChangePageContent() {
 export default function EmailChangePage() {
   return (
     <AuthGuard>
-      <EmailChangePageContent />
+      <VerifiedChangeFlow title="이메일 변경" changeStepLabel="새 이메일">
+        <EmailChangeForm />
+      </VerifiedChangeFlow>
     </AuthGuard>
   );
 }
