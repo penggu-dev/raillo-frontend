@@ -64,6 +64,15 @@ export const useCreatePendingBooking = (onCreated: () => void) => {
       return;
     }
 
+    // 좌석 목록에 없는 번호는 좌석 ID로 바뀌지 않는다 — 일부만 빠지면 승객 수와 어긋난 요청이 된다
+    const passengerTypes = toPassengerTypes(passengerCounts);
+    if (seatIds.length !== passengerTypes.length) {
+      notify(
+        `승객 ${passengerTypes.length}명에 좌석 ${seatIds.length}개가 선택됐습니다. 좌석을 다시 선택해주세요.`,
+      );
+      return;
+    }
+
     if (!train.trainScheduleId) {
       notify("열차 스케줄 정보를 찾을 수 없습니다.");
       return;
@@ -74,7 +83,7 @@ export const useCreatePendingBooking = (onCreated: () => void) => {
         trainScheduleId: train.trainScheduleId,
         departureStationId,
         arrivalStationId,
-        passengerTypes: toPassengerTypes(passengerCounts),
+        passengerTypes,
         seatIds,
       });
       onCreated();

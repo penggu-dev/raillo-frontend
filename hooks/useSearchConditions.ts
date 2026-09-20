@@ -21,18 +21,22 @@ export const useSearchConditions = () => {
   const dateStr = searchParams.get("date") ?? "";
   const hour = searchParams.get("hour") ?? "00";
 
-  const passengerCounts: PassengerCounts = useMemo(
-    () => ({
-      adult: Number(searchParams.get("adult")) || 0,
-      child: Number(searchParams.get("child")) || 0,
-      infant: Number(searchParams.get("infant")) || 0,
-      senior: Number(searchParams.get("senior")) || 0,
-      severelydisabled: Number(searchParams.get("severelydisabled")) || 0,
-      mildlydisabled: Number(searchParams.get("mildlydisabled")) || 0,
-      veteran: Number(searchParams.get("veteran")) || 0,
-    }),
-    [searchParams],
-  );
+  const passengerCounts: PassengerCounts = useMemo(() => {
+    // URL은 사용자가 고칠 수 있다 — 0 이상의 정수가 아니면 0명으로 본다(소수·음수는 좌석 수를 맞출 수 없음)
+    const count = (key: string): number => {
+      const value = Number(searchParams.get(key));
+      return Number.isSafeInteger(value) && value >= 0 ? value : 0;
+    };
+    return {
+      adult: count("adult"),
+      child: count("child"),
+      infant: count("infant"),
+      senior: count("senior"),
+      severelydisabled: count("severelydisabled"),
+      mildlydisabled: count("mildlydisabled"),
+      veteran: count("veteran"),
+    };
+  }, [searchParams]);
   const totalPassengers = Object.values(passengerCounts).reduce(
     (sum, count) => sum + count,
     0,
