@@ -76,3 +76,20 @@ describe("useSearchConditions", () => {
     expect(lastQuery().get("hour")).toBe("07")
   })
 })
+
+describe("useSearchConditions 승객 수 정규화", () => {
+  it.each([
+    ["소수", "adult=1.5", 0],
+    ["음수", "adult=-1", 0],
+    ["숫자가 아님", "adult=two", 0],
+    ["빈 값", "adult=", 0],
+    ["정수", "adult=3", 3],
+  ])("%s 승객 수는 %s → %i명", (_, query, expected) => {
+    navigation.params = new URLSearchParams(`departure=서울&arrival=부산&date=2099-12-31&hour=09&${query}`)
+
+    const { result } = renderHook(() => useSearchConditions())
+
+    expect(result.current.passengerCounts.adult).toBe(expected)
+    expect(result.current.totalPassengers).toBe(expected)
+  })
+})
