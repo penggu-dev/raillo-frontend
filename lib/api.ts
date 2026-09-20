@@ -99,10 +99,13 @@ async function apiRequest<T>(
     }
 
     const text = await response.text();
+    const parsed: unknown = text ? JSON.parse(text) : {};
     // 성공이면 ApiResponse, 실패면 서버 오류 형식(또는 message만) — 어느 쪽이든 필드는 모두 선택적으로 다룬다
-    const data: ApiResponse<T> & Partial<ApiErrorResponse> = text
-      ? JSON.parse(text)
-      : {};
+    // JSON은 null·숫자·문자열도 될 수 있으므로 객체가 아니면 필드 없는 응답으로 다룬다
+    const data: ApiResponse<T> & Partial<ApiErrorResponse> =
+      typeof parsed === "object" && parsed !== null
+        ? (parsed as ApiResponse<T> & Partial<ApiErrorResponse>)
+        : {};
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
 
@@ -127,15 +130,17 @@ async function apiRequest<T>(
       }
 
       // 서버 에러 응답 형식에 맞게 처리
-      if (data.errorMessage) {
+      if (typeof data.errorMessage === "string") {
         throw new ApiError(
           data.errorMessage,
-          data.errorCode || "UNKNOWN_ERROR",
-          data.timestamp || new Date().toISOString(),
+          typeof data.errorCode === "string" ? data.errorCode : "UNKNOWN_ERROR",
+          typeof data.timestamp === "string"
+            ? data.timestamp
+            : new Date().toISOString(),
           data.details || null,
           response.status,
         );
-      } else if (data.message) {
+      } else if (typeof data.message === "string") {
         throw new ApiError(
           data.message,
           "UNKNOWN_ERROR",
