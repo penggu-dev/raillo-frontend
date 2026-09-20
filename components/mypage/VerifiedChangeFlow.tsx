@@ -21,8 +21,8 @@ interface VerifiedChangeFlowProps {
   children: ReactNode;
 }
 
-/** 남은 시간을 소리로 알리는 기준 — 매초 읽히면 방해가 된다 */
-const ANNOUNCE_AT_SECONDS = 60;
+/** 남은 시간을 소리로 알리는 구간 — 매초 읽히면 방해가 된다 */
+const ANNOUNCE_UNDER_SECONDS = 60;
 
 /**
  * 회원정보 변경 흐름 — 1단계 이메일 인증 → 2단계 변경.
@@ -88,7 +88,9 @@ export function VerifiedChangeFlow({
                       <p className="text-muted-foreground tabular-nums">
                         인증 유효 시간 <span aria-hidden="true">{formatRemaining(remainingMs)}</span>
                         <span className="sr-only" aria-live="polite">
-                          {remainingSeconds === ANNOUNCE_AT_SECONDS ? "인증 유효 시간이 1분 남았습니다." : ""}
+                          {remainingSeconds > 0 && remainingSeconds <= ANNOUNCE_UNDER_SECONDS
+                            ? "인증 유효 시간이 1분 남았습니다."
+                            : ""}
                         </span>
                       </p>
                     )}
