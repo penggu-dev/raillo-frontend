@@ -306,6 +306,8 @@ function TrainSearchPage() {
           selectedTrain={selectedTrain}
           selectedSeatType={selectedSeatType}
           appliedSeats={selectedSeats}
+          // 적용한 좌석이 있을 때만 그 호차를 복원한다 — 없으면 첫 적합 호차
+          appliedCar={selectedSeats.length > 0 ? selectedCar : null}
           onApply={handleSeatSelectionApply}
           maxSeats={totalPassengers}
           carList={carList}

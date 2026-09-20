@@ -23,6 +23,13 @@ import {
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
 
+// 좌석 등급에 맞는 객차인지 — 호차 선택과 목록 필터가 같은 기준을 쓴다
+const matchesSeatType = (car: CarInfo, seatType: SeatType): boolean => {
+  if (seatType === "firstClassSeat") return car.carType === "FIRST_CLASS";
+  if (seatType === "standardSeat") return car.carType === "STANDARD";
+  return true;
+};
+
 interface SeatSelectionDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -30,6 +37,8 @@ interface SeatSelectionDialogProps {
   selectedSeatType: SeatType;
   /** 이미 적용된 좌석 — 열 때 고르는 중인 좌석의 시작값 */
   appliedSeats: string[];
+  /** 이미 적용된 호차 번호 — 열 때 이 호차를 복원한다. 적용된 좌석이 없으면 null */
+  appliedCar: number | null;
   onApply: (selectedSeats: string[], selectedCar: number) => void;
   /** 고를 수 있는 좌석 수 (총 승객 수) */
   maxSeats: number;
@@ -51,6 +60,7 @@ export function SeatSelectionDialog({
   selectedTrain,
   selectedSeatType,
   appliedSeats,
+  appliedCar,
   onApply,
   maxSeats,
   carList,
@@ -84,41 +94,21 @@ export function SeatSelectionDialog({
     }
   }, [isOpen]);
 
-  // 다이얼로그가 열릴 때마다 초기화
+  // 열릴 때 호차 선택 — 적용된 호차가 있으면 복원하고, 없으면 좌석 등급에 맞는 첫 호차
   useEffect(() => {
-    if (isOpen && carList.length > 0) {
-      // 선택된 좌석 타입에 맞는 첫 번째 객차 선택
-      const suitableCar = carList.find((car) => {
-        if (selectedSeatType === "firstClassSeat") {
-          return car.carType === "FIRST_CLASS";
-        } else if (selectedSeatType === "standardSeat") {
-          return car.carType === "STANDARD";
-        }
-        return true;
-      });
+    if (!isOpen) return;
+    const candidates = carList.filter((car) => matchesSeatType(car, selectedSeatType));
+    if (candidates.length === 0) return;
 
-      // 적절한 객차를 찾지 못한 경우, 좌석 타입에 맞는 객차만 필터링해서 첫 번째 선택
-      if (!suitableCar) {
-        const filteredCars = carList.filter((car) => {
-          if (selectedSeatType === "firstClassSeat") {
-            return car.carType === "FIRST_CLASS";
-          } else if (selectedSeatType === "standardSeat") {
-            return car.carType === "STANDARD";
-          }
-          return true;
-        });
+    // 적용된 호차가 목록에 없거나 좌석 등급이 다르면 첫 호차로 되돌린다
+    const appliedMatch =
+      appliedCar === null
+        ? undefined
+        : candidates.find((car) => parseInt(car.carNumber) === appliedCar);
 
-        if (filteredCars.length > 0) {
-          setSelectedCar(filteredCars[0]);
-        }
-      } else {
-        setSelectedCar(suitableCar);
-      }
-
-      // selectedCar가 설정되면 자동으로 onCarSelect가 호출되므로
-      // 여기서는 onRefreshSeats를 호출하지 않음
-    }
-  }, [isOpen, carList, selectedSeatType]);
+    setSelectedCar(appliedMatch ?? candidates[0]);
+    // selectedCar가 설정되면 아래 effect가 onCarSelect를 호출하므로 여기서 좌석을 다시 받지 않는다
+  }, [isOpen, carList, selectedSeatType, appliedCar]);
 
   // selectedCar가 변경될 때만 onCarSelect 호출 (중복 방지)
   const lastSelectedCarId = useRef<string | null>(null);
@@ -149,16 +139,7 @@ export function SeatSelectionDialog({
   };
 
   // 좌석 타입에 따른 객차 필터링
-  const getFilteredCars = () => {
-    return carList.filter((car) => {
-      if (selectedSeatType === "firstClassSeat") {
-        return car.carType === "FIRST_CLASS";
-      } else if (selectedSeatType === "standardSeat") {
-        return car.carType === "STANDARD";
-      }
-      return true;
-    });
-  };
+  const getFilteredCars = () => carList.filter((car) => matchesSeatType(car, selectedSeatType));
 
   // 좌석 배열 생성 (API 데이터 기반)
   const generateSeatGrid = (): SeatGridItem[] => {
