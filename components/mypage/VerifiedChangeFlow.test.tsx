@@ -122,4 +122,27 @@ describe("VerifiedChangeFlow", () => {
     expect(screen.queryByLabelText("새 비밀번호")).not.toBeInTheDocument()
     expect(screen.getByRole("button", { name: "인증코드 발송" })).toBeInTheDocument()
   })
+
+  it("남은 시간이 1분 아래로 내려가면 알림 문구가 나온다 (60초 렌더를 건너뛰어도)", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    renderFlow()
+    await passVerification(user)
+
+    const notice = "인증 유효 시간이 1분 남았습니다."
+    expect(screen.queryByText(notice)).not.toBeInTheDocument()
+
+    // 61초 남은 시점 — 아직 알리지 않는다
+    act(() => {
+      vi.advanceTimersByTime(VERIFICATION_TTL_MS - 61_000)
+    })
+    expect(screen.queryByText(notice)).not.toBeInTheDocument()
+
+    // 정확히 60초인 렌더 없이 59초로 건너뛰어도 문구가 나온다
+    act(() => {
+      vi.advanceTimersByTime(2_000)
+    })
+    expect(screen.getByText(notice)).toBeInTheDocument()
+  })
+
 })
