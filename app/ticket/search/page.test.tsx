@@ -30,7 +30,12 @@ vi.mock("@/components/ticket/search/search-form", () => ({
     </button>
   ),
 }))
-vi.mock("@/components/ticket/search/seat-selection-dialog", () => ({ SeatSelectionDialog: () => null }))
+// 좌석 선택 다이얼로그 모듈을 불러온 횟수 — clearAllMocks에 초기화되지 않도록 숫자로 센다
+const seatDialogModule = vi.hoisted(() => ({ imports: 0 }))
+vi.mock("@/components/ticket/search/seat-selection-dialog", () => {
+  seatDialogModule.imports += 1
+  return { SeatSelectionDialog: () => null }
+})
 vi.mock("@/components/ticket/search/booking-panel", () => ({ BookingPanel: () => null }))
 vi.mock("@/components/common/usage-info", () => ({ UsageInfo: () => null }))
 
@@ -192,5 +197,18 @@ describe("더보기 실패", () => {
     await waitFor(() => expect(cardLabels()).toHaveLength(40))
     expect(requestedPages()).toEqual([0, 1, 1])
     expect(moreButton()).toBeNull()
+  })
+})
+
+describe("좌석 선택 다이얼로그 지연 로딩", () => {
+  it("예매 패널을 열기 전에는 불러오지 않고, 열 때 불러온다", async () => {
+    searchTrainsMock.mockResolvedValueOnce(slicePage("T", 0, 0, 20, false))
+
+    renderPage()
+    await screen.findByText("T000")
+    expect(seatDialogModule.imports).toBe(0)
+
+    act(() => screen.getAllByRole("button", { name: "선택" })[0].click())
+    await waitFor(() => expect(seatDialogModule.imports).toBe(1))
   })
 })
