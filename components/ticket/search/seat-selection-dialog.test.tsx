@@ -42,7 +42,7 @@ const seat = (seatNumber: string, isAvailable = true): SeatDetail => ({
 })
 const seats = ["1A", "1B", "1C", "1D"].map((n) => seat(n))
 
-const renderDialog = (props: { isOpen?: boolean; appliedSeats?: string[]; maxSeats?: number; onApply?: (s: string[], car: number) => void } = {}) => {
+const renderDialog = (props: { isOpen?: boolean; appliedSeats?: string[]; appliedCar?: number | null; maxSeats?: number; onApply?: (s: string[], car: number) => void } = {}) => {
   const onApply = props.onApply ?? vi.fn()
   const element = (overrides: { isOpen?: boolean; appliedSeats?: string[] } = {}) => (
     <SeatSelectionDialog
@@ -51,6 +51,7 @@ const renderDialog = (props: { isOpen?: boolean; appliedSeats?: string[]; maxSea
       selectedTrain={train}
       selectedSeatType="standardSeat"
       appliedSeats={overrides.appliedSeats ?? props.appliedSeats ?? []}
+      appliedCar={props.appliedCar ?? null}
       onApply={onApply}
       maxSeats={props.maxSeats ?? 2}
       carList={cars}
@@ -113,5 +114,71 @@ describe("SeatSelectionDialog 좌석 선택", () => {
     expect(seatButton("1D")).toHaveAttribute("aria-pressed", "true")
     expect(seatButton("1B")).toHaveAttribute("aria-pressed", "false")
     expect(seatButton("1C")).toHaveAttribute("aria-pressed", "false")
+  })
+})
+
+describe("SeatSelectionDialog 적용된 호차 복원", () => {
+  // 같은 좌석 번호가 있는 일반실 2칸 + 특실 1칸
+  const twoCars: CarInfo[] = [
+    { id: 13, carNumber: "3", carType: "STANDARD", totalSeats: 40, remainingSeats: 31, seatArrangement: "2+2" },
+    { id: 14, carNumber: "4", carType: "STANDARD", totalSeats: 40, remainingSeats: 20, seatArrangement: "2+2" },
+    { id: 11, carNumber: "1", carType: "FIRST_CLASS", totalSeats: 20, remainingSeats: 9, seatArrangement: "2+1" },
+  ]
+
+  const renderWithCars = (appliedCar: number | null, appliedSeats: string[] = ["1A"]) => {
+    const onApply = vi.fn()
+    render(
+      <SeatSelectionDialog
+        isOpen
+        onClose={vi.fn()}
+        selectedTrain={train}
+        selectedSeatType="standardSeat"
+        appliedSeats={appliedSeats}
+        appliedCar={appliedCar}
+        onApply={onApply}
+        maxSeats={1}
+        carList={twoCars}
+        seatList={seats}
+        loadingCars={false}
+        loadingSeats={false}
+        onCarSelect={vi.fn()}
+        onRefreshSeats={vi.fn()}
+        returnFocusRef={{ current: null }}
+      />,
+    )
+    return { onApply }
+  }
+
+  it("적용된 호차로 다시 열면 그 호차가 선택되고 적용 시 같은 호차를 넘긴다", () => {
+    const { onApply } = renderWithCars(4)
+
+    expect(screen.getByText(/4호차 \(일반실\)/)).toBeInTheDocument()
+    act(() => screen.getByRole("button", { name: /선택적용/ }).click())
+    expect(onApply).toHaveBeenCalledWith(["1A"], 4)
+  })
+
+  it("적용된 좌석이 없으면 좌석 등급에 맞는 첫 호차를 선택한다", () => {
+    const { onApply } = renderWithCars(null, [])
+
+    expect(screen.getByText(/3호차 \(일반실\)/)).toBeInTheDocument()
+    act(() => seatButton("1A").click())
+    act(() => screen.getByRole("button", { name: /선택적용/ }).click())
+    expect(onApply).toHaveBeenCalledWith(["1A"], 3)
+  })
+
+  it("적용된 호차가 목록에 없으면 첫 호차로 되돌린다", () => {
+    const { onApply } = renderWithCars(9)
+
+    expect(screen.getByText(/3호차 \(일반실\)/)).toBeInTheDocument()
+    act(() => screen.getByRole("button", { name: /선택적용/ }).click())
+    expect(onApply).toHaveBeenCalledWith(["1A"], 3)
+  })
+
+  it("좌석 등급이 다른 호차는 복원하지 않는다", () => {
+    const { onApply } = renderWithCars(1)
+
+    expect(screen.getByText(/3호차 \(일반실\)/)).toBeInTheDocument()
+    act(() => screen.getByRole("button", { name: /선택적용/ }).click())
+    expect(onApply).toHaveBeenCalledWith(["1A"], 3)
   })
 })
