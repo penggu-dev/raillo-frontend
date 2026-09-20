@@ -5,7 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
-import { formatDate, formatPrice, formatTime } from "@/lib/utils/format";
+import {
+  formatDate,
+  formatDateTime,
+  formatPrice,
+  formatTime,
+} from "@/lib/utils/format";
 import type { PendingBookingCartItem } from "@/types/bookingType";
 
 interface ReservationCardProps {
@@ -100,6 +105,11 @@ export function ReservationCard({
                   <Clock className="h-4 w-4 mr-1" />
                   결제 기한
                 </h4>
+                <div className="text-sm font-medium">
+                  {reservation.expiresAt
+                    ? `${formatDateTime(reservation.expiresAt)}까지`
+                    : "기한 정보 없음"}
+                </div>
               </div>
             </div>
 
