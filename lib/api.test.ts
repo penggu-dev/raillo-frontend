@@ -43,6 +43,12 @@ describe("api 성공 응답", () => {
     await expect(api.get<{ id: number }>("/items/1")).resolves.toEqual({ message: "ok", result: { id: 1 } })
   })
 
+  it("성공 응답이 객체가 아니면 빈 객체를 돌려준다", async () => {
+    fetchMock.mockResolvedValueOnce(reply(200, null))
+
+    await expect(api.get("/items")).resolves.toEqual({})
+  })
+
   it("204는 빈 객체를 돌려준다", async () => {
     fetchMock.mockResolvedValueOnce(reply(204))
 
@@ -93,6 +99,23 @@ describe("api 오류 응답", () => {
     fetchMock.mockResolvedValueOnce(reply(502))
 
     await expect(caught(api.get("/items"))).resolves.toMatchObject({ message: "API 요청에 실패했습니다.", errorCode: "UNKNOWN_ERROR", status: 502 })
+  })
+
+  // JSON은 null·숫자·문자열도 될 수 있다 — 필드를 읽다 TypeError가 나면 안 된다
+  it.each([
+    ["null", null],
+    ["숫자", 500],
+    ["문자열", "서버 오류"],
+  ])("본문이 객체가 아니면(%s) 기본 문구를 쓴다", async (_, body) => {
+    fetchMock.mockResolvedValueOnce(reply(500, body))
+
+    await expect(caught(api.get("/items"))).resolves.toMatchObject({ message: "API 요청에 실패했습니다.", errorCode: "UNKNOWN_ERROR", status: 500 })
+  })
+
+  it("오류 문구가 문자열이 아니면 기본 문구를 쓴다", async () => {
+    fetchMock.mockResolvedValueOnce(reply(500, { errorMessage: 500, message: { ko: "오류" } }))
+
+    await expect(caught(api.get("/items"))).resolves.toMatchObject({ message: "API 요청에 실패했습니다.", errorCode: "UNKNOWN_ERROR", status: 500 })
   })
 
   it("서버에 닿지 못하면 NETWORK_ERROR(상태 0)로 바꾼다", async () => {
