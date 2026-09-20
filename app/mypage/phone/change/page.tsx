@@ -1,21 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { updatePhoneNumber } from "@/lib/api/members";
-import MyPageSidebar from "@/components/layout/MyPageSidebar";
-import { useGetMemberInfo } from "@/hooks/useUser";
 import AuthGuard from "@/components/auth/AuthGuard";
+import { VerifiedChangeFlow } from "@/components/mypage/VerifiedChangeFlow";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
-import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 
@@ -27,24 +23,9 @@ const phoneSchema = z.object({
 
 type PhoneFormValues = z.infer<typeof phoneSchema>;
 
-function PhoneChangePageContent() {
+function PhoneChangeForm() {
   const router = useRouter();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const emailVerified = sessionStorage.getItem(
-      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED,
-    );
-    const emailVerifiedFor = sessionStorage.getItem(
-      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR,
-    );
-
-    if (!emailVerified || emailVerifiedFor !== "phone_change") {
-      router.push("/mypage/verify?purpose=phone_change");
-    }
-  }, [router]);
-
-  const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo();
 
   const [phoneNumber1, setPhoneNumber1] = useState("");
   const [phoneNumber2, setPhoneNumber2] = useState("");
@@ -63,23 +44,10 @@ function PhoneChangePageContent() {
     setValue("phoneNumber", `${p1}${p2}${p3}`, { shouldValidate: true });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4 py-16 text-center">
-          <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-muted-foreground">페이지를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
-
   const onSubmit = async (data: PhoneFormValues) => {
     try {
       await updatePhoneNumber(data.phoneNumber);
       toast({ description: "휴대폰 번호 변경이 성공적으로 처리되었습니다." });
-      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED);
-      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR);
       router.push("/mypage");
     } catch (error: unknown) {
       toast({
@@ -94,140 +62,123 @@ function PhoneChangePageContent() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Sidebar */}
-          <MyPageSidebar memberInfo={memberInfo || undefined} />
-
-          {/* Main Content */}
-          <div className="flex-1">
-            <Card>
-              <CardContent className="p-8">
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-foreground mb-4">
-                    휴대폰 번호 변경
-                  </h2>
-                  <div className="space-y-2 text-foreground">
-                    <p>• 로그인에 사용할 휴대폰 번호를 변경합니다.</p>
-                    <p>
-                      • 변경된 휴대폰 번호로 회원정보의 휴대폰 번호가 자동
-                      변경됩니다.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mb-8">
-                  <h3 className="text-lg font-bold text-foreground mb-4">
-                    새 휴대폰 번호 입력
-                  </h3>
-                  <div className="space-y-3 text-sm text-foreground mb-6">
-                    <p>• 변경할 휴대폰 번호를 입력해주세요.</p>
-                    <p>• 입력하신 휴대폰 번호로 인증 SMS가 발송됩니다.</p>
-                  </div>
-
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        새 휴대폰 번호
-                      </label>
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          type="text"
-                          value={phoneNumber1}
-                          onChange={(e) => {
-                            setPhoneNumber1(e.target.value);
-                            updatePhoneField(
-                              e.target.value,
-                              phoneNumber2,
-                              phoneNumber3,
-                            );
-                          }}
-                          placeholder="010"
-                          className="w-20 text-center"
-                          maxLength={3}
-                          autoComplete="tel-area-code"
-                        />
-                        <span className="text-muted-foreground">-</span>
-                        <Input
-                          type="text"
-                          value={phoneNumber2}
-                          onChange={(e) => {
-                            setPhoneNumber2(e.target.value);
-                            updatePhoneField(
-                              phoneNumber1,
-                              e.target.value,
-                              phoneNumber3,
-                            );
-                          }}
-                          placeholder="0000"
-                          className="w-24 text-center"
-                          maxLength={4}
-                          autoComplete="tel-local-prefix"
-                        />
-                        <span className="text-muted-foreground">-</span>
-                        <Input
-                          type="text"
-                          value={phoneNumber3}
-                          onChange={(e) => {
-                            setPhoneNumber3(e.target.value);
-                            updatePhoneField(
-                              phoneNumber1,
-                              phoneNumber2,
-                              e.target.value,
-                            );
-                          }}
-                          placeholder="0000"
-                          className="w-24 text-center"
-                          maxLength={4}
-                          autoComplete="tel-local-suffix"
-                        />
-                      </div>
-                      {errors.phoneNumber && (
-                        <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                          {errors.phoneNumber.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-6 py-2 rounded-full disabled:opacity-50"
-                    >
-                      {isSubmitting ? "처리 중..." : "휴대폰 번호 변경"}
-                    </Button>
-                  </form>
-                </div>
-
-                <Alert variant="warning" role="note">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle asChild>
-                    <h4 className="mb-2">주의사항</h4>
-                  </AlertTitle>
-                  <AlertDescription>
-                    <ul className="space-y-1">
-                      <li>
-                        • 휴대폰 번호 변경 후 기존 휴대폰 번호로는 로그인할 수
-                        없습니다.
-                      </li>
-                      <li>
-                        • 변경된 휴대폰 번호로 인증 SMS가 발송되므로 정확히
-                        입력해주세요.
-                      </li>
-                      <li>• 인증 SMS를 확인하여 변경을 완료해주세요.</li>
-                      <li>
-                        • 멤버십 비밀번호와 휴대폰 번호를 동일하게 설정할 수
-                        없습니다.
-                      </li>
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-          </div>
+    <div>
+      <div className="mb-8">
+        <div className="space-y-2 text-foreground">
+          <p>• 로그인에 사용할 휴대폰 번호를 변경합니다.</p>
+          <p>
+            • 변경된 휴대폰 번호로 회원정보의 휴대폰 번호가 자동
+            변경됩니다.
+          </p>
         </div>
       </div>
+
+      <div className="mb-8">
+        <h3 className="text-lg font-bold text-foreground mb-4">
+          새 휴대폰 번호 입력
+        </h3>
+        <div className="space-y-3 text-sm text-foreground mb-6">
+          <p>• 변경할 휴대폰 번호를 입력해주세요.</p>
+          <p>• 입력하신 휴대폰 번호로 인증 SMS가 발송됩니다.</p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              새 휴대폰 번호
+            </label>
+            <div className="flex items-center space-x-2">
+              <Input
+                type="text"
+                value={phoneNumber1}
+                onChange={(e) => {
+                  setPhoneNumber1(e.target.value);
+                  updatePhoneField(
+                    e.target.value,
+                    phoneNumber2,
+                    phoneNumber3,
+                  );
+                }}
+                placeholder="010"
+                className="w-20 text-center"
+                maxLength={3}
+                autoComplete="tel-area-code"
+              />
+              <span className="text-muted-foreground">-</span>
+              <Input
+                type="text"
+                value={phoneNumber2}
+                onChange={(e) => {
+                  setPhoneNumber2(e.target.value);
+                  updatePhoneField(
+                    phoneNumber1,
+                    e.target.value,
+                    phoneNumber3,
+                  );
+                }}
+                placeholder="0000"
+                className="w-24 text-center"
+                maxLength={4}
+                autoComplete="tel-local-prefix"
+              />
+              <span className="text-muted-foreground">-</span>
+              <Input
+                type="text"
+                value={phoneNumber3}
+                onChange={(e) => {
+                  setPhoneNumber3(e.target.value);
+                  updatePhoneField(
+                    phoneNumber1,
+                    phoneNumber2,
+                    e.target.value,
+                  );
+                }}
+                placeholder="0000"
+                className="w-24 text-center"
+                maxLength={4}
+                autoComplete="tel-local-suffix"
+              />
+            </div>
+            {errors.phoneNumber && (
+              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                {errors.phoneNumber.message}
+              </p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-6 py-2 rounded-full disabled:opacity-50"
+          >
+            {isSubmitting ? "처리 중..." : "휴대폰 번호 변경"}
+          </Button>
+        </form>
+      </div>
+
+      <Alert variant="warning" role="note">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle asChild>
+          <h4 className="mb-2">주의사항</h4>
+        </AlertTitle>
+        <AlertDescription>
+          <ul className="space-y-1">
+            <li>
+              • 휴대폰 번호 변경 후 기존 휴대폰 번호로는 로그인할 수
+              없습니다.
+            </li>
+            <li>
+              • 변경된 휴대폰 번호로 인증 SMS가 발송되므로 정확히
+              입력해주세요.
+            </li>
+            <li>• 인증 SMS를 확인하여 변경을 완료해주세요.</li>
+            <li>
+              • 멤버십 비밀번호와 휴대폰 번호를 동일하게 설정할 수
+              없습니다.
+            </li>
+          </ul>
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }
@@ -235,7 +186,9 @@ function PhoneChangePageContent() {
 export default function PhoneChangePage() {
   return (
     <AuthGuard>
-      <PhoneChangePageContent />
+      <VerifiedChangeFlow title="휴대폰 번호 변경" changeStepLabel="새 휴대폰 번호">
+        <PhoneChangeForm />
+      </VerifiedChangeFlow>
     </AuthGuard>
   );
 }
