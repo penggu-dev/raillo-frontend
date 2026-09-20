@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
-import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import AuthGuard from "@/components/auth/AuthGuard";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +19,9 @@ import {
 } from "lucide-react";
 import { formatPrice, formatDate, formatTime } from "@/lib/utils/format";
 import { deletePendingBookings } from "@/lib/api/pendingBookings";
+import { usePendingBookingSelection } from "@/hooks/usePendingBookingSelection";
+import { useTossPayment } from "@/hooks/useTossPayment";
+import { ReservationCard } from "@/components/ticket/reservations/ReservationCard";
 import {
   useGetPendingBookingList,
   PENDING_BOOKINGS_QUERY_KEY,
@@ -45,11 +46,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
-import { preparePayment } from "@/lib/api/payments";
-import { getPaymentFailNotice } from "@/lib/utils/paymentRedirect";
 import { useAuth } from "@/hooks/useAuth";
 import { TossPaymentWidget } from "@/components/payment/TossPaymentWidget";
-import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
@@ -66,104 +64,30 @@ function ReservationsPageContent() {
   });
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [selectedCancelId, setSelectedCancelId] = useState<string | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const { data, isLoading, isError, error, refetch } = useGetPendingBookingList();
   const reservations = data ?? [];
 
-  const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
-  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
-  const [paymentInfo, setPaymentInfo] = useState<{
-    orderId: string;
-    amount: number;
-  } | null>(null);
-  const [paymentLoading, setPaymentLoading] = useState(false);
+  const {
+    selectedIds,
+    validReservations,
+    selectedItems,
+    totalPrice,
+    allSelected,
+    toggle,
+    toggleAll,
+    deselect,
+  } = usePendingBookingSelection(reservations);
 
-  // 결제 실패·취소로 돌아온 경우(failUrl의 code·message) 안내 후 주소에서 제거
-  const searchParams = useSearchParams();
-  const failNoticeShownRef = useRef(false);
-  useEffect(() => {
-    const notice = getPaymentFailNotice(searchParams);
-    if (!notice || failNoticeShownRef.current) return;
-    failNoticeShownRef.current = true;
-    toast({
-      title: notice.title,
-      description: notice.description,
-      variant: notice.canceled ? "default" : "destructive",
-    });
-    router.replace("/ticket/reservations");
-  }, [searchParams, toast, router]);
-
-  // Toss 위젯 초기화
-  useEffect(() => {
-    if (isChecking || !isAuthenticated) return;
-
-    const initPaymentWidget = async () => {
-      try {
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
-        const storedCustomerKey = localStorage.getItem(
-          LOCAL_STORAGE_KEYS.TOSS_CUSTOMER_KEY,
-        );
-        const customerKey =
-          storedCustomerKey ??
-          (typeof crypto !== "undefined" && "randomUUID" in crypto
-            ? `customer-${crypto.randomUUID()}`
-            : `customer-${Math.random().toString(36).slice(2)}`);
-
-        if (!storedCustomerKey) {
-          localStorage.setItem(
-            LOCAL_STORAGE_KEYS.TOSS_CUSTOMER_KEY,
-            customerKey,
-          );
-        }
-
-        const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
-        paymentWidgetRef.current = paymentWidget;
-      } catch {
-        // 위젯 초기화 실패 시 결제 UI 미표시
-      }
-    };
-
-    initPaymentWidget();
-  }, [isAuthenticated, isChecking]);
-
-  const getTotalPrice = (reservation: PendingBookingCartItem) => {
-    return reservation.totalFare ?? reservation.fare ?? 0;
-  };
-
-  const getSeatSummary = (seats: PendingBookingCartItem["seats"]) => {
-    const seatType = seats[0]?.carType === "FIRST_CLASS" ? "특실" : "일반실";
-    return `${seatType} ${seats.length}매`;
-  };
-
-  const isExpired = (expiresAt?: string) => {
-    if (!expiresAt) return false;
-    return new Date(expiresAt) <= new Date();
-  };
-
-  const toggleItemSelection = (pendingBookingId: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(pendingBookingId)) {
-        next.delete(pendingBookingId);
-      } else {
-        next.add(pendingBookingId);
-      }
-      return next;
-    });
-  };
-
-  const toggleAllSelection = () => {
-    const valid = reservations.filter((r) => !isExpired(r.expiresAt));
-    const allSelected = valid.every((item) =>
-      selectedIds.has(item.pendingBookingId),
-    );
-    if (allSelected) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(valid.map((item) => item.pendingBookingId)));
-    }
-  };
+  const {
+    widget,
+    paymentInfo,
+    paymentLoading,
+    showPaymentDialog,
+    setShowPaymentDialog,
+    prepare,
+    requestPayment,
+  } = useTossPayment({ enabled: isAuthenticated && !isChecking });
 
   const handleCancelReservation = (pendingBookingId: string) => {
     setSelectedCancelId(pendingBookingId);
@@ -175,11 +99,7 @@ function ReservationsPageContent() {
       try {
         await deletePendingBookings([selectedCancelId]);
         toast({ description: "예약이 취소되었습니다." });
-        setSelectedIds((prev) => {
-          const next = new Set(prev);
-          next.delete(selectedCancelId);
-          return next;
-        });
+        deselect(selectedCancelId);
         queryClient.invalidateQueries({ queryKey: PENDING_BOOKINGS_QUERY_KEY });
       } catch (err) {
         toast({
@@ -196,105 +116,6 @@ function ReservationsPageContent() {
     setShowCancelDialog(false);
     setSelectedCancelId(null);
   };
-
-  const handlePaymentClick = async () => {
-    if (!paymentWidgetRef.current) {
-      toast({
-        title: "결제 위젯 준비 중",
-        description: "잠시 후 다시 시도해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const selected = reservations.filter((item) =>
-      selectedIds.has(item.pendingBookingId),
-    );
-    if (selected.length === 0) {
-      toast({
-        title: "선택 필요",
-        description: "결제할 예약을 선택해주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setPaymentLoading(true);
-    try {
-      const result = await preparePayment({
-        pendingBookingIds: selected.map((item) => item.pendingBookingId),
-      });
-      setPaymentInfo({
-        orderId: result.orderId,
-        amount: result.amount,
-      });
-      setShowPaymentDialog(true);
-    } catch (err) {
-      toast({
-        title: "결제 준비 실패",
-        description: handleError(
-          err,
-          "결제 준비 중 오류가 발생했습니다.",
-          false,
-        ),
-        variant: "destructive",
-      });
-    } finally {
-      setPaymentLoading(false);
-    }
-  };
-
-  const handleRequestPayment = async () => {
-    if (!paymentWidgetRef.current || !paymentInfo) return;
-
-    const selected = reservations.filter((item) =>
-      selectedIds.has(item.pendingBookingId),
-    );
-    const orderName =
-      selected.length > 1
-        ? `${selected[0].trainName} ${selected[0].trainNumber} 외 ${selected.length - 1}매`
-        : `${selected[0].trainName} ${selected[0].trainNumber} 승차권`;
-
-    try {
-      await paymentWidgetRef.current.requestPayment({
-        orderId: paymentInfo.orderId,
-        orderName,
-        successUrl: `${window.location.origin}/ticket/reservation/success`,
-        failUrl: `${window.location.origin}/ticket/reservations`,
-      });
-    } catch (err: unknown) {
-      const paymentError = err as { code?: string; message?: string };
-      const errorCode = String(paymentError.code ?? "");
-      const errorMessage = String(paymentError.message ?? "");
-      const isUserCancel =
-        errorCode === "USER_CANCEL" ||
-        errorCode.includes("CANCEL") ||
-        errorMessage.includes("취소");
-
-      if (isUserCancel) {
-        setShowPaymentDialog(false);
-        return;
-      }
-
-      toast({
-        title: "결제 요청 실패",
-        description: "결제 요청 중 오류가 발생했습니다.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const validReservations = reservations.filter((r) => !isExpired(r.expiresAt));
-  const selectedItems = reservations.filter((item) =>
-    selectedIds.has(item.pendingBookingId),
-  );
-  const totalPrice = selectedItems.reduce(
-    (sum, item) => sum + getTotalPrice(item),
-    0,
-  );
-  const allSelected =
-    validReservations.length > 0 &&
-    validReservations.every((item) => selectedIds.has(item.pendingBookingId));
 
   if (isLoading || isError) {
     return (
@@ -362,7 +183,7 @@ function ReservationsPageContent() {
                   <Checkbox
                     id="select-all-reservations"
                     checked={allSelected}
-                    onCheckedChange={toggleAllSelection}
+                    onCheckedChange={toggleAll}
                     className="data-[state=checked]:bg-primary"
                   />
                   <label
@@ -399,99 +220,13 @@ function ReservationsPageContent() {
               />
             ) : (
               validReservations.map((reservation) => (
-                <Card
+                <ReservationCard
                   key={reservation.pendingBookingId}
-                  className={`shadow-elev-sm transition-all duration-200 hover:shadow-elev-md ${selectedIds.has(reservation.pendingBookingId) ? "border-primary ring-[3px] ring-secondary" : ""}`}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        checked={selectedIds.has(reservation.pendingBookingId)}
-                        onCheckedChange={() =>
-                          toggleItemSelection(reservation.pendingBookingId)
-                        }
-                        aria-label={`${reservation.trainName} ${reservation.trainNumber} ${formatDate(reservation.operationDate)} ${reservation.departureStationName} 출발 ${reservation.arrivalStationName} 도착 예약 선택`}
-                        className="mt-1 data-[state=checked]:bg-primary"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <TrainTypeBadge trainName={reservation.trainName} />
-                            <span className="text-lg font-bold">
-                              {reservation.trainNumber}
-                            </span>
-                            <span className="text-muted-foreground">
-                              {formatDate(reservation.operationDate)}
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-xl font-bold text-primary">
-                              {formatPrice(getTotalPrice(reservation))}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              예약번호: {reservation.pendingBookingId}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                          <div>
-                            <h4 className="font-medium text-foreground mb-2 flex items-center">
-                              <MapPin className="h-4 w-4 mr-1" />
-                              운행 정보
-                            </h4>
-                            <div className="space-y-1">
-                              <div className="flex items-center space-x-2">
-                                <span className="font-medium">
-                                  {reservation.departureStationName}
-                                </span>
-                                <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                                <span className="font-medium">
-                                  {reservation.arrivalStationName}
-                                </span>
-                              </div>
-                              <div className="text-sm text-muted-foreground">
-                                {formatTime(reservation.departureTime)} ~{" "}
-                                {formatTime(reservation.arrivalTime)}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <h4 className="font-medium text-foreground mb-2">
-                              좌석 정보
-                            </h4>
-                            <div className="text-sm font-medium">
-                              {getSeatSummary(reservation.seats)}
-                            </div>
-                          </div>
-
-                          <div>
-                            <h4 className="font-medium text-foreground mb-2 flex items-center">
-                              <Clock className="h-4 w-4 mr-1" />
-                              결제 기한
-                            </h4>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-end pt-4 border-t">
-                          <Button
-                            variant="outline-destructive"
-                            size="sm"
-                            onClick={() =>
-                              handleCancelReservation(
-                                reservation.pendingBookingId,
-                              )
-                            }
-                          >
-                            <X className="h-4 w-4 mr-1" />
-                            예약취소
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  reservation={reservation}
+                  selected={selectedIds.has(reservation.pendingBookingId)}
+                  onToggle={() => toggle(reservation.pendingBookingId)}
+                  onCancel={() => handleCancelReservation(reservation.pendingBookingId)}
+                />
               ))
             )}
           </div>
@@ -530,7 +265,7 @@ function ReservationsPageContent() {
               </span>
             </div>
             <Button
-              onClick={handlePaymentClick}
+              onClick={() => prepare(selectedItems)}
               disabled={paymentLoading}
             >
               {paymentLoading ? (
@@ -553,12 +288,12 @@ function ReservationsPageContent() {
               {selectedItems.length}개 항목 · 총 {formatPrice(totalPrice)}
             </DialogDescription>
           </DialogHeader>
-          {showPaymentDialog && paymentWidgetRef.current && paymentInfo && (
+          {showPaymentDialog && widget && paymentInfo && (
             <TossPaymentWidget
-              paymentWidget={paymentWidgetRef.current}
+              paymentWidget={widget}
               paymentInfo={paymentInfo}
               onCancel={() => setShowPaymentDialog(false)}
-              onRequestPayment={handleRequestPayment}
+              onRequestPayment={() => requestPayment(selectedItems)}
             />
           )}
         </DialogContent>
