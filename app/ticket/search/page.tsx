@@ -6,10 +6,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { formatPrice } from "@/lib/utils/format";
-import { searchTrains, searchCars, searchSeats } from "@/lib/api/trains";
+import { searchCars, searchSeats } from "@/lib/api/trains";
 import { stationUtils } from "@/constants/stations";
 import { createPendingBooking } from "@/lib/api/pendingBookings";
 import { PENDING_BOOKINGS_QUERY_KEY } from "@/hooks/usePendingBooking";
+import { TRAIN_SEARCH_QUERY_KEY, useTrainSearch } from "@/hooks/useTrainSearch";
 import { handleError } from "@/lib/utils/errorHandler";
 import { BookingPanel } from "@/components/ticket/search/booking-panel";
 import { SearchForm } from "@/components/ticket/search/search-form";
@@ -21,6 +22,7 @@ import type {
   SeatDetail,
   TrainSchedule,
   SeatType,
+  TrainSearchRequest,
 } from "@/types/trainType";
 import type { PassengerCounts } from "@/types/passengerType";
 import { useToast } from "@/hooks/useToast";
@@ -69,11 +71,46 @@ function TrainSearchPage() {
     d.setHours(Number(hour), 0, 0, 0);
     return d;
   }, [dateStr, hour]);
-  const [displayedTrains, setDisplayedTrains] = useState<TrainSchedule[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
+
+  // 현재 URL 조건으로 조회 요청을 만든다 — 역 이름으로 ID를 찾지 못하면 null
+  const buildSearchRequest = (): TrainSearchRequest | null => {
+    const departureStationId = stationUtils.getStationId(departureStation);
+    const arrivalStationId = stationUtils.getStationId(arrivalStation);
+    if (!departureStationId || !arrivalStationId) return null;
+    return {
+      departureStationId,
+      arrivalStationId,
+      operationDate: dateStr,
+      passengerCount: Object.values(passengerCounts).reduce(
+        (sum, count) => sum + count,
+        0,
+      ),
+      departureHour: hour.replace("시", ""),
+    };
+  };
+
+  // 조회 버튼으로 확정한 검색 조건 — URL은 폼을 바꿀 때마다 갱신되므로 조회 키로 쓰지 않는다
+  const [searchRequest, setSearchRequest] = useState<TrainSearchRequest | null>(
+    () =>
+      departureStation && arrivalStation && dateStr
+        ? buildSearchRequest()
+        : null,
+  );
+  const {
+    data: searchData,
+    error: searchError,
+    errorUpdatedAt,
+    isPending: searchPending,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+  } = useTrainSearch(searchRequest);
+  const displayedTrains = useMemo(
+    () => searchData?.pages.flatMap((page) => page.content) ?? [],
+    [searchData],
+  );
+  const loading = searchRequest !== null && searchPending;
   const [selectedTrain, setSelectedTrain] = useState<TrainSchedule | null>(
     null,
   );
@@ -95,12 +132,10 @@ function TrainSearchPage() {
   const [loadingCars, setLoadingCars] = useState(false);
   const [loadingSeats, setLoadingSeats] = useState(false);
 
-  // 중복 호출 방지 플래그
-  const didFetchTrains = useRef(false);
-  // 조회 차수 — 다시 조회할 때마다 올려, 이전 조회·더보기의 늦은 응답을 버린다
-  const searchGenerationRef = useRef(0);
-  // 더보기 진행 여부 — 버튼 비활성화가 렌더되기 전의 연속 클릭을 막는다
-  const loadingMoreRef = useRef(false);
+  // 첫 진입 처리(검색 기록·역 오류 알림)를 한 번만 하기 위한 플래그
+  const didInitSearch = useRef(false);
+  // 이 화면에 들어온 시각 — 재방문 때 캐시에 남아 있던 이전 오류는 다시 알리지 않는다
+  const mountedAtRef = useRef(Date.now());
   // 예매 패널·좌석 선택 다이얼로그를 닫은 뒤 포커스를 돌려줄 요소
   const overlayReturnFocusRef = useRef<HTMLElement | null>(null);
 
@@ -113,81 +148,53 @@ function TrainSearchPage() {
     router.replace(`/ticket/search?${current.toString()}`);
   };
 
-  // 실제 API 호출 함수
-  const fetchTrainsFromAPI = async () => {
-    const generation = ++searchGenerationRef.current;
-    // 진행 중이던 더보기는 이전 조회의 요청이므로 더보기 상태를 풀어 둔다
-    loadingMoreRef.current = false;
-    setLoadingMore(false);
-    setLoading(true);
-
-    // 검색 기록 저장
-    saveSearchHistory(departureStation, arrivalStation);
-
-    try {
-      const totalPassengers = Object.values(passengerCounts).reduce(
-        (sum: number, count: unknown) => sum + (count as number),
-        0,
-      );
-
-      const departureStationId = stationUtils.getStationId(departureStation);
-      const arrivalStationId = stationUtils.getStationId(arrivalStation);
-
-      if (!departureStationId || !arrivalStationId) {
-        toast({
-          title: "오류",
-          description: "역 정보를 찾을 수 없습니다.",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      const searchRequest = {
-        departureStationId,
-        arrivalStationId,
-        operationDate: dateStr,
-        passengerCount: totalPassengers,
-        departureHour: hour.replace("시", ""),
-      };
-
-      const result = await searchTrains(searchRequest, { page: 0 });
-      if (generation !== searchGenerationRef.current) return;
-      const resultArray: TrainSchedule[] = Array.isArray(result.content)
-        ? result.content
-        : [];
-
-      setDisplayedTrains(resultArray);
-      setCurrentPage(result.currentPage);
-      setHasNext(result.hasNext ?? false);
-    } catch (error) {
-      if (generation !== searchGenerationRef.current) return;
-      toast({
-        title: "오류",
-        description: handleError(error, "열차 검색에 실패했습니다."),
-        variant: "destructive",
-      });
-      setDisplayedTrains([]);
-      setCurrentPage(0);
-      setHasNext(false);
-    } finally {
-      if (generation === searchGenerationRef.current) {
-        setLoading(false);
-      }
-    }
+  const notifyStationNotFound = () => {
+    toast({
+      title: "오류",
+      description: "역 정보를 찾을 수 없습니다.",
+      variant: "destructive",
+    });
   };
 
-  // URL params에서 검색 조건을 읽어 초기 fetch
-  useEffect(() => {
-    if (didFetchTrains.current) return;
-    didFetchTrains.current = true;
-
-    if (departureStation && arrivalStation && dateStr) {
-      fetchTrainsFromAPI();
-    } else {
-      setLoading(false);
+  // 조회 버튼: 현재 URL 조건을 확정하고 0페이지부터 다시 받는다
+  const submitSearch = () => {
+    saveSearchHistory(departureStation, arrivalStation);
+    const request = buildSearchRequest();
+    if (!request) {
+      notifyStationNotFound();
+      return;
     }
+    // 같은 조건이어도 쌓인 페이지를 버리고 새로 조회한다 (진행 중이던 요청은 취소됨)
+    queryClient.removeQueries({
+      queryKey: [...TRAIN_SEARCH_QUERY_KEY, request],
+      exact: true,
+    });
+    setSearchRequest(request);
+  };
+
+  // 첫 진입: URL 조건이 있으면 검색 기록을 남기고, 역을 찾지 못했으면 알린다
+  useEffect(() => {
+    if (didInitSearch.current) return;
+    didInitSearch.current = true;
+    if (!departureStation || !arrivalStation || !dateStr) return;
+    saveSearchHistory(departureStation, arrivalStation);
+    if (!searchRequest) notifyStationNotFound();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 조회·더보기 실패 알림 — 이 화면에 들어온 뒤 생긴 오류만
+  useEffect(() => {
+    if (!searchError || errorUpdatedAt < mountedAtRef.current) return;
+    toast({
+      title: "오류",
+      description: handleError(
+        searchError,
+        isFetchNextPageError
+          ? "열차 목록을 불러오는 데 실패했습니다."
+          : "열차 검색에 실패했습니다.",
+      ),
+      variant: "destructive",
+    });
+  }, [searchError, errorUpdatedAt]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleUpdateSearch = () => {
     if (!dateStr) {
@@ -211,8 +218,7 @@ function TrainSearchPage() {
     }
 
     setSearchConditionsChanged(false);
-    setCurrentPage(0);
-    fetchTrainsFromAPI();
+    submitSearch();
   };
 
   const handleDateChange = (newDate: Date) => {
@@ -295,64 +301,10 @@ function TrainSearchPage() {
     setShowBookingPanel(true);
   };
 
-  const handleLoadMore = async () => {
-    if (!departureStation || !arrivalStation) return;
-    if (loadingMoreRef.current) return;
-    loadingMoreRef.current = true;
-    const generation = searchGenerationRef.current;
-
-    setLoadingMore(true);
-
-    try {
-      const nextPage = currentPage + 1;
-      const departureStationId = stationUtils.getStationId(departureStation);
-      const arrivalStationId = stationUtils.getStationId(arrivalStation);
-
-      if (!departureStationId || !arrivalStationId) {
-        setLoadingMore(false);
-        return;
-      }
-
-      const totalPassengers = Object.values(passengerCounts).reduce(
-        (sum: number, count: unknown) => sum + (count as number),
-        0,
-      );
-
-      const searchRequest = {
-        departureStationId,
-        arrivalStationId,
-        operationDate: dateStr,
-        passengerCount: totalPassengers,
-        departureHour: hour.replace("시", ""),
-      };
-
-      const result = await searchTrains(searchRequest, { page: nextPage });
-      // 응답 전에 다시 조회했다면 이전 조건의 페이지이므로 붙이지 않는다
-      if (generation !== searchGenerationRef.current) return;
-      const newTrains: TrainSchedule[] = Array.isArray(result.content)
-        ? result.content
-        : [];
-
-      setDisplayedTrains((prev) => [...prev, ...newTrains]);
-      setCurrentPage(result.currentPage);
-      setHasNext(result.hasNext ?? false);
-    } catch (error) {
-      if (generation !== searchGenerationRef.current) return;
-      toast({
-        title: "오류",
-        description: handleError(
-          error,
-          "열차 목록을 불러오는 데 실패했습니다.",
-        ),
-        variant: "destructive",
-      });
-      // hasNext·currentPage는 그대로 둔다 — 더보기를 다시 누르면 같은 페이지를 다시 요청한다
-    } finally {
-      if (generation === searchGenerationRef.current) {
-        loadingMoreRef.current = false;
-        setLoadingMore(false);
-      }
-    }
+  const handleLoadMore = () => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    // 이미 받는 중이면 새 요청을 만들지 않는다 — 비활성화가 렌더되기 전의 연속 클릭 포함
+    void fetchNextPage({ cancelRefetch: false });
   };
 
   // 예약용 passengers 생성 함수
@@ -656,8 +608,9 @@ function TrainSearchPage() {
           <TrainList
             displayedTrains={displayedTrains}
             selectedTrain={selectedTrain}
-            loadingMore={loadingMore}
-            hasMoreTrains={hasNext}
+            loadingMore={isFetchingNextPage}
+            // 더보기가 실패해도 버튼을 남긴다 — 다시 누르면 같은 페이지를 다시 요청한다
+            hasMoreTrains={Boolean(hasNextPage)}
             onSeatSelection={handleSeatSelection}
             onLoadMore={handleLoadMore}
             formatPrice={formatPrice}
