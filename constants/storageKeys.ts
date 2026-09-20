@@ -8,6 +8,4 @@ export const SESSION_STORAGE_KEYS = {
   FOUND_MEMBER_NUMBER: "foundMemberNo",
   PASSWORD_RESET_TOKEN: "tempPasswordToken",
   PASSWORD_RESET_EMAIL: "tempPasswordEmail",
-  IDENTITY_VERIFIED: "emailVerified",
-  IDENTITY_VERIFIED_FOR: "emailVerifiedFor",
 } as const;
