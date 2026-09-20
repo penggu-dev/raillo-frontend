@@ -1,43 +1,24 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { updatePassword } from "@/lib/api/members";
-import MyPageSidebar from "@/components/layout/MyPageSidebar";
-import { useGetMemberInfo } from "@/hooks/useUser";
 import AuthGuard from "@/components/auth/AuthGuard";
+import { VerifiedChangeFlow } from "@/components/mypage/VerifiedChangeFlow";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useToast } from "@/hooks/useToast";
 import { passwordSchema, PasswordFormValues } from "@/lib/validation/password";
-import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-function PasswordChangePageContent() {
+/** 2단계 — 이메일 인증을 마친 뒤에만 렌더된다(인증이 만료되면 사라지며 입력값도 함께 버려진다) */
+function PasswordChangeForm() {
   const router = useRouter();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const emailVerified = sessionStorage.getItem(
-      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED,
-    );
-    const emailVerifiedFor = sessionStorage.getItem(
-      SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR,
-    );
-
-    if (!emailVerified || emailVerifiedFor !== "password_change") {
-      router.push("/mypage/verify?purpose=password_change");
-    }
-  }, [router]);
-
-  const { data: memberInfo = null, isLoading: loading } = useGetMemberInfo();
 
   const [showPasswords, setShowPasswords] = useState({
     new: false,
@@ -57,23 +38,10 @@ function PasswordChangePageContent() {
   const watchNew = watch("newPassword");
   const watchConfirm = watch("confirmPassword");
 
-  if (loading) {
-    return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4 py-16 text-center">
-          <LoadingSpinner className="mx-auto mb-4" />
-          <p className="text-muted-foreground">페이지를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
-
   const onSubmit = async (data: PasswordFormValues) => {
     try {
       await updatePassword(data.newPassword);
       toast({ description: "비밀번호가 성공적으로 변경되었습니다." });
-      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED);
-      sessionStorage.removeItem(SESSION_STORAGE_KEYS.IDENTITY_VERIFIED_FOR);
       router.push("/mypage");
     } catch (error: unknown) {
       toast({
@@ -88,152 +56,128 @@ function PasswordChangePageContent() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Sidebar */}
-          <MyPageSidebar memberInfo={memberInfo || undefined} />
-
-          {/* Main Content */}
-          <div className="flex-1">
-            <Card>
-              <CardContent className="p-8">
-                <div className="mb-8">
-                  <h1 className="text-2xl font-bold text-foreground mb-6">
-                    비밀번호 변경
-                  </h1>
-
-                  <div className="space-y-3 mb-8">
-                    <p className="text-foreground">
-                      • 새로운 비밀번호를 설정해 주세요.
-                    </p>
-                    <p className="text-foreground">
-                      • 비밀번호는 8자 이상 입력해 주세요.
-                    </p>
-                    <p className="text-foreground">
-                      • 개인정보와 관련된 숫자, 연속된 숫자, 동일 반복된 숫자
-                      등은 사용하지 마십시오.
-                    </p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  {/* 신규 비밀번호 */}
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="new-password"
-                      className="text-sm font-medium text-foreground"
-                    >
-                      새 비밀번호 <span className="text-red-600 dark:text-red-400">*</span>
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="new-password"
-                        type={showPasswords.new ? "text" : "password"}
-                        placeholder="새 비밀번호를 입력하세요 (8자 이상)"
-                        {...register("newPassword")}
-                        className={`pr-10 ${errors.newPassword ? "border-red-500 dark:border-red-400" : ""}`}
-                        autoComplete="new-password"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        aria-label={showPasswords.new ? "새 비밀번호 숨기기" : "새 비밀번호 보기"}
-                        onClick={() =>
-                          setShowPasswords((prev) => ({
-                            ...prev,
-                            new: !prev.new,
-                          }))
-                        }
-                      >
-                        {showPasswords.new ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
-                    </div>
-                    {errors.newPassword && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
-                        {errors.newPassword.message}
-                      </p>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      8자 이상 입력해주세요.
-                    </p>
-                  </div>
-
-                  {/* 비밀번호 확인 */}
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="confirm-password"
-                      className="text-sm font-medium text-foreground"
-                    >
-                      새 비밀번호 확인 <span className="text-red-600 dark:text-red-400">*</span>
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="confirm-password"
-                        type={showPasswords.confirm ? "text" : "password"}
-                        placeholder="새 비밀번호를 다시 입력하세요"
-                        {...register("confirmPassword")}
-                        className={`pr-10 ${errors.confirmPassword ? "border-red-500 dark:border-red-400" : ""}`}
-                        autoComplete="new-password"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                        aria-label={showPasswords.confirm ? "새 비밀번호 확인 숨기기" : "새 비밀번호 확인 보기"}
-                        onClick={() =>
-                          setShowPasswords((prev) => ({
-                            ...prev,
-                            confirm: !prev.confirm,
-                          }))
-                        }
-                      >
-                        {showPasswords.confirm ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
-                    </div>
-                    {errors.confirmPassword && (
-                      <p className="text-xs text-red-600 dark:text-red-400">
-                        {errors.confirmPassword.message}
-                      </p>
-                    )}
-                    {watchConfirm && !errors.confirmPassword && (
-                      <p
-                        className={`text-xs ${watchNew === watchConfirm ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
-                      >
-                        {watchNew === watchConfirm
-                          ? "비밀번호가 일치합니다."
-                          : "비밀번호가 일치하지 않습니다."}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* 수정완료 버튼 */}
-                  <div className="pt-6">
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-8 py-2 rounded-full disabled:opacity-50"
-                    >
-                      {isSubmitting ? "처리 중..." : "비밀번호 변경"}
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+    <div>
+      <div className="space-y-3 mb-8">
+        <p className="text-foreground">• 새로운 비밀번호를 설정해 주세요.</p>
+        <p className="text-foreground">• 비밀번호는 8자 이상 입력해 주세요.</p>
+        <p className="text-foreground">
+          • 개인정보와 관련된 숫자, 연속된 숫자, 동일 반복된 숫자 등은 사용하지
+          마십시오.
+        </p>
       </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* 신규 비밀번호 */}
+        <div className="space-y-2">
+          <Label
+            htmlFor="new-password"
+            className="text-sm font-medium text-foreground"
+          >
+            새 비밀번호 <span className="text-red-600 dark:text-red-400">*</span>
+          </Label>
+          <div className="relative">
+            <Input
+              id="new-password"
+              type={showPasswords.new ? "text" : "password"}
+              placeholder="새 비밀번호를 입력하세요 (8자 이상)"
+              {...register("newPassword")}
+              className={`pr-10 ${errors.newPassword ? "border-red-500 dark:border-red-400" : ""}`}
+              autoComplete="new-password"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              aria-label={showPasswords.new ? "새 비밀번호 숨기기" : "새 비밀번호 보기"}
+              onClick={() =>
+                setShowPasswords((prev) => ({
+                  ...prev,
+                  new: !prev.new,
+                }))
+              }
+            >
+              {showPasswords.new ? (
+                <EyeOff className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <Eye className="h-4 w-4 text-muted-foreground" />
+              )}
+            </Button>
+          </div>
+          {errors.newPassword && (
+            <p className="text-xs text-red-600 dark:text-red-400">
+              {errors.newPassword.message}
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            8자 이상 입력해주세요.
+          </p>
+        </div>
+
+        {/* 비밀번호 확인 */}
+        <div className="space-y-2">
+          <Label
+            htmlFor="confirm-password"
+            className="text-sm font-medium text-foreground"
+          >
+            새 비밀번호 확인 <span className="text-red-600 dark:text-red-400">*</span>
+          </Label>
+          <div className="relative">
+            <Input
+              id="confirm-password"
+              type={showPasswords.confirm ? "text" : "password"}
+              placeholder="새 비밀번호를 다시 입력하세요"
+              {...register("confirmPassword")}
+              className={`pr-10 ${errors.confirmPassword ? "border-red-500 dark:border-red-400" : ""}`}
+              autoComplete="new-password"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              aria-label={showPasswords.confirm ? "새 비밀번호 확인 숨기기" : "새 비밀번호 확인 보기"}
+              onClick={() =>
+                setShowPasswords((prev) => ({
+                  ...prev,
+                  confirm: !prev.confirm,
+                }))
+              }
+            >
+              {showPasswords.confirm ? (
+                <EyeOff className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <Eye className="h-4 w-4 text-muted-foreground" />
+              )}
+            </Button>
+          </div>
+          {errors.confirmPassword && (
+            <p className="text-xs text-red-600 dark:text-red-400">
+              {errors.confirmPassword.message}
+            </p>
+          )}
+          {watchConfirm && !errors.confirmPassword && (
+            <p
+              className={`text-xs ${watchNew === watchConfirm ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+            >
+              {watchNew === watchConfirm
+                ? "비밀번호가 일치합니다."
+                : "비밀번호가 일치하지 않습니다."}
+            </p>
+          )}
+        </div>
+
+        {/* 수정완료 버튼 */}
+        <div className="pt-6">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-8 py-2 rounded-full disabled:opacity-50"
+          >
+            {isSubmitting ? "처리 중..." : "비밀번호 변경"}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
@@ -241,7 +185,9 @@ function PasswordChangePageContent() {
 export default function PasswordChangePage() {
   return (
     <AuthGuard>
-      <PasswordChangePageContent />
+      <VerifiedChangeFlow title="비밀번호 변경" changeStepLabel="새 비밀번호">
+        <PasswordChangeForm />
+      </VerifiedChangeFlow>
     </AuthGuard>
   );
 }
