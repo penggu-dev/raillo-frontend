@@ -21,7 +21,8 @@ export const usePendingBookingSelection = (
   const validReservations = reservations.filter(
     (reservation) => !isExpired(reservation.expiresAt),
   );
-  const selectedItems = reservations.filter((reservation) =>
+  // 화면에 머무는 동안 기한이 지날 수 있다 — 선택·합계·결제는 유효한 예약만 본다
+  const selectedItems = validReservations.filter((reservation) =>
     selectedIds.has(reservation.pendingBookingId),
   );
   const totalPrice = selectedItems.reduce(

@@ -87,3 +87,22 @@ describe("usePendingBookingSelection", () => {
     expect(result.current.selectedItems.map((r) => r.pendingBookingId)).toEqual(["b"])
   })
 })
+
+describe("usePendingBookingSelection 기한 만료", () => {
+  it("고른 뒤 기한이 지나면 선택·합계에서 빠진다", () => {
+    const before = [item("a", { fare: 10000 }), item("b", { fare: 25000 })]
+    const { result, rerender } = renderHook(
+      ({ list }) => usePendingBookingSelection(list),
+      { initialProps: { list: before } },
+    )
+
+    act(() => result.current.toggleAll())
+    expect(result.current.totalPrice).toBe(35000)
+
+    // 같은 예약이 만료된 상태로 다시 조회됐다
+    rerender({ list: [item("a", { fare: 10000, expiresAt: hoursFromNow(-1) }), item("b", { fare: 25000 })] })
+
+    expect(result.current.selectedItems.map((r) => r.pendingBookingId)).toEqual(["b"])
+    expect(result.current.totalPrice).toBe(25000)
+  })
+})
