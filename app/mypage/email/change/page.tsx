@@ -109,10 +109,14 @@ function EmailChangeForm() {
           className="flex items-start space-x-4"
         >
           <div className="flex-1">
-            <label className="block text-sm font-medium text-foreground mb-2">
+            <label
+              htmlFor="new-email"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
               새 이메일 주소
             </label>
             <Input
+              id="new-email"
               type="email"
               placeholder="새 이메일 주소를 입력하세요"
               {...emailForm.register("email")}
@@ -155,7 +159,10 @@ function EmailChangeForm() {
             className="flex items-start space-x-4"
           >
             <div className="flex-1">
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label
+                htmlFor="email-auth-code"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 인증코드
               </label>
               <Controller
@@ -163,6 +170,7 @@ function EmailChangeForm() {
                 control={codeForm.control}
                 render={({ field }) => (
                   <Input
+                    id="email-auth-code"
                     type="text"
                     value={field.value}
                     onChange={(e) =>

@@ -84,66 +84,72 @@ function PhoneChangeForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              새 휴대폰 번호
-            </label>
-            <div className="flex items-center space-x-2">
-              <Input
-                type="text"
-                value={phoneNumber1}
-                onChange={(e) => {
-                  setPhoneNumber1(e.target.value);
-                  updatePhoneField(
-                    e.target.value,
-                    phoneNumber2,
-                    phoneNumber3,
-                  );
-                }}
-                placeholder="010"
-                className="w-20 text-center"
-                maxLength={3}
-                autoComplete="tel-area-code"
-              />
-              <span className="text-muted-foreground">-</span>
-              <Input
-                type="text"
-                value={phoneNumber2}
-                onChange={(e) => {
-                  setPhoneNumber2(e.target.value);
-                  updatePhoneField(
-                    phoneNumber1,
-                    e.target.value,
-                    phoneNumber3,
-                  );
-                }}
-                placeholder="0000"
-                className="w-24 text-center"
-                maxLength={4}
-                autoComplete="tel-local-prefix"
-              />
-              <span className="text-muted-foreground">-</span>
-              <Input
-                type="text"
-                value={phoneNumber3}
-                onChange={(e) => {
-                  setPhoneNumber3(e.target.value);
-                  updatePhoneField(
-                    phoneNumber1,
-                    phoneNumber2,
-                    e.target.value,
-                  );
-                }}
-                placeholder="0000"
-                className="w-24 text-center"
-                maxLength={4}
-                autoComplete="tel-local-suffix"
-              />
-            </div>
-            {errors.phoneNumber && (
-              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                {errors.phoneNumber.message}
-              </p>
-            )}
+            {/* 입력 세 칸이 한 항목이므로 그룹으로 묶고, 칸마다 개별 이름을 준다 */}
+            <fieldset>
+              <legend className="block text-sm font-medium text-foreground mb-2">
+                새 휴대폰 번호
+              </legend>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="text"
+                  value={phoneNumber1}
+                  onChange={(e) => {
+                    setPhoneNumber1(e.target.value);
+                    updatePhoneField(
+                      e.target.value,
+                      phoneNumber2,
+                      phoneNumber3,
+                    );
+                  }}
+                  placeholder="010"
+                  className="w-20 text-center"
+                  maxLength={3}
+                  autoComplete="tel-area-code"
+                  aria-label={`새 휴대폰 번호 앞 3자리`}
+                />
+                <span className="text-muted-foreground">-</span>
+                <Input
+                  type="text"
+                  value={phoneNumber2}
+                  onChange={(e) => {
+                    setPhoneNumber2(e.target.value);
+                    updatePhoneField(
+                      phoneNumber1,
+                      e.target.value,
+                      phoneNumber3,
+                    );
+                  }}
+                  placeholder="0000"
+                  className="w-24 text-center"
+                  maxLength={4}
+                  autoComplete="tel-local-prefix"
+                  aria-label={`새 휴대폰 번호 가운데 4자리`}
+                />
+                <span className="text-muted-foreground">-</span>
+                <Input
+                  type="text"
+                  value={phoneNumber3}
+                  onChange={(e) => {
+                    setPhoneNumber3(e.target.value);
+                    updatePhoneField(
+                      phoneNumber1,
+                      phoneNumber2,
+                      e.target.value,
+                    );
+                  }}
+                  placeholder="0000"
+                  className="w-24 text-center"
+                  maxLength={4}
+                  autoComplete="tel-local-suffix"
+                  aria-label={`새 휴대폰 번호 마지막 4자리`}
+                />
+              </div>
+              {errors.phoneNumber && (
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
+            </fieldset>
           </div>
 
           <Button
