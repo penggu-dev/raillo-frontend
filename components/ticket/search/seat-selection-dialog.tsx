@@ -22,13 +22,7 @@ import {
 } from "@/components/ticket/search/TrainSeatGrid";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
-
-// 좌석 등급에 맞는 객차인지 — 호차 선택과 목록 필터가 같은 기준을 쓴다
-const matchesSeatType = (car: CarInfo, seatType: SeatType): boolean => {
-  if (seatType === "firstClassSeat") return car.carType === "FIRST_CLASS";
-  if (seatType === "standardSeat") return car.carType === "STANDARD";
-  return true;
-};
+import { matchesSeatType, pickSeatCar } from "./seat-car";
 
 interface SeatSelectionDialogProps {
   isOpen: boolean;
@@ -97,16 +91,11 @@ export function SeatSelectionDialog({
   // 열릴 때 호차 선택 — 적용된 호차가 있으면 복원하고, 없으면 좌석 등급에 맞는 첫 호차
   useEffect(() => {
     if (!isOpen) return;
-    const candidates = carList.filter((car) => matchesSeatType(car, selectedSeatType));
-    if (candidates.length === 0) return;
-
     // 적용된 호차가 목록에 없거나 좌석 등급이 다르면 첫 호차로 되돌린다
-    const appliedMatch =
-      appliedCar === null
-        ? undefined
-        : candidates.find((car) => parseInt(car.carNumber) === appliedCar);
+    const car = pickSeatCar(carList, selectedSeatType, appliedCar);
+    if (!car) return;
 
-    setSelectedCar(appliedMatch ?? candidates[0]);
+    setSelectedCar(car);
     // selectedCar가 설정되면 아래 effect가 onCarSelect를 호출하므로 여기서 좌석을 다시 받지 않는다
   }, [isOpen, carList, selectedSeatType, appliedCar]);
 

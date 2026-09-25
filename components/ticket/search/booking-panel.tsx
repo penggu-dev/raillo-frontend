@@ -12,6 +12,7 @@ import { Clock, CreditCard, X, Train } from "lucide-react";
 import type { CarInfo, TrainSchedule, SeatType } from "@/types/trainType";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
+import { pickSeatCar } from "./seat-car";
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
 import { formatPrice } from "@/lib/utils/format";
 import { getSeatTypeName } from "@/lib/utils/ticketUtils";
@@ -49,8 +50,12 @@ export function BookingPanel({
 
   if (!selectedTrain) return null;
 
-  const selectedCarInfo = carList.find(
-    (car) => parseInt(car.carNumber) === selectedCar,
+  // 좌석을 적용하기 전에는 좌석 선택 창이 열 호차(등급에 맞는 첫 호차)를 미리 보여 준다
+  const hasAppliedSeats = selectedSeats.length > 0;
+  const selectedCarInfo = pickSeatCar(
+    carList,
+    selectedSeatType,
+    hasAppliedSeats ? selectedCar : null,
   );
   const selectedSeatInfo = selectedTrain[selectedSeatType];
   const price = selectedSeatInfo?.fare ?? 0;
@@ -144,7 +149,7 @@ export function BookingPanel({
                   ) : selectedCarInfo ? (
                     <>
                       <div className="text-sm text-muted-foreground mb-1">
-                        선택된 객차
+                        {hasAppliedSeats ? "선택된 객차" : "배정 예정 객차"}
                       </div>
                       <div className="text-lg font-semibold">
                         {selectedCarInfo.carNumber}호차
@@ -157,6 +162,7 @@ export function BookingPanel({
                       <div className="text-xs text-muted-foreground mt-1">
                         {selectedCarInfo.remainingSeats}/
                         {selectedCarInfo.totalSeats}석
+                        {!hasAppliedSeats && " · 좌석 선택에서 변경"}
                       </div>
                     </>
                   ) : (
@@ -164,9 +170,12 @@ export function BookingPanel({
                       <div className="text-sm text-muted-foreground mb-1">
                         객차 정보
                       </div>
-                      <div className="text-lg font-semibold">
-                        {selectedCar}호차
-                      </div>
+                      {/* 적용 전 기본값(1호차)은 실제로 고른 호차가 아니므로 번호를 보이지 않는다 */}
+                      {hasAppliedSeats && (
+                        <div className="text-lg font-semibold">
+                          {selectedCar}호차
+                        </div>
+                      )}
                       <div className="text-sm text-muted-foreground">정보 없음</div>
                     </>
                   )}
