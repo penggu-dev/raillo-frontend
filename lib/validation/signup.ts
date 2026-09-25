@@ -1,6 +1,14 @@
 import { PASSWORD_MIN_LENGTH } from "@/constants/validation";
 import { z } from "zod";
 
+// YYYY-MM-DD 문자열이 오늘(사용자 기기 날짜)보다 뒤인지 — 같은 형식이라 문자열 비교로 충분
+const isFutureDate = (value: string): boolean => {
+  const today = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const todayText = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+  return value > todayText;
+};
+
 export const signupSchema = z
   .object({
     name: z.string().min(1, "이름은 필수입니다."),
@@ -23,7 +31,8 @@ export const signupSchema = z
     birthDate: z
       .string()
       .min(1, "생년월일은 필수입니다.")
-      .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 모두 선택해주세요."),
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 모두 선택해주세요.")
+      .refine((value) => !isFutureDate(value), "생년월일은 오늘 이후일 수 없습니다."),
     gender: z.enum(["M", "F"], { message: "성별을 선택해주세요." }),
     terms: z.literal(true, { message: "이용약관에 동의해주세요." }),
     privacy: z.literal(true, {

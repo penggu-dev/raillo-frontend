@@ -65,13 +65,12 @@ export default function SignupPage() {
 
   // 생년월일 옵션들
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from(
-    { length: 100 },
-    (_, i) => currentYear - i,
-  ).reverse();
+  // 최근 해부터 — 연도를 미리 고르지 않으므로 목록이 열리는 위치가 곧 시작점
+  const yearOptions = Array.from({ length: 100 }, (_, i) => currentYear - i);
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
 
-  const [birthYear, setBirthYear] = useState<string>(currentYear.toString());
+  // 기본값을 두지 않는다 — 올해가 미리 선택되면 월·일만 골라 올해 생년월일로 제출될 수 있음
+  const [birthYear, setBirthYear] = useState<string>("");
   const [birthMonth, setBirthMonth] = useState<string>("");
   const [birthDay, setBirthDay] = useState<string>("");
 
