@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest"
 import { signupSchema, formatPhoneNumber, removePhoneNumberFormatting } from "./signup"
 
 const validInput = {
@@ -102,6 +102,31 @@ describe("signupSchema", () => {
       const messages = result.error.issues.map((i) => i.message)
       expect(messages).toContain("생년월일을 모두 선택해주세요.")
     }
+  })
+
+  describe("생년월일 날짜 범위", () => {
+    // 기기 날짜를 2026-09-26 정오로 고정
+    beforeEach(() => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date(2026, 8, 26, 12, 0, 0))
+    })
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it("오늘 이후 날짜는 실패한다", () => {
+      const result = signupSchema.safeParse({ ...validInput, birthDate: "2026-09-27" })
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        const messages = result.error.issues.map((i) => i.message)
+        expect(messages).toContain("생년월일은 오늘 이후일 수 없습니다.")
+      }
+    })
+
+    it("오늘과 과거 날짜는 통과한다", () => {
+      expect(signupSchema.safeParse({ ...validInput, birthDate: "2026-09-26" }).success).toBe(true)
+      expect(signupSchema.safeParse({ ...validInput, birthDate: "1990-01-15" }).success).toBe(true)
+    })
   })
 
   it("성별이 M/F가 아니면 실패한다", () => {
