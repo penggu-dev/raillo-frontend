@@ -12,7 +12,7 @@ import { login } from "@/lib/api/authentication";
 import { handleError } from "@/lib/utils/errorHandler";
 import { useAuthStore } from "@/stores/auth-store";
 import { useToast } from "@/hooks/useToast";
-import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import { LOCAL_STORAGE_KEYS, SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 const loginSchema = z.object({
@@ -37,12 +37,21 @@ const LoginField = () => {
     defaultValues: { memberNumber: "", password: "" },
   });
 
+  // 넘겨받은 회원번호로 칸을 채운다 — 회원번호 찾기 결과(sessionStorage)가 가입 완료(localStorage)보다 최근 의도라 먼저 본다
   useEffect(() => {
-    const storedMemberNo = localStorage.getItem(
+    const foundMemberNo = sessionStorage.getItem(
+      SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER,
+    );
+    const signupMemberNo = localStorage.getItem(
       LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER,
     );
-    if (storedMemberNo) {
-      setValue("memberNumber", storedMemberNo);
+    const memberNo = foundMemberNo ?? signupMemberNo;
+    if (memberNo) setValue("memberNumber", memberNo);
+
+    if (foundMemberNo) {
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER);
+    }
+    if (signupMemberNo) {
       localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER);
     }
   }, [setValue]);

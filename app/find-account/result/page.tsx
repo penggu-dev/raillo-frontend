@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, CheckCircle, ArrowLeft } from "lucide-react";
@@ -13,8 +13,13 @@ export default function FindAccountResultPage() {
   const [memberNo, setMemberNo] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  // 회원번호는 읽은 뒤 지운다 — 개발 모드에서 effect가 두 번 돌면 두 번째에는 값이 없어 찾기 화면으로 돌아가므로 한 번만 처리
+  const handledRef = useRef(false);
 
   useEffect(() => {
+    if (handledRef.current) return;
+    handledRef.current = true;
+
     // sessionStorage에서 회원번호 가져오기
     const memberNoFromStorage = sessionStorage.getItem(
       SESSION_STORAGE_KEYS.FOUND_MEMBER_NUMBER,
