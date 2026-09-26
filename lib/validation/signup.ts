@@ -30,7 +30,8 @@ export const signupSchema = z
     ),
     birthDate: z
       .string()
-      .min(1, "생년월일은 필수입니다.")
+      // 연도·월·일을 모두 골라야 값이 만들어지므로, 일부만 골랐거나 아무것도 안 골랐을 때 같은 안내를 쓴다
+      .min(1, "생년월일을 모두 선택해주세요.")
       .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 모두 선택해주세요.")
       .refine((value) => !isFutureDate(value), "생년월일은 오늘 이후일 수 없습니다."),
     gender: z.enum(["M", "F"], { message: "성별을 선택해주세요." }),
