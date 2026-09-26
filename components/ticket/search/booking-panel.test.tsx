@@ -78,4 +78,12 @@ describe("BookingPanel 객차 정보", () => {
     expect(section.getByText("선택된 객차")).toBeInTheDocument()
     expect(section.getByText("2호차")).toBeInTheDocument()
   })
+
+  it("적용한 호차가 목록에 없으면 다른 호차로 대신하지 않고 적용한 번호와 정보 없음을 보여 준다", () => {
+    renderPanel({ selectedSeatType: "standardSeat", selectedSeats: ["3A"], selectedCar: 5 })
+    const section = within(carSection())
+    expect(section.getByText("5호차")).toBeInTheDocument()
+    expect(section.getByText("정보 없음")).toBeInTheDocument()
+    expect(section.queryByText("2호차")).not.toBeInTheDocument()
+  })
 })
