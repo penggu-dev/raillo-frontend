@@ -104,6 +104,15 @@ describe("signupSchema", () => {
     }
   })
 
+  it("생년월일을 고르지 않았으면 모두 선택하라고 안내한다", () => {
+    const result = signupSchema.safeParse({ ...validInput, birthDate: "" })
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      const messages = result.error.issues.map((i) => i.message)
+      expect(messages).toContain("생년월일을 모두 선택해주세요.")
+    }
+  })
+
   describe("생년월일 날짜 범위", () => {
     // 기기 날짜를 2026-09-26 정오로 고정
     beforeEach(() => {
