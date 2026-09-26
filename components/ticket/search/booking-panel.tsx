@@ -12,7 +12,7 @@ import { Clock, CreditCard, X, Train } from "lucide-react";
 import type { CarInfo, TrainSchedule, SeatType } from "@/types/trainType";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { restoreFocus, type ReturnFocusRef } from "./overlay-focus";
-import { pickSeatCar } from "./seat-car";
+import { matchesSeatType, pickSeatCar } from "./seat-car";
 import { TrainTypeBadge } from "@/components/ticket/TrainTypeBadge";
 import { formatPrice } from "@/lib/utils/format";
 import { getSeatTypeName } from "@/lib/utils/ticketUtils";
@@ -50,13 +50,16 @@ export function BookingPanel({
 
   if (!selectedTrain) return null;
 
-  // 좌석을 적용하기 전에는 좌석 선택 창이 열 호차(등급에 맞는 첫 호차)를 미리 보여 준다
+  // 좌석을 적용하기 전에는 좌석 선택 창이 열 호차(등급에 맞는 첫 호차)를 미리 보여 준다.
+  // 적용한 뒤에는 그 호차만 보여 준다 — 목록에 없으면 다른 호차로 대신하지 않는다(좌석 칸의 호차 번호와 어긋나지 않도록)
   const hasAppliedSeats = selectedSeats.length > 0;
-  const selectedCarInfo = pickSeatCar(
-    carList,
-    selectedSeatType,
-    hasAppliedSeats ? selectedCar : null,
-  );
+  const selectedCarInfo = hasAppliedSeats
+    ? carList.find(
+        (car) =>
+          parseInt(car.carNumber) === selectedCar &&
+          matchesSeatType(car, selectedSeatType),
+      )
+    : pickSeatCar(carList, selectedSeatType, null);
   const selectedSeatInfo = selectedTrain[selectedSeatType];
   const price = selectedSeatInfo?.fare ?? 0;
 
