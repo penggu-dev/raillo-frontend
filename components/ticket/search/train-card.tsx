@@ -37,7 +37,7 @@ function SeatOption({ label, seat, onSelect }: SeatOptionProps) {
         </Button>
       ) : (
         // 조작 요소가 아니므로 버튼으로 그리지 않는다 — 높이는 버튼(h-9)과 맞춰 카드 정렬 유지
-        <div className="flex h-9 items-center justify-center rounded-control border border-dashed text-sm font-medium text-muted-foreground">
+        <div className="flex h-9 items-center justify-center rounded-control border border-dashed border-muted-foreground/30 text-sm font-medium text-muted-foreground">
           {seat ? "매진" : "운행 안 함"}
         </div>
       )}
