@@ -78,6 +78,7 @@ function ReservationsPageContent() {
     widget,
     paymentInfo,
     paymentLoading,
+    paymentRequesting,
     showPaymentDialog,
     setShowPaymentDialog,
     prepare,
@@ -256,7 +257,12 @@ function ReservationsPageContent() {
 
       {/* Toss 결제 Dialog — TossPaymentWidget이 마운트될 때 #payment-widget이 DOM에 존재함 */}
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent
+          className="max-w-lg max-h-[90vh] overflow-y-auto"
+          // 토스 결제창을 누르거나 ESC를 눌러도 결제 팝업(위젯)이 사라지지 않게 — 결제창이 닫히면 원래대로
+          onInteractOutside={(e) => paymentRequesting && e.preventDefault()}
+          onEscapeKeyDown={(e) => paymentRequesting && e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>결제 수단 선택</DialogTitle>
             <DialogDescription>
