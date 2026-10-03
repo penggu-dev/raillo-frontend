@@ -253,3 +253,10 @@
     }
   }
 }
+
+/* 토스 결제창이 떠 있는 동안: 결제 팝업(모달)이 body에 건 pointer-events: none(인라인)을 풀어
+   body에 붙는 결제창(QR 등)을 누를 수 있게 한다. 클래스는 hooks/useTossPayment가 붙이고 뗀다.
+   hooks/는 Tailwind content 밖이라 @layer 안에 두면 빌드에서 지워진다 — 레이어 밖에 둔다 */
+body.payment-window-open {
+  pointer-events: auto !important;
+}
