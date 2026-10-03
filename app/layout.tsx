@@ -6,6 +6,7 @@ import { QueryProvider } from '@/components/providers/QueryProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { Toaster } from '@/components/ui/toaster'
 import { THEME_INIT_SCRIPT } from '@/lib/theme'
+import { pretendard } from './fonts/pretendard'
 
 export const metadata: Metadata = {
   title: 'Raillo',
@@ -19,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" className={pretendard.variable} suppressHydrationWarning>
       <body>
         <script
           // 첫 페인트 전 테마 적용 (규칙은 lib/theme.ts)
