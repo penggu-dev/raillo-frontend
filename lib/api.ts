@@ -161,6 +161,9 @@ async function apiRequest<T>(
 
     return data;
   } catch (error: unknown) {
+    // 요청 취소(조건 변경·화면 이탈로 React Query가 취소)는 오류가 아니다 — 기록하지 않고 그대로 전달한다
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
     const isNetworkError =

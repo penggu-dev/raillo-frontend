@@ -33,6 +33,7 @@ afterEach(() => {
   refreshTokens.mockReset()
   removeTokens.mockReset()
   vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
   vi.restoreAllMocks()
 })
 
@@ -123,6 +124,25 @@ describe("api 오류 응답", () => {
     fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch"))
 
     await expect(caught(api.get("/items"))).resolves.toMatchObject({ errorCode: "NETWORK_ERROR", status: 0 })
+  })
+
+  it("요청이 취소되면 개발 모드에서도 기록하지 않고 취소 오류를 그대로 전달한다", async () => {
+    vi.stubEnv("NODE_ENV", "development")
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {})
+    const aborted = new DOMException("signal is aborted without reason", "AbortError")
+    fetchMock.mockRejectedValueOnce(aborted)
+
+    await expect(api.get("/items")).rejects.toBe(aborted)
+    expect(consoleError).not.toHaveBeenCalled()
+  })
+
+  it("개발 모드에서 취소가 아닌 오류는 기록한다", async () => {
+    vi.stubEnv("NODE_ENV", "development")
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {})
+    fetchMock.mockResolvedValueOnce(reply(500))
+
+    await expect(caught(api.get("/items"))).resolves.toMatchObject({ status: 500 })
+    expect(consoleError).toHaveBeenCalledWith("💥 API Error:", expect.objectContaining({ url: expect.stringContaining("/items") }))
   })
 })
 
