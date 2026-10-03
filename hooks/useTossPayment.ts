@@ -45,6 +45,8 @@ const loadWidget = async (): Promise<PaymentWidgetInstance> => {
   return loadPaymentWidget(clientKey, getCustomerKey());
 };
 
+const PAYMENT_WINDOW_OPEN_CLASS = "payment-window-open";
+
 // 위젯 불러오기 제한 시간 — 원격 스크립트가 응답하지 않아도 결제 버튼이 계속 잠기지 않게 한다
 const WIDGET_LOAD_TIMEOUT_MS = 10_000;
 
@@ -73,6 +75,8 @@ export const useTossPayment = () => {
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
+  // 토스 결제창(QR 등)이 떠 있는 동안 — 결제 팝업은 이 동안 닫히지 않아야 한다(위젯이 사라지면 결제 요청이 깨짐)
+  const [paymentRequesting, setPaymentRequesting] = useState(false);
 
   // 결제 실패·취소로 돌아온 경우(failUrl의 code·message) 안내 후 주소에서 제거
   const failNoticeShownRef = useRef(false);
@@ -162,6 +166,9 @@ export const useTossPayment = () => {
   const requestPayment = async () => {
     if (!widgetRef.current || !paymentInfo) return;
 
+    // 결제 팝업(모달)이 body 클릭을 막아 body에 붙는 토스 결제창까지 눌리지 않는다 — 결제창이 떠 있는 동안만 푼다(globals.css)
+    document.body.classList.add(PAYMENT_WINDOW_OPEN_CLASS);
+    setPaymentRequesting(true);
     try {
       await widgetRef.current.requestPayment({
         orderId: paymentInfo.orderId,
@@ -189,6 +196,9 @@ export const useTossPayment = () => {
         description: "결제 요청 중 오류가 발생했습니다.",
         variant: "destructive",
       });
+    } finally {
+      document.body.classList.remove(PAYMENT_WINDOW_OPEN_CLASS);
+      setPaymentRequesting(false);
     }
   };
 
@@ -196,6 +206,7 @@ export const useTossPayment = () => {
     widget,
     paymentInfo,
     paymentLoading,
+    paymentRequesting,
     showPaymentDialog,
     setShowPaymentDialog,
     prepare,
