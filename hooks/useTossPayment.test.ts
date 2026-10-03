@@ -44,7 +44,7 @@ describe("useTossPayment", () => {
     })
 
     expect(preparePaymentMock).toHaveBeenCalledWith({ pendingBookingIds: ["a"] })
-    expect(result.current.paymentInfo).toEqual({ orderId: "ORD_1", amount: 26400 })
+    expect(result.current.paymentInfo).toEqual({ orderId: "ORD_1", amount: 26400, items: [item("a", "001")] })
     expect(result.current.showPaymentDialog).toBe(true)
   })
 
@@ -94,7 +94,7 @@ describe("useTossPayment", () => {
       await result.current.prepare(selected)
     })
     await act(async () => {
-      await result.current.requestPayment(selected)
+      await result.current.requestPayment()
     })
 
     expect(requestPaymentMock).toHaveBeenCalledWith({
@@ -103,6 +103,23 @@ describe("useTossPayment", () => {
       successUrl: `${window.location.origin}/ticket/reservation/success`,
       failUrl: `${window.location.origin}/ticket/reservations`,
     })
+  })
+
+  it("준비하는 동안 선택이 바뀌어도 준비할 때 고른 예약으로 결제창을 요청한다", async () => {
+    const { result } = await renderPayment()
+    const selected = [item("a", "001"), item("b", "003")]
+
+    await act(async () => {
+      await result.current.prepare(selected)
+    })
+    // 화면의 선택 배열이 바뀌어도(전부 해제 등) 준비 당시 항목을 쓴다
+    selected.length = 0
+    await act(async () => {
+      await result.current.requestPayment()
+    })
+
+    expect(result.current.paymentInfo?.items).toHaveLength(2)
+    expect(requestPaymentMock).toHaveBeenCalledWith(expect.objectContaining({ orderName: "KTX 001 외 1매" }))
   })
 
   it("사용자가 결제창을 닫으면 조용히 결제 화면만 닫는다", async () => {
@@ -114,7 +131,7 @@ describe("useTossPayment", () => {
       await result.current.prepare(selected)
     })
     await act(async () => {
-      await result.current.requestPayment(selected)
+      await result.current.requestPayment()
     })
 
     expect(result.current.showPaymentDialog).toBe(false)
