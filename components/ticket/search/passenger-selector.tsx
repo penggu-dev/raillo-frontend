@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useId, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Users, Plus, Minus, X } from "lucide-react"
@@ -12,9 +12,12 @@ interface PassengerSelectorProps {
   placeholder: string
   label: string
   simple?: boolean // 간단한 모드 (어른만 선택)
+  hideLabel?: boolean // 라벨을 낭독기용으로만 — 버튼 이름에는 그대로 들어간다
 }
 
-export function PassengerSelector({ value, onValueChange, placeholder, label, simple = false }: PassengerSelectorProps) {
+export function PassengerSelector({ value, onValueChange, placeholder, label, simple = false, hideLabel = false }: PassengerSelectorProps) {
+  const labelId = useId()
+  const valueId = useId()
   const [isOpen, setIsOpen] = useState(false)
   const [tempPassengerCounts, setTempPassengerCounts] = useState<PassengerCounts>(value)
 
@@ -83,15 +86,18 @@ export function PassengerSelector({ value, onValueChange, placeholder, label, si
   return (
     <>
       <div>
-        <label className="block text-sm font-medium mb-2 text-foreground">{label}</label>
+        {/* 라벨이 가리키는 것은 대화상자를 여는 버튼 — label/htmlFor 대신 버튼 이름을 "라벨 + 현재 값"으로 */}
+        <div id={labelId} className="block text-sm font-medium mb-2 text-foreground">
+          {hideLabel ? <span className="sr-only">{label}</span> : label}
+        </div>
         <Button
           variant="outline"
           className="w-full justify-start text-left font-normal bg-background text-foreground hover:bg-muted"
           onClick={handleOpen}
-          aria-label={`${label} 선택 열기`}
+          aria-labelledby={`${labelId} ${valueId}`}
         >
           <Users className="mr-2 h-4 w-4" />
-          {getTotalPassengers() > 0 ? `총 ${getTotalPassengers()}명` : placeholder}
+          <span id={valueId}>{getTotalPassengers() > 0 ? `총 ${getTotalPassengers()}명` : placeholder}</span>
         </Button>
       </div>
 

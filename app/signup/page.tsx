@@ -333,11 +333,13 @@ export default function SignupPage() {
                   )}
                 </div>
 
-                {/* 생년월일 */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">
-                    생년월일 <span className="text-red-600 dark:text-red-400">*</span>
-                  </Label>
+                {/* 생년월일 — 선택 상자 세 개를 묶음 이름으로 설명. 안쪽 span이 이전 라벨과 같은 줄 높이를 유지 */}
+                <fieldset className="space-y-2">
+                  <legend>
+                    <span className="text-sm font-medium leading-none text-foreground">
+                      생년월일 <span className="text-red-600 dark:text-red-400">*</span>
+                    </span>
+                  </legend>
                   <div className="flex space-x-2">
                     <div className="flex-1">
                       <Select
@@ -415,13 +417,15 @@ export default function SignupPage() {
                       {errors.birthDate.message}
                     </p>
                   )}
-                </div>
+                </fieldset>
 
                 {/* 성별 */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">
-                    성별 <span className="text-red-600 dark:text-red-400">*</span>
-                  </Label>
+                <fieldset className="space-y-2">
+                  <legend>
+                    <span className="text-sm font-medium leading-none text-foreground">
+                      성별 <span className="text-red-600 dark:text-red-400">*</span>
+                    </span>
+                  </legend>
                   <Controller
                     name="gender"
                     control={control}
@@ -430,6 +434,7 @@ export default function SignupPage() {
                         <Button
                           type="button"
                           variant={field.value === "M" ? "default" : "outline"}
+                          aria-pressed={field.value === "M"}
                           onClick={() => field.onChange("M")}
                           className="flex-1"
                         >
@@ -438,6 +443,7 @@ export default function SignupPage() {
                         <Button
                           type="button"
                           variant={field.value === "F" ? "default" : "outline"}
+                          aria-pressed={field.value === "F"}
                           onClick={() => field.onChange("F")}
                           className="flex-1"
                         >
@@ -451,7 +457,7 @@ export default function SignupPage() {
                       {errors.gender.message}
                     </p>
                   )}
-                </div>
+                </fieldset>
 
                 {/* 약관 동의 */}
                 <div className="space-y-4 pt-6 border-t border-border">

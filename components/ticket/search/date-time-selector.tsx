@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect, useId } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -25,6 +25,7 @@ interface DateTimeSelectorProps {
   onValueChange: (date: Date) => void;
   placeholder: string;
   label: string;
+  hideLabel?: boolean; // 라벨을 낭독기용으로만 — 버튼 이름에는 그대로 들어간다
 }
 
 export function DateTimeSelector({
@@ -32,7 +33,10 @@ export function DateTimeSelector({
   onValueChange,
   placeholder,
   label,
+  hideLabel = false,
 }: DateTimeSelectorProps) {
+  const labelId = useId();
+  const valueId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [tempDate, setTempDate] = useState<Date>(value || new Date());
   const [selectedHour, setSelectedHour] = useState<string>(
@@ -169,16 +173,20 @@ export function DateTimeSelector({
   return (
     <>
       <div>
-        <label className="block text-sm font-medium mb-2 text-foreground">
-          {label}
-        </label>
+        {/* 라벨이 가리키는 것은 대화상자를 여는 버튼 — label/htmlFor 대신 버튼 이름을 "라벨 + 현재 값"으로 */}
+        <div id={labelId} className="block text-sm font-medium mb-2 text-foreground">
+          {hideLabel ? <span className="sr-only">{label}</span> : label}
+        </div>
         <Button
           variant="outline"
           className="w-full justify-start text-left font-normal bg-background text-foreground hover:bg-muted"
           onClick={() => setIsOpen(true)}
+          aria-labelledby={`${labelId} ${valueId}`}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, "MM/dd HH시", { locale: ko }) : placeholder}
+          <span id={valueId}>
+            {value ? format(value, "MM/dd HH시", { locale: ko }) : placeholder}
+          </span>
         </Button>
       </div>
 

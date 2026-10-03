@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -18,6 +18,7 @@ interface StationSelectorProps {
   otherStation?: string; // 다른 역 (출발역이면 도착역, 도착역이면 출발역)
   onBothStationsChange?: (departure: string, arrival: string) => void; // 두 역을 동시에 변경할 때
   disabled?: boolean; // 비활성화 여부
+  hideLabel?: boolean; // 라벨을 낭독기용으로만 — 버튼 이름에는 그대로 들어간다
   hideHistory?: boolean; // 검색 기록 숨기기
 }
 
@@ -29,7 +30,10 @@ export function StationSelector({
   onBothStationsChange,
   disabled,
   hideHistory = false,
+  hideLabel = false,
 }: StationSelectorProps) {
+  const labelId = useId();
+  const valueId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
@@ -70,19 +74,19 @@ export function StationSelector({
   return (
     <>
       <div>
-        <label
-          className="block text-sm font-medium mb-2 text-foreground"
-        >
-          {label}
-        </label>
+        {/* 라벨이 가리키는 것은 대화상자를 여는 버튼 — label/htmlFor 대신 버튼 이름을 "라벨 + 현재 값"으로 */}
+        <div id={labelId} className="block text-sm font-medium mb-2 text-foreground">
+          {hideLabel ? <span className="sr-only">{label}</span> : label}
+        </div>
         <Button
           variant="outline"
           className="w-full justify-start text-left font-normal bg-background text-foreground hover:bg-muted"
           onClick={() => setIsOpen(true)}
           disabled={disabled}
+          aria-labelledby={`${labelId} ${valueId}`}
         >
           <MapPin className="mr-2 h-4 w-4" />
-          {value || placeholder}
+          <span id={valueId}>{value || placeholder}</span>
         </Button>
       </div>
 

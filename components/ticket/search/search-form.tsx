@@ -100,7 +100,8 @@ export function SearchForm({
                 value={departureStation}
                 onValueChange={onDepartureStationChange}
                 placeholder="출발역 선택"
-                label=""
+                label="출발역"
+                hideLabel
                 otherStation={arrivalStation}
                 onBothStationsChange={onBothStationsChange || ((departure, arrival) => {
                   onDepartureStationChange(departure)
@@ -117,7 +118,8 @@ export function SearchForm({
                 value={arrivalStation}
                 onValueChange={onArrivalStationChange}
                 placeholder="도착역 선택"
-                label=""
+                label="도착역"
+                hideLabel
                 otherStation={departureStation}
                 onBothStationsChange={onBothStationsChange || ((departure, arrival) => {
                   onDepartureStationChange(departure)
@@ -134,7 +136,8 @@ export function SearchForm({
                 value={date}
                 onValueChange={onDateChange}
                 placeholder="날짜 선택"
-                label=""
+                label="출발일"
+                hideLabel
               />
             </div>
 
@@ -146,7 +149,8 @@ export function SearchForm({
                 value={passengerCounts}
                 onValueChange={onPassengerChange}
                 placeholder="인원 선택"
-                label=""
+                label="인원"
+                hideLabel
                 simple={false}
               />
             </div>
