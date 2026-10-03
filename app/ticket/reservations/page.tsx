@@ -53,7 +53,8 @@ function ReservationsPageContent() {
   const router = useRouter();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { isAuthenticated, isChecking } = useAuth({
+  // 비로그인이면 로그인 화면으로 — 결제 위젯은 결제할 때 불러오므로 로그인 상태를 따로 넘기지 않는다
+  useAuth({
     redirectPath: "/ticket/reservations",
   });
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -81,7 +82,7 @@ function ReservationsPageContent() {
     setShowPaymentDialog,
     prepare,
     requestPayment,
-  } = useTossPayment({ enabled: isAuthenticated && !isChecking });
+  } = useTossPayment();
 
   const handleCancelReservation = (pendingBookingId: string) => {
     setSelectedCancelId(pendingBookingId);
@@ -259,7 +260,8 @@ function ReservationsPageContent() {
           <DialogHeader>
             <DialogTitle>결제 수단 선택</DialogTitle>
             <DialogDescription>
-              {selectedItems.length}개 항목 · 총 {formatPrice(totalPrice)}
+              {paymentInfo &&
+                `${paymentInfo.items.length}개 항목 · 총 ${formatPrice(paymentInfo.amount)}`}
             </DialogDescription>
           </DialogHeader>
           {showPaymentDialog && widget && paymentInfo && (
@@ -267,7 +269,7 @@ function ReservationsPageContent() {
               paymentWidget={widget}
               paymentInfo={paymentInfo}
               onCancel={() => setShowPaymentDialog(false)}
-              onRequestPayment={() => requestPayment(selectedItems)}
+              onRequestPayment={requestPayment}
             />
           )}
         </DialogContent>

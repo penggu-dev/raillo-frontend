@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import { preparePayment } from "@/lib/api/payments";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
@@ -14,6 +13,8 @@ import type { PendingBookingCartItem } from "@/types/bookingType";
 interface PaymentInfo {
   orderId: string;
   amount: number;
+  // 준비할 때 고른 예약 — 준비 중 화면의 선택이 바뀌어도 결제창 요약·요청은 이 항목을 쓴다
+  items: PendingBookingCartItem[];
 }
 
 /** 결제창에 보여 줄 주문 이름 — 여러 건이면 첫 열차 기준으로 묶어 적는다 */
@@ -37,15 +38,36 @@ const getCustomerKey = (): string => {
   return created;
 };
 
+/** 결제 위젯 불러오기 — SDK와 Toss 원격 스크립트를 결제할 때만 받는다 */
+const loadWidget = async (): Promise<PaymentWidgetInstance> => {
+  const { loadPaymentWidget } = await import("@tosspayments/payment-widget-sdk");
+  const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
+  return loadPaymentWidget(clientKey, getCustomerKey());
+};
+
+// 위젯 불러오기 제한 시간 — 원격 스크립트가 응답하지 않아도 결제 버튼이 계속 잠기지 않게 한다
+const WIDGET_LOAD_TIMEOUT_MS = 10_000;
+
+const loadWidgetWithTimeout = (): Promise<PaymentWidgetInstance> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("결제 위젯 불러오기 시간 초과")), WIDGET_LOAD_TIMEOUT_MS);
+  });
+  // race가 먼저 끝난 쪽만 받으므로, 시간을 넘긴 뒤 늦게 끝난 불러오기는 위젯 상태를 바꾸지 않는다
+  return Promise.race([loadWidget(), timeout]).finally(() => clearTimeout(timer));
+};
+
 /**
- * 결제 위젯 생명주기 — 위젯 초기화 → 결제 준비(주문 번호·금액) → 결제창 요청.
+ * 결제 위젯 생명주기 — 결제 준비(위젯 불러오기 + 주문 번호·금액) → 결제창 요청.
  * 결제 승인은 successUrl(`/ticket/reservation/success`)이 맡는다.
  */
-export const useTossPayment = ({ enabled }: { enabled: boolean }) => {
+export const useTossPayment = () => {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const widgetRef = useRef<PaymentWidgetInstance | null>(null);
+  // 불러오는 중인 위젯 — 연달아 눌러도 한 번만 불러온다. 실패하면 비워 다음 시도에서 다시 불러온다
+  const widgetLoadRef = useRef<Promise<PaymentWidgetInstance> | null>(null);
   // 렌더에도 쓰이므로 상태로 함께 둔다 — 로드가 끝나면 결제 화면을 그릴 수 있다
   const [widget, setWidget] = useState<PaymentWidgetInstance | null>(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
@@ -66,34 +88,26 @@ export const useTossPayment = ({ enabled }: { enabled: boolean }) => {
     router.replace("/ticket/reservations");
   }, [searchParams, toast, router]);
 
-  useEffect(() => {
-    if (!enabled) return;
-
-    const init = async () => {
-      try {
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
-        const loaded = await loadPaymentWidget(clientKey, getCustomerKey());
-        widgetRef.current = loaded;
-        setWidget(loaded);
-      } catch {
-        // 위젯 초기화 실패 시 결제 UI 미표시
-      }
-    };
-
-    init();
-  }, [enabled]);
-
-  /** 결제 준비 — 주문 번호·금액을 받아 결제창을 띄울 준비를 한다 */
-  const prepare = async (selected: PendingBookingCartItem[]) => {
-    if (!widgetRef.current) {
-      toast({
-        title: "결제 위젯 준비 중",
-        description: "잠시 후 다시 시도해주세요.",
-        variant: "destructive",
-      });
-      return;
+  const ensureWidget = (): Promise<PaymentWidgetInstance> => {
+    if (widgetRef.current) return Promise.resolve(widgetRef.current);
+    if (!widgetLoadRef.current) {
+      widgetLoadRef.current = loadWidgetWithTimeout().then(
+        (loaded) => {
+          widgetRef.current = loaded;
+          setWidget(loaded);
+          return loaded;
+        },
+        (err: unknown) => {
+          widgetLoadRef.current = null;
+          throw err;
+        },
+      );
     }
+    return widgetLoadRef.current;
+  };
 
+  /** 결제 준비 — 위젯을 불러오면서 주문 번호·금액을 받아 결제창을 띄울 준비를 한다 */
+  const prepare = async (selected: PendingBookingCartItem[]) => {
     if (selected.length === 0) {
       toast({
         title: "선택 필요",
@@ -103,32 +117,55 @@ export const useTossPayment = ({ enabled }: { enabled: boolean }) => {
       return;
     }
 
+    // 누른 시점의 선택을 고정한다 — 준비를 기다리는 동안 화면의 선택이 바뀌어도 이 항목으로 결제한다
+    const items = [...selected];
     setPaymentLoading(true);
     try {
-      const result = await preparePayment({
-        pendingBookingIds: selected.map((item) => item.pendingBookingId),
-      });
-      setPaymentInfo({ orderId: result.orderId, amount: result.amount });
+      // 둘 다 끝나야 결제 화면을 열 수 있다 — 동시에 진행해 버튼을 누른 뒤 기다림이 늘지 않게.
+      // 결제 준비가 실패하면 위젯 불러오기를 기다리지 않고 바로 알린다
+      const widgetResult = ensureWidget().then(
+        () => true,
+        () => false,
+      );
+
+      let prepared: { orderId: string; amount: number };
+      try {
+        prepared = await preparePayment({
+          pendingBookingIds: items.map((item) => item.pendingBookingId),
+        });
+      } catch (err: unknown) {
+        toast({
+          title: "결제 준비 실패",
+          description: handleError(err, "결제 준비 중 오류가 발생했습니다.", false),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!(await widgetResult)) {
+        toast({
+          title: "결제 위젯을 불러오지 못했습니다",
+          description: "잠시 후 다시 시도해주세요.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setPaymentInfo({ orderId: prepared.orderId, amount: prepared.amount, items });
       setShowPaymentDialog(true);
-    } catch (err) {
-      toast({
-        title: "결제 준비 실패",
-        description: handleError(err, "결제 준비 중 오류가 발생했습니다.", false),
-        variant: "destructive",
-      });
     } finally {
       setPaymentLoading(false);
     }
   };
 
   /** 결제창 요청 — 성공하면 Toss가 successUrl로 보내고 그 화면이 승인한다 */
-  const requestPayment = async (selected: PendingBookingCartItem[]) => {
-    if (!widgetRef.current || !paymentInfo || selected.length === 0) return;
+  const requestPayment = async () => {
+    if (!widgetRef.current || !paymentInfo) return;
 
     try {
       await widgetRef.current.requestPayment({
         orderId: paymentInfo.orderId,
-        orderName: orderNameOf(selected),
+        orderName: orderNameOf(paymentInfo.items),
         successUrl: `${window.location.origin}/ticket/reservation/success`,
         failUrl: `${window.location.origin}/ticket/reservations`,
       });

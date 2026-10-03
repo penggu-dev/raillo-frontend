@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
+import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils/format";
 
