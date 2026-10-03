@@ -365,3 +365,18 @@ describe("예매 흐름", () => {
     expect(screen.queryByRole("button", { name: "예매하기" })).toBeNull()
   })
 })
+
+describe("페이지 제목", () => {
+  it("조회 중에도 결과가 나온 뒤에도 h1 '열차 조회'가 있다", async () => {
+    const first = deferred<TrainSearchResponse>()
+    searchTrainsMock.mockReturnValueOnce(first.promise)
+
+    renderPage()
+    await waitFor(() => expect(skeleton().length).toBeGreaterThan(0))
+    expect(screen.getByRole("heading", { level: 1, name: "열차 조회" })).toBeInTheDocument()
+
+    await act(async () => first.resolve(slicePage("T", 0, 0, 3, false)))
+    await screen.findByText("T000")
+    expect(screen.getByRole("heading", { level: 1, name: "열차 조회" })).toBeInTheDocument()
+  })
+})
