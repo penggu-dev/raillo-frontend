@@ -106,14 +106,19 @@ describe("useTossPayment", () => {
   })
 
   it("준비하는 동안 선택이 바뀌어도 준비할 때 고른 예약으로 결제창을 요청한다", async () => {
+    let finishPrepare: (info: { orderId: string; amount: number }) => void = () => {}
+    preparePaymentMock.mockReturnValueOnce(new Promise((resolve) => (finishPrepare = resolve)))
     const { result } = await renderPayment()
     const selected = [item("a", "001"), item("b", "003")]
 
     await act(async () => {
-      await result.current.prepare(selected)
+      void result.current.prepare(selected)
     })
-    // 화면의 선택 배열이 바뀌어도(전부 해제 등) 준비 당시 항목을 쓴다
+    // 준비 응답을 기다리는 동안 화면의 선택이 바뀌어도(전부 해제 등) 준비 당시 항목을 쓴다
     selected.length = 0
+    await act(async () => {
+      finishPrepare({ orderId: "ORD_1", amount: 26400 })
+    })
     await act(async () => {
       await result.current.requestPayment()
     })
