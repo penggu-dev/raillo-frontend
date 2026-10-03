@@ -12,7 +12,7 @@ const config: Config = {
   theme: {
   	extend: {
   		fontFamily: {
-  			pretendard: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+  			pretendard: ['var(--font-pretendard)', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
   		},
   		fontSize: {
   			'11': '11px',
