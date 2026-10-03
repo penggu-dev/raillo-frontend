@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "@testing-library/react"
+import { act, renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk"
 import { preparePayment } from "@/lib/api/payments"
@@ -24,11 +24,7 @@ const requestPaymentMock = vi.fn()
 const item = (id: string, trainNumber: string): PendingBookingCartItem =>
   ({ pendingBookingId: id, trainName: "KTX", trainNumber }) as unknown as PendingBookingCartItem
 
-const renderPayment = async () => {
-  const view = renderHook(() => useTossPayment({ enabled: true }))
-  await waitFor(() => expect(view.result.current.widget).not.toBeNull())
-  return view
-}
+const renderPayment = async () => renderHook(() => useTossPayment())
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -108,6 +104,49 @@ describe("useTossPayment", () => {
 
     expect(result.current.showPaymentDialog).toBe(false)
     expect(toast).not.toHaveBeenCalledWith(expect.objectContaining({ title: "결제 요청 실패" }))
+  })
+
+  it("화면에 들어온 것만으로는 결제 위젯을 불러오지 않는다", async () => {
+    const { result } = await renderPayment()
+
+    await act(async () => {})
+
+    expect(loadPaymentWidgetMock).not.toHaveBeenCalled()
+    expect(result.current.widget).toBeNull()
+  })
+
+  it("결제 준비 때 위젯을 불러오고, 다시 준비할 때는 불러온 위젯을 쓴다", async () => {
+    const { result } = await renderPayment()
+
+    await act(async () => {
+      await result.current.prepare([item("a", "001")])
+    })
+    await act(async () => {
+      await result.current.prepare([item("b", "003")])
+    })
+
+    expect(loadPaymentWidgetMock).toHaveBeenCalledTimes(1)
+    expect(result.current.widget).not.toBeNull()
+    expect(preparePaymentMock).toHaveBeenCalledTimes(2)
+  })
+
+  it("위젯을 불러오지 못하면 알리고 결제 화면을 열지 않으며, 다시 누르면 다시 불러온다", async () => {
+    loadPaymentWidgetMock.mockRejectedValueOnce(new Error("network"))
+    const { result } = await renderPayment()
+
+    await act(async () => {
+      await result.current.prepare([item("a", "001")])
+    })
+
+    expect(result.current.showPaymentDialog).toBe(false)
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "결제 위젯을 불러오지 못했습니다" }))
+
+    await act(async () => {
+      await result.current.prepare([item("a", "001")])
+    })
+
+    expect(loadPaymentWidgetMock).toHaveBeenCalledTimes(2)
+    expect(result.current.showPaymentDialog).toBe(true)
   })
 
   it("결제 실패로 돌아오면 사유를 알리고 주소에서 지운다", async () => {
