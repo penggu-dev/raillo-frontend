@@ -164,6 +164,43 @@ describe("useTossPayment", () => {
     expect(result.current.showPaymentDialog).toBe(true)
   })
 
+  it("위젯 불러오기가 끝나지 않으면 제한 시간 뒤 알리고 버튼을 풀며, 늦게 끝난 불러오기는 무시한다", async () => {
+    vi.useFakeTimers()
+    try {
+      let finishLate: (widget: never) => void = () => {}
+      loadPaymentWidgetMock.mockReturnValueOnce(new Promise((resolve) => (finishLate = resolve)))
+      const { result } = await renderPayment()
+
+      await act(async () => {
+        void result.current.prepare([item("a", "001")])
+      })
+      expect(result.current.paymentLoading).toBe(true)
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(10_000)
+      })
+
+      expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "결제 위젯을 불러오지 못했습니다" }))
+      expect(result.current.paymentLoading).toBe(false)
+      expect(result.current.showPaymentDialog).toBe(false)
+
+      // 다시 누르면 새로 불러오고, 앞서 시간을 넘긴 불러오기가 늦게 끝나도 위젯을 바꾸지 않는다
+      await act(async () => {
+        await result.current.prepare([item("a", "001")])
+      })
+      const current = result.current.widget
+      await act(async () => {
+        finishLate({ requestPayment: vi.fn() } as never)
+      })
+
+      expect(loadPaymentWidgetMock).toHaveBeenCalledTimes(2)
+      expect(result.current.showPaymentDialog).toBe(true)
+      expect(result.current.widget).toBe(current)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it("결제 실패로 돌아오면 사유를 알리고 주소에서 지운다", async () => {
     navigation.params = new URLSearchParams("code=REJECT_CARD_COMPANY&message=카드사 거절&orderId=ORD_1")
 
