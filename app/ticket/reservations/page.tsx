@@ -260,7 +260,8 @@ function ReservationsPageContent() {
           <DialogHeader>
             <DialogTitle>결제 수단 선택</DialogTitle>
             <DialogDescription>
-              {selectedItems.length}개 항목 · 총 {formatPrice(totalPrice)}
+              {paymentInfo &&
+                `${paymentInfo.items.length}개 항목 · 총 ${formatPrice(paymentInfo.amount)}`}
             </DialogDescription>
           </DialogHeader>
           {showPaymentDialog && widget && paymentInfo && (
@@ -268,7 +269,7 @@ function ReservationsPageContent() {
               paymentWidget={widget}
               paymentInfo={paymentInfo}
               onCancel={() => setShowPaymentDialog(false)}
-              onRequestPayment={() => requestPayment(selectedItems)}
+              onRequestPayment={requestPayment}
             />
           )}
         </DialogContent>

@@ -13,6 +13,8 @@ import type { PendingBookingCartItem } from "@/types/bookingType";
 interface PaymentInfo {
   orderId: string;
   amount: number;
+  // 준비할 때 고른 예약 — 준비 중 화면의 선택이 바뀌어도 결제창 요약·요청은 이 항목을 쓴다
+  items: PendingBookingCartItem[];
 }
 
 /** 결제창에 보여 줄 주문 이름 — 여러 건이면 첫 열차 기준으로 묶어 적는다 */
@@ -124,7 +126,7 @@ export const useTossPayment = () => {
         () => false,
       );
 
-      let prepared: PaymentInfo;
+      let prepared: { orderId: string; amount: number };
       try {
         prepared = await preparePayment({
           pendingBookingIds: selected.map((item) => item.pendingBookingId),
@@ -147,7 +149,7 @@ export const useTossPayment = () => {
         return;
       }
 
-      setPaymentInfo({ orderId: prepared.orderId, amount: prepared.amount });
+      setPaymentInfo({ orderId: prepared.orderId, amount: prepared.amount, items: [...selected] });
       setShowPaymentDialog(true);
     } finally {
       setPaymentLoading(false);
@@ -155,13 +157,13 @@ export const useTossPayment = () => {
   };
 
   /** 결제창 요청 — 성공하면 Toss가 successUrl로 보내고 그 화면이 승인한다 */
-  const requestPayment = async (selected: PendingBookingCartItem[]) => {
-    if (!widgetRef.current || !paymentInfo || selected.length === 0) return;
+  const requestPayment = async () => {
+    if (!widgetRef.current || !paymentInfo) return;
 
     try {
       await widgetRef.current.requestPayment({
         orderId: paymentInfo.orderId,
-        orderName: orderNameOf(selected),
+        orderName: orderNameOf(paymentInfo.items),
         successUrl: `${window.location.origin}/ticket/reservation/success`,
         failUrl: `${window.location.origin}/ticket/reservations`,
       });
