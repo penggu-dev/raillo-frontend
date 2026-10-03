@@ -4,18 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 export default function GuestTicketSearchLoading() {
   return (
     <div className="min-h-screen">
-      {/* Breadcrumb Skeleton */}
-      <div className="bg-card border-b py-3">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Skeleton className="h-4 w-4" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-          <Skeleton className="h-8 w-8" />
-        </div>
-      </div>
-
-      {/* Main Content Skeleton */}
+      {/* 실제 화면처럼 이동 경로 줄 없이 본문부터 — 이동 경로는 공용 헤더가 그린다 */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
