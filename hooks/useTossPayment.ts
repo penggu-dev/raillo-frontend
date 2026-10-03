@@ -105,28 +105,28 @@ export const useTossPayment = () => {
 
     setPaymentLoading(true);
     try {
-      // 둘 다 기다려야 결제 화면을 열 수 있다 — 동시에 진행해 버튼을 누른 뒤 기다림이 늘지 않게
-      const [widgetResult, prepareResult] = await Promise.allSettled([
-        ensureWidget(),
-        preparePayment({
-          pendingBookingIds: selected.map((item) => item.pendingBookingId),
-        }),
-      ]);
+      // 둘 다 끝나야 결제 화면을 열 수 있다 — 동시에 진행해 버튼을 누른 뒤 기다림이 늘지 않게.
+      // 결제 준비가 실패하면 위젯 불러오기를 기다리지 않고 바로 알린다
+      const widgetResult = ensureWidget().then(
+        () => true,
+        () => false,
+      );
 
-      if (prepareResult.status === "rejected") {
+      let prepared: PaymentInfo;
+      try {
+        prepared = await preparePayment({
+          pendingBookingIds: selected.map((item) => item.pendingBookingId),
+        });
+      } catch (err: unknown) {
         toast({
           title: "결제 준비 실패",
-          description: handleError(
-            prepareResult.reason,
-            "결제 준비 중 오류가 발생했습니다.",
-            false,
-          ),
+          description: handleError(err, "결제 준비 중 오류가 발생했습니다.", false),
           variant: "destructive",
         });
         return;
       }
 
-      if (widgetResult.status === "rejected") {
+      if (!(await widgetResult)) {
         toast({
           title: "결제 위젯을 불러오지 못했습니다",
           description: "잠시 후 다시 시도해주세요.",
@@ -135,8 +135,7 @@ export const useTossPayment = () => {
         return;
       }
 
-      const { orderId, amount } = prepareResult.value;
-      setPaymentInfo({ orderId, amount });
+      setPaymentInfo({ orderId: prepared.orderId, amount: prepared.amount });
       setShowPaymentDialog(true);
     } finally {
       setPaymentLoading(false);
