@@ -127,6 +127,29 @@ describe("useTossPayment", () => {
     expect(requestPaymentMock).toHaveBeenCalledWith(expect.objectContaining({ orderName: "KTX 001 외 1매" }))
   })
 
+  it("결제창이 떠 있는 동안 결제 중 상태와 body 클래스를 두고, 결제창이 닫히면 걷는다", async () => {
+    let closeWindow: (reason: unknown) => void = () => {}
+    requestPaymentMock.mockReturnValueOnce(new Promise((_, reject) => (closeWindow = reject)))
+    const { result } = await renderPayment()
+
+    await act(async () => {
+      await result.current.prepare([item("a", "001")])
+    })
+    await act(async () => {
+      void result.current.requestPayment()
+    })
+
+    expect(result.current.paymentRequesting).toBe(true)
+    expect(document.body.classList.contains("payment-window-open")).toBe(true)
+
+    await act(async () => {
+      closeWindow({ code: "USER_CANCEL" })
+    })
+
+    expect(result.current.paymentRequesting).toBe(false)
+    expect(document.body.classList.contains("payment-window-open")).toBe(false)
+  })
+
   it("사용자가 결제창을 닫으면 조용히 결제 화면만 닫는다", async () => {
     requestPaymentMock.mockRejectedValueOnce({ code: "USER_CANCEL" })
     const { result } = await renderPayment()
