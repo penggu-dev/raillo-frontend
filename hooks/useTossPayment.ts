@@ -43,6 +43,18 @@ const loadWidget = async (): Promise<PaymentWidgetInstance> => {
   return loadPaymentWidget(clientKey, getCustomerKey());
 };
 
+// 위젯 불러오기 제한 시간 — 원격 스크립트가 응답하지 않아도 결제 버튼이 계속 잠기지 않게 한다
+const WIDGET_LOAD_TIMEOUT_MS = 10_000;
+
+const loadWidgetWithTimeout = (): Promise<PaymentWidgetInstance> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("결제 위젯 불러오기 시간 초과")), WIDGET_LOAD_TIMEOUT_MS);
+  });
+  // race가 먼저 끝난 쪽만 받으므로, 시간을 넘긴 뒤 늦게 끝난 불러오기는 위젯 상태를 바꾸지 않는다
+  return Promise.race([loadWidget(), timeout]).finally(() => clearTimeout(timer));
+};
+
 /**
  * 결제 위젯 생명주기 — 결제 준비(위젯 불러오기 + 주문 번호·금액) → 결제창 요청.
  * 결제 승인은 successUrl(`/ticket/reservation/success`)이 맡는다.
@@ -77,7 +89,7 @@ export const useTossPayment = () => {
   const ensureWidget = (): Promise<PaymentWidgetInstance> => {
     if (widgetRef.current) return Promise.resolve(widgetRef.current);
     if (!widgetLoadRef.current) {
-      widgetLoadRef.current = loadWidget().then(
+      widgetLoadRef.current = loadWidgetWithTimeout().then(
         (loaded) => {
           widgetRef.current = loaded;
           setWidget(loaded);
