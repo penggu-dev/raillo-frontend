@@ -117,6 +117,8 @@ export const useTossPayment = () => {
       return;
     }
 
+    // 누른 시점의 선택을 고정한다 — 준비를 기다리는 동안 화면의 선택이 바뀌어도 이 항목으로 결제한다
+    const items = [...selected];
     setPaymentLoading(true);
     try {
       // 둘 다 끝나야 결제 화면을 열 수 있다 — 동시에 진행해 버튼을 누른 뒤 기다림이 늘지 않게.
@@ -129,7 +131,7 @@ export const useTossPayment = () => {
       let prepared: { orderId: string; amount: number };
       try {
         prepared = await preparePayment({
-          pendingBookingIds: selected.map((item) => item.pendingBookingId),
+          pendingBookingIds: items.map((item) => item.pendingBookingId),
         });
       } catch (err: unknown) {
         toast({
@@ -149,7 +151,7 @@ export const useTossPayment = () => {
         return;
       }
 
-      setPaymentInfo({ orderId: prepared.orderId, amount: prepared.amount, items: [...selected] });
+      setPaymentInfo({ orderId: prepared.orderId, amount: prepared.amount, items });
       setShowPaymentDialog(true);
     } finally {
       setPaymentLoading(false);
