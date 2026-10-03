@@ -151,7 +151,11 @@ export default function SignupPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                noValidate
+                className="space-y-6"
+              >
                 {/* 성명 */}
                 <div className="space-y-2">
                   <Label

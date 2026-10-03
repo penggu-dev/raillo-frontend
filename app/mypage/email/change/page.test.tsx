@@ -44,4 +44,17 @@ describe("이메일 변경 화면", () => {
     expect(await screen.findByLabelText("새 이메일 주소")).toBeInTheDocument()
   })
 
+  it("형식이 틀린 이메일을 제출하면 브라우저 검증 대신 앱 오류 문구를 보여 준다", async () => {
+    const user = userEvent.setup()
+    render(<EmailChangePage />)
+
+    await user.click(screen.getByRole("button", { name: "인증코드 발송" }))
+    await user.type(await screen.findByLabelText(/인증코드/), "123456")
+    await user.click(screen.getByRole("button", { name: "인증 확인" }))
+
+    await user.type(await screen.findByLabelText("새 이메일 주소"), "rail")
+    await user.click(screen.getByRole("button", { name: "인증코드 발송" }))
+
+    expect(await screen.findByText("올바른 이메일 형식을 입력해주세요.")).toBeInTheDocument()
+  })
 })
