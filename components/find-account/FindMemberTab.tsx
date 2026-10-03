@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, User, Mail, ArrowLeft } from "lucide-react";
+import { FileText, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { findMemberNo, verifyMemberNo } from "@/lib/api/authMembers";
 import { SESSION_STORAGE_KEYS } from "@/constants/storageKeys";
 import { AUTH_CODE_LENGTH } from "@/constants/validation";
-import LoadingSpinner from "../common/LoadingSpinner";
 import useErrorToast from "@/hooks/useErrorToast";
+import { EmailCodeStep } from "./EmailCodeStep";
+import { FindAccountGuide, LoadingSubmitButton } from "./FindAccountParts";
 
 export function FindMemberTab() {
   const [memberName, setMemberName] = useState("");
@@ -51,13 +51,13 @@ export function FindMemberTab() {
     }
   };
 
-  const handleVerifyAuthCode = async (skipLengthCheck = false) => {
+  const handleVerifyAuthCode = async () => {
     if (!authCode) {
       showErrorToast("인증 코드를 입력해주세요.", "입력 오류");
       return;
     }
 
-    if (!skipLengthCheck && authCode.length !== AUTH_CODE_LENGTH) {
+    if (authCode.length !== AUTH_CODE_LENGTH) {
       showErrorToast("인증 코드는 6자리여야 합니다.", "입력 오류");
       return;
     }
@@ -82,9 +82,8 @@ export function FindMemberTab() {
     }
   };
 
-  const handleAuthCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, "");
-    setAuthCode(value);
+  const handleAuthCodeChange = (value: string) => {
+    setAuthCode(value.replace(/[^0-9]/g, ""));
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,138 +161,31 @@ export function FindMemberTab() {
             </div>
           </div>
 
-          <div className="text-center pt-4">
-            <Button
-              type="submit"
-              className="font-semibold px-8 py-3"
-              size="lg"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <LoadingSpinner size="sm" color="white" className="mr-2" />
-                  처리 중...
-                </div>
-              ) : (
-                "회원번호 찾기"
-              )}
-            </Button>
-          </div>
+          <LoadingSubmitButton isLoading={isLoading} loadingLabel="처리 중...">
+            회원번호 찾기
+          </LoadingSubmitButton>
         </form>
 
-        <div className="bg-muted rounded-lg p-4">
-          <div className="flex items-start space-x-3">
-            <FileText className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-            <div>
-              <h3 className="font-semibold text-foreground mb-1">
-                회원번호 찾기 안내
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                등록된 이메일 주소로 인증 코드가 전송됩니다. 이메일을 확인하여
-                6자리 인증 코드를 입력해주세요.
-                <br />
-                휴대폰번호가 변경되었거나 회원정보와 일치하지 않는 경우
-                고객센터로 문의해주세요.
-              </p>
-            </div>
-          </div>
-        </div>
+        <FindAccountGuide icon={FileText} title="회원번호 찾기 안내" tone="muted">
+          등록된 이메일 주소로 인증 코드가 전송됩니다. 이메일을 확인하여 6자리
+          인증 코드를 입력해주세요.
+          <br />
+          휴대폰번호가 변경되었거나 회원정보와 일치하지 않는 경우 고객센터로
+          문의해주세요.
+        </FindAccountGuide>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="mb-4">
-        <Button
-          variant="ghost"
-          onClick={handleBackToFind}
-          className="flex items-center space-x-2 text-muted-foreground hover:text-foreground"
-          disabled={isLoading}
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>뒤로가기</span>
-        </Button>
-      </div>
-
-      <div className="text-center mb-6">
-        <h3 className="text-xl font-semibold text-foreground mb-2">
-          이메일 인증
-        </h3>
-        <p className="text-foreground">
-          <span className="font-medium">{userEmail}</span>로 인증 코드를
-          전송했습니다.
-          <br />
-          이메일을 확인하여 인증 코드를 입력해주세요.
-        </p>
-      </div>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleVerifyAuthCode(false);
-        }}
-        className="space-y-4"
-      >
-        <div className="space-y-2">
-          <Label
-            htmlFor="authCode"
-            className="text-sm font-medium text-foreground"
-          >
-            인증 코드
-          </Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="authCode"
-              type="text"
-              placeholder="인증 코드 6자리를 입력하세요"
-              value={authCode}
-              onChange={handleAuthCodeChange}
-              className={`pl-10 ${authCode.length === AUTH_CODE_LENGTH ? "border-green-600 focus:border-green-600 dark:border-green-400 dark:focus:border-green-400" : ""}`}
-              maxLength={AUTH_CODE_LENGTH}
-              disabled={isLoading}
-              autoComplete="one-time-code"
-            />
-            {authCode.length > 0 && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
-                {authCode.length}/{AUTH_CODE_LENGTH}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="text-center pt-4">
-          <Button
-            type="submit"
-            className="font-semibold px-8 py-3"
-            size="lg"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <LoadingSpinner size="sm" color="white" className="mr-2" />
-                인증 중...
-              </div>
-            ) : (
-              "인증 확인"
-            )}
-          </Button>
-        </div>
-      </form>
-
-      <div className="bg-primary/10 rounded-lg p-4">
-        <div className="flex items-start space-x-3">
-          <Mail className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-          <div>
-            <h3 className="font-semibold text-foreground mb-1">인증 코드 안내</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              이메일로 전송된 6자리 인증 코드를 입력해주세요. 인증 코드는 5분간
-              유효합니다.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <EmailCodeStep
+      inputId="authCode"
+      email={userEmail}
+      authCode={authCode}
+      onAuthCodeChange={handleAuthCodeChange}
+      onSubmit={handleVerifyAuthCode}
+      onBack={handleBackToFind}
+      isLoading={isLoading}
+    />
   );
 }
