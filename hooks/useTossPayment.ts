@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { loadPaymentWidget } from "@tosspayments/payment-widget-sdk";
 import type { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import { preparePayment } from "@/lib/api/payments";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
@@ -37,15 +36,24 @@ const getCustomerKey = (): string => {
   return created;
 };
 
+/** 결제 위젯 불러오기 — SDK와 Toss 원격 스크립트를 결제할 때만 받는다 */
+const loadWidget = async (): Promise<PaymentWidgetInstance> => {
+  const { loadPaymentWidget } = await import("@tosspayments/payment-widget-sdk");
+  const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
+  return loadPaymentWidget(clientKey, getCustomerKey());
+};
+
 /**
- * 결제 위젯 생명주기 — 위젯 초기화 → 결제 준비(주문 번호·금액) → 결제창 요청.
+ * 결제 위젯 생명주기 — 결제 준비(위젯 불러오기 + 주문 번호·금액) → 결제창 요청.
  * 결제 승인은 successUrl(`/ticket/reservation/success`)이 맡는다.
  */
-export const useTossPayment = ({ enabled }: { enabled: boolean }) => {
+export const useTossPayment = () => {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const widgetRef = useRef<PaymentWidgetInstance | null>(null);
+  // 불러오는 중인 위젯 — 연달아 눌러도 한 번만 불러온다. 실패하면 비워 다음 시도에서 다시 불러온다
+  const widgetLoadRef = useRef<Promise<PaymentWidgetInstance> | null>(null);
   // 렌더에도 쓰이므로 상태로 함께 둔다 — 로드가 끝나면 결제 화면을 그릴 수 있다
   const [widget, setWidget] = useState<PaymentWidgetInstance | null>(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
@@ -66,34 +74,26 @@ export const useTossPayment = ({ enabled }: { enabled: boolean }) => {
     router.replace("/ticket/reservations");
   }, [searchParams, toast, router]);
 
-  useEffect(() => {
-    if (!enabled) return;
-
-    const init = async () => {
-      try {
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY as string;
-        const loaded = await loadPaymentWidget(clientKey, getCustomerKey());
-        widgetRef.current = loaded;
-        setWidget(loaded);
-      } catch {
-        // 위젯 초기화 실패 시 결제 UI 미표시
-      }
-    };
-
-    init();
-  }, [enabled]);
-
-  /** 결제 준비 — 주문 번호·금액을 받아 결제창을 띄울 준비를 한다 */
-  const prepare = async (selected: PendingBookingCartItem[]) => {
-    if (!widgetRef.current) {
-      toast({
-        title: "결제 위젯 준비 중",
-        description: "잠시 후 다시 시도해주세요.",
-        variant: "destructive",
-      });
-      return;
+  const ensureWidget = (): Promise<PaymentWidgetInstance> => {
+    if (widgetRef.current) return Promise.resolve(widgetRef.current);
+    if (!widgetLoadRef.current) {
+      widgetLoadRef.current = loadWidget().then(
+        (loaded) => {
+          widgetRef.current = loaded;
+          setWidget(loaded);
+          return loaded;
+        },
+        (err: unknown) => {
+          widgetLoadRef.current = null;
+          throw err;
+        },
+      );
     }
+    return widgetLoadRef.current;
+  };
 
+  /** 결제 준비 — 위젯을 불러오면서 주문 번호·금액을 받아 결제창을 띄울 준비를 한다 */
+  const prepare = async (selected: PendingBookingCartItem[]) => {
     if (selected.length === 0) {
       toast({
         title: "선택 필요",
@@ -105,17 +105,39 @@ export const useTossPayment = ({ enabled }: { enabled: boolean }) => {
 
     setPaymentLoading(true);
     try {
-      const result = await preparePayment({
-        pendingBookingIds: selected.map((item) => item.pendingBookingId),
-      });
-      setPaymentInfo({ orderId: result.orderId, amount: result.amount });
+      // 둘 다 기다려야 결제 화면을 열 수 있다 — 동시에 진행해 버튼을 누른 뒤 기다림이 늘지 않게
+      const [widgetResult, prepareResult] = await Promise.allSettled([
+        ensureWidget(),
+        preparePayment({
+          pendingBookingIds: selected.map((item) => item.pendingBookingId),
+        }),
+      ]);
+
+      if (prepareResult.status === "rejected") {
+        toast({
+          title: "결제 준비 실패",
+          description: handleError(
+            prepareResult.reason,
+            "결제 준비 중 오류가 발생했습니다.",
+            false,
+          ),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (widgetResult.status === "rejected") {
+        toast({
+          title: "결제 위젯을 불러오지 못했습니다",
+          description: "잠시 후 다시 시도해주세요.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { orderId, amount } = prepareResult.value;
+      setPaymentInfo({ orderId, amount });
       setShowPaymentDialog(true);
-    } catch (err) {
-      toast({
-        title: "결제 준비 실패",
-        description: handleError(err, "결제 준비 중 오류가 발생했습니다.", false),
-        variant: "destructive",
-      });
     } finally {
       setPaymentLoading(false);
     }
