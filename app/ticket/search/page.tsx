@@ -15,6 +15,7 @@ import { BookingPanel } from "@/components/ticket/search/booking-panel";
 import { SearchForm } from "@/components/ticket/search/search-form";
 import { TrainList } from "@/components/ticket/search/train-list";
 import { TrainListSkeleton } from "@/components/ticket/search/TrainListSkeleton";
+import { PageHeader } from "@/components/common/PageHeader";
 import { UsageInfo } from "@/components/common/usage-info";
 import type { TrainSchedule, SeatType, TrainSearchRequest } from "@/types/trainType";
 
@@ -254,6 +255,9 @@ function TrainSearchPage() {
     // 로딩 스켈레톤과 같은 최소 높이 — 결과 수(빈 결과 포함)에 따라 푸터 위치가 바뀌지 않게 한다
     <div className="container mx-auto min-h-screen px-4 py-4 md:py-8">
       <div className="max-w-6xl mx-auto">
+        {/* 검색 조건 카드가 화면 머리 역할 — 제목은 낭독기용으로만 두어 모바일 첫 화면 결과 수를 유지한다 */}
+        <PageHeader title="열차 조회" className="sr-only" />
+
         {/* Search Form */}
         <SearchForm
           departureStation={departureStation}
