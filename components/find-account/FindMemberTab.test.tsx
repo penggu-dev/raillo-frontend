@@ -64,6 +64,23 @@ describe("회원번호 찾기 탭", () => {
     expect(push).toHaveBeenCalledWith("/find-account/result")
   })
 
+  it("인증 코드는 숫자만 받고, 6자리가 아니면 확인하지 않는다", async () => {
+    const user = userEvent.setup()
+    render(<FindMemberTab />)
+
+    await user.type(screen.getByLabelText("이름"), "김철수")
+    await user.type(screen.getByLabelText("휴대폰번호"), "01012345678")
+    await user.click(screen.getByRole("button", { name: "회원번호 찾기" }))
+    await screen.findByRole("heading", { name: "이메일 인증" })
+
+    await user.type(screen.getByLabelText("인증 코드"), "12a34")
+    expect(screen.getByLabelText("인증 코드")).toHaveValue("1234")
+    await user.click(screen.getByRole("button", { name: "인증 확인" }))
+
+    expect(verifyMemberNoMock).not.toHaveBeenCalled()
+    expect(showErrorToast).toHaveBeenCalledWith("인증 코드는 6자리여야 합니다.", "입력 오류")
+  })
+
   it("뒤로가기는 찾기 단계로 돌아간다", async () => {
     const user = userEvent.setup()
     render(<FindMemberTab />)
