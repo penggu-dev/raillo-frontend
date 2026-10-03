@@ -106,6 +106,7 @@ function EmailChangeForm() {
 
         <form
           onSubmit={emailForm.handleSubmit(onSendCode)}
+          noValidate
           className="flex items-start space-x-4"
         >
           <div className="flex-1">
