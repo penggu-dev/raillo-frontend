@@ -71,6 +71,21 @@ describe("useTossPayment", () => {
     expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "결제 준비 실패" }))
   })
 
+  it("결제 준비가 실패하면 위젯 불러오기를 기다리지 않고 바로 알린다", async () => {
+    // 위젯 불러오기가 끝나지 않는 상황(느린 원격 스크립트)
+    loadPaymentWidgetMock.mockReturnValueOnce(new Promise(() => {}))
+    preparePaymentMock.mockRejectedValueOnce(new Error("mock"))
+    const { result } = await renderPayment()
+
+    await act(async () => {
+      void result.current.prepare([item("a", "001")])
+    })
+
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "결제 준비 실패" }))
+    expect(result.current.paymentLoading).toBe(false)
+    expect(result.current.showPaymentDialog).toBe(false)
+  })
+
   it("결제창에 주문 이름과 성공·실패 주소를 넘긴다", async () => {
     const { result } = await renderPayment()
     const selected = [item("a", "001"), item("b", "003")]
