@@ -27,6 +27,8 @@ export function TermsAgreement({ control, errors }: TermsAgreementProps) {
             render={({ field }) => (
               <Checkbox
                 id="terms"
+                aria-invalid={!!errors.terms}
+                aria-describedby={errors.terms ? "terms-error" : undefined}
                 checked={field.value === true}
                 onCheckedChange={(checked) =>
                   field.onChange(checked ? true : undefined)
@@ -46,7 +48,7 @@ export function TermsAgreement({ control, errors }: TermsAgreementProps) {
           </Link>
         </div>
         {errors.terms && (
-          <p className="text-xs text-red-600 dark:text-red-400 ml-6">
+          <p id="terms-error" className="text-xs text-red-600 dark:text-red-400 ml-6">
             {errors.terms.message}
           </p>
         )}
@@ -58,6 +60,8 @@ export function TermsAgreement({ control, errors }: TermsAgreementProps) {
             render={({ field }) => (
               <Checkbox
                 id="privacy"
+                aria-invalid={!!errors.privacy}
+                aria-describedby={errors.privacy ? "privacy-error" : undefined}
                 checked={field.value === true}
                 onCheckedChange={(checked) =>
                   field.onChange(checked ? true : undefined)
@@ -80,7 +84,7 @@ export function TermsAgreement({ control, errors }: TermsAgreementProps) {
           </Link>
         </div>
         {errors.privacy && (
-          <p className="text-xs text-red-600 dark:text-red-400 ml-6">
+          <p id="privacy-error" className="text-xs text-red-600 dark:text-red-400 ml-6">
             {errors.privacy.message}
           </p>
         )}

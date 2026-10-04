@@ -78,6 +78,7 @@ export function BirthDateField({ onChange, error }: BirthDateFieldProps) {
             <SelectTrigger
               aria-label="출생 연도"
               aria-invalid={!!error}
+              aria-describedby={error ? "birthDate-error" : undefined}
               className={error ? "border-red-500 dark:border-red-400" : ""}
             >
               <SelectValue placeholder="년도" />
@@ -101,6 +102,7 @@ export function BirthDateField({ onChange, error }: BirthDateFieldProps) {
             <SelectTrigger
               aria-label="출생 월"
               aria-invalid={!!error}
+              aria-describedby={error ? "birthDate-error" : undefined}
               className={error ? "border-red-500 dark:border-red-400" : ""}
             >
               <SelectValue placeholder="월" />
@@ -125,6 +127,7 @@ export function BirthDateField({ onChange, error }: BirthDateFieldProps) {
             <SelectTrigger
               aria-label="출생 일"
               aria-invalid={!!error}
+              aria-describedby={error ? "birthDate-error" : undefined}
               className={error ? "border-red-500 dark:border-red-400" : ""}
             >
               <SelectValue placeholder="일" />
@@ -140,7 +143,7 @@ export function BirthDateField({ onChange, error }: BirthDateFieldProps) {
         </div>
       </div>
       {error && (
-        <p className="text-xs text-red-600 dark:text-red-400">
+        <p id="birthDate-error" className="text-xs text-red-600 dark:text-red-400">
           {error}
         </p>
       )}
