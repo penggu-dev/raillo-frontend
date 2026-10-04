@@ -45,6 +45,8 @@ const loadWidget = async (): Promise<PaymentWidgetInstance> => {
   return loadPaymentWidget(clientKey, getCustomerKey());
 };
 
+const PAYMENT_WINDOW_OPEN_CLASS = "payment-window-open";
+
 // 위젯 불러오기 제한 시간 — 원격 스크립트가 응답하지 않아도 결제 버튼이 계속 잠기지 않게 한다
 const WIDGET_LOAD_TIMEOUT_MS = 10_000;
 
@@ -73,6 +75,17 @@ export const useTossPayment = () => {
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
+  // 토스 결제창(QR 등)이 떠 있는 동안 — 결제 팝업은 이 동안 닫히지 않아야 한다(위젯이 사라지면 결제 요청이 깨짐)
+  const requestingRef = useRef(false);
+
+  // 결제창이 떠 있는 채로 화면을 떠나도 body 클릭 막힘 해제가 남지 않게 한다
+  useEffect(() => () => document.body.classList.remove(PAYMENT_WINDOW_OPEN_CLASS), []);
+
+  /** 결제 화면 열기·닫기 — ESC·바깥 누름·X·취소 버튼이 모두 여기로 온다. 결제창이 떠 있는 동안은 닫지 않는다 */
+  const changePaymentDialog = (open: boolean) => {
+    if (!open && requestingRef.current) return;
+    setShowPaymentDialog(open);
+  };
 
   // 결제 실패·취소로 돌아온 경우(failUrl의 code·message) 안내 후 주소에서 제거
   const failNoticeShownRef = useRef(false);
@@ -160,8 +173,11 @@ export const useTossPayment = () => {
 
   /** 결제창 요청 — 성공하면 Toss가 successUrl로 보내고 그 화면이 승인한다 */
   const requestPayment = async () => {
-    if (!widgetRef.current || !paymentInfo) return;
+    if (!widgetRef.current || !paymentInfo || requestingRef.current) return;
 
+    // 결제 팝업(모달)이 body 클릭을 막아 body에 붙는 토스 결제창까지 눌리지 않는다 — 결제창이 떠 있는 동안만 푼다(globals.css)
+    requestingRef.current = true;
+    document.body.classList.add(PAYMENT_WINDOW_OPEN_CLASS);
     try {
       await widgetRef.current.requestPayment({
         orderId: paymentInfo.orderId,
@@ -189,6 +205,9 @@ export const useTossPayment = () => {
         description: "결제 요청 중 오류가 발생했습니다.",
         variant: "destructive",
       });
+    } finally {
+      requestingRef.current = false;
+      document.body.classList.remove(PAYMENT_WINDOW_OPEN_CLASS);
     }
   };
 
@@ -197,7 +216,7 @@ export const useTossPayment = () => {
     paymentInfo,
     paymentLoading,
     showPaymentDialog,
-    setShowPaymentDialog,
+    setShowPaymentDialog: changePaymentDialog,
     prepare,
     requestPayment,
   };

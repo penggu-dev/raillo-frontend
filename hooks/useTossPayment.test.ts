@@ -30,6 +30,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   navigation.params = new URLSearchParams()
   localStorage.clear()
+  document.body.classList.remove("payment-window-open")
   requestPaymentMock.mockResolvedValue(undefined)
   loadPaymentWidgetMock.mockResolvedValue({ requestPayment: requestPaymentMock } as never)
   preparePaymentMock.mockResolvedValue({ orderId: "ORD_1", amount: 26400 })
@@ -125,6 +126,73 @@ describe("useTossPayment", () => {
 
     expect(result.current.paymentInfo?.items).toHaveLength(2)
     expect(requestPaymentMock).toHaveBeenCalledWith(expect.objectContaining({ orderName: "KTX 001 외 1매" }))
+  })
+
+  it("결제창이 떠 있는 동안 body 클래스를 두고 결제 화면을 닫을 수 없으며, 결제창이 닫히면 걷고 화면도 닫는다", async () => {
+    let closeWindow: (reason: unknown) => void = () => {}
+    requestPaymentMock.mockReturnValueOnce(new Promise((_, reject) => (closeWindow = reject)))
+    const { result } = await renderPayment()
+
+    await act(async () => {
+      await result.current.prepare([item("a", "001")])
+    })
+    await act(async () => {
+      void result.current.requestPayment()
+    })
+
+    expect(document.body.classList.contains("payment-window-open")).toBe(true)
+
+    // ESC·바깥 누름·X(onOpenChange)와 위젯의 취소 버튼이 모두 이 함수로 닫는다
+    act(() => {
+      result.current.setShowPaymentDialog(false)
+    })
+    expect(result.current.showPaymentDialog).toBe(true)
+
+    await act(async () => {
+      closeWindow({ code: "USER_CANCEL" })
+    })
+
+    expect(document.body.classList.contains("payment-window-open")).toBe(false)
+    expect(result.current.showPaymentDialog).toBe(false)
+  })
+
+  it("결제창이 떠 있는 동안 다시 요청해도 한 번만 요청하고, 그 결제창이 닫힐 때까지 클래스를 유지한다", async () => {
+    let closeWindow: (reason: unknown) => void = () => {}
+    requestPaymentMock.mockReturnValueOnce(new Promise((_, reject) => (closeWindow = reject)))
+    const { result } = await renderPayment()
+
+    await act(async () => {
+      await result.current.prepare([item("a", "001")])
+    })
+    await act(async () => {
+      void result.current.requestPayment()
+    })
+    await act(async () => {
+      await result.current.requestPayment()
+    })
+
+    expect(requestPaymentMock).toHaveBeenCalledTimes(1)
+    expect(document.body.classList.contains("payment-window-open")).toBe(true)
+
+    await act(async () => {
+      closeWindow({ code: "USER_CANCEL" })
+    })
+    expect(document.body.classList.contains("payment-window-open")).toBe(false)
+  })
+
+  it("결제창이 떠 있는 동안 화면을 떠나면 body 클래스를 걷는다", async () => {
+    requestPaymentMock.mockReturnValueOnce(new Promise(() => {}))
+    const { result, unmount } = await renderPayment()
+
+    await act(async () => {
+      await result.current.prepare([item("a", "001")])
+    })
+    await act(async () => {
+      void result.current.requestPayment()
+    })
+    unmount()
+
+    expect(document.body.classList.contains("payment-window-open")).toBe(false)
   })
 
   it("사용자가 결제창을 닫으면 조용히 결제 화면만 닫는다", async () => {
