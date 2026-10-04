@@ -41,6 +41,8 @@ export function PasswordFields({ register, control, errors }: PasswordFieldsProp
             placeholder="비밀번호를 입력하세요"
             {...register("password")}
             className={`pl-10 pr-10 ${errors.password ? "border-red-500 dark:border-red-400" : ""}`}
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-error" : undefined}
             autoComplete="new-password"
           />
           <button
@@ -57,7 +59,7 @@ export function PasswordFields({ register, control, errors }: PasswordFieldsProp
           </button>
         </div>
         {errors.password && (
-          <p className="text-xs text-red-600 dark:text-red-400">
+          <p id="password-error" className="text-xs text-red-600 dark:text-red-400">
             {errors.password.message}
           </p>
         )}
@@ -82,6 +84,8 @@ export function PasswordFields({ register, control, errors }: PasswordFieldsProp
             placeholder="비밀번호를 다시 입력하세요"
             {...register("confirmPassword")}
             className={`pl-10 pr-10 ${errors.confirmPassword ? "border-red-500 dark:border-red-400" : ""}`}
+            aria-invalid={!!errors.confirmPassword}
+            aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
             autoComplete="new-password"
           />
           <button
@@ -100,7 +104,7 @@ export function PasswordFields({ register, control, errors }: PasswordFieldsProp
           </button>
         </div>
         {errors.confirmPassword && (
-          <p className="text-xs text-red-600 dark:text-red-400">
+          <p id="confirmPassword-error" className="text-xs text-red-600 dark:text-red-400">
             {errors.confirmPassword.message}
           </p>
         )}

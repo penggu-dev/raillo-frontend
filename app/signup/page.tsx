@@ -113,11 +113,13 @@ export default function SignupPage() {
                       placeholder="성명을 입력하세요"
                       {...register("name")}
                       className={`pl-10 ${errors.name ? "border-red-500 dark:border-red-400" : ""}`}
+                      aria-invalid={!!errors.name}
+                      aria-describedby={errors.name ? "name-error" : undefined}
                       autoComplete="name"
                     />
                   </div>
                   {errors.name && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p id="name-error" className="text-xs text-red-600 dark:text-red-400">
                       {errors.name.message}
                     </p>
                   )}
@@ -139,11 +141,13 @@ export default function SignupPage() {
                       placeholder="이메일 주소를 입력하세요"
                       {...register("email")}
                       className={`pl-10 ${errors.email ? "border-red-500 dark:border-red-400" : ""}`}
+                      aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? "email-error" : undefined}
                       autoComplete="email"
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p id="email-error" className="text-xs text-red-600 dark:text-red-400">
                       {errors.email.message}
                     </p>
                   )}
@@ -174,13 +178,15 @@ export default function SignupPage() {
                             field.onChange(formatPhoneNumber(e.target.value))
                           }
                           className={`pl-10 ${errors.phoneNumber ? "border-red-500 dark:border-red-400" : ""}`}
+                          aria-invalid={!!errors.phoneNumber}
+                          aria-describedby={errors.phoneNumber ? "phoneNumber-error" : undefined}
                           autoComplete="tel"
                         />
                       )}
                     />
                   </div>
                   {errors.phoneNumber && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
+                    <p id="phoneNumber-error" className="text-xs text-red-600 dark:text-red-400">
                       {errors.phoneNumber.message}
                     </p>
                   )}
