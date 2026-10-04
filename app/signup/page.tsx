@@ -24,6 +24,7 @@ import {
   removePhoneNumberFormatting,
 } from "@/lib/validation/signup";
 import { handleError } from "@/lib/utils/errorHandler";
+import { useToast } from "@/hooks/useToast";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
 import { PasswordFields } from "./_components/PasswordFields";
 import { BirthDateField } from "./_components/BirthDateField";
@@ -32,6 +33,7 @@ import { TermsAgreement } from "./_components/TermsAgreement";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { toast } = useToast();
 
   const {
     register,
@@ -73,7 +75,12 @@ export default function SignupPage() {
 
       router.push("/signup/complete");
     } catch (error: unknown) {
-      handleError(error, "회원가입에 실패했습니다.");
+      // handleError는 문구만 돌려준다 — 안내는 여기서 띄운다
+      toast({
+        title: "오류",
+        description: handleError(error, "회원가입에 실패했습니다."),
+        variant: "destructive",
+      });
     }
   };
 
