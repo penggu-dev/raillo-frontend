@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,15 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Eye, EyeOff, User, Mail, Lock, Phone } from "lucide-react";
+import { User, Mail, Phone } from "lucide-react";
 import { signup } from "@/lib/api/authentication";
 import type { SignupRequest } from "@/types/authType";
 import {
@@ -34,17 +25,18 @@ import {
 } from "@/lib/validation/signup";
 import { handleError } from "@/lib/utils/errorHandler";
 import { LOCAL_STORAGE_KEYS } from "@/constants/storageKeys";
+import { PasswordFields } from "./_components/PasswordFields";
+import { BirthDateField } from "./_components/BirthDateField";
+import { GenderField } from "./_components/GenderField";
+import { TermsAgreement } from "./_components/TermsAgreement";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     control,
-    watch,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>({
@@ -62,57 +54,6 @@ export default function SignupPage() {
       marketing: false,
     },
   });
-
-  // 생년월일 옵션들
-  const currentYear = new Date().getFullYear();
-  // 최근 해부터 — 연도를 미리 고르지 않으므로 목록이 열리는 위치가 곧 시작점
-  const yearOptions = Array.from({ length: 100 }, (_, i) => currentYear - i);
-  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
-
-  // 기본값을 두지 않는다 — 올해가 미리 선택되면 월·일만 골라 올해 생년월일로 제출될 수 있음
-  const [birthYear, setBirthYear] = useState<string>("");
-  const [birthMonth, setBirthMonth] = useState<string>("");
-  const [birthDay, setBirthDay] = useState<string>("");
-
-  const getDayOptions = () => {
-    if (!birthYear || !birthMonth) return [];
-    const daysInMonth = new Date(
-      parseInt(birthYear),
-      parseInt(birthMonth),
-      0,
-    ).getDate();
-    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  };
-  const dayOptions = getDayOptions();
-
-  const handleBirthDateChange = (
-    type: "year" | "month" | "day",
-    value: string,
-  ) => {
-    if (type === "year") {
-      setBirthYear(value);
-      setBirthMonth("");
-      setBirthDay("");
-      setValue("birthDate", "", { shouldValidate: false });
-    } else if (type === "month") {
-      setBirthMonth(value);
-      setBirthDay("");
-      setValue("birthDate", "", { shouldValidate: false });
-    } else {
-      setBirthDay(value);
-      if (birthYear && birthMonth && value) {
-        const formattedDate = `${birthYear}-${birthMonth.padStart(2, "0")}-${value.padStart(2, "0")}`;
-        setValue("birthDate", formattedDate, { shouldValidate: true });
-      }
-    }
-  };
-
-  const watchPassword = watch("password");
-  const watchConfirmPassword = watch("confirmPassword");
-  const passwordsMatch =
-    watchPassword &&
-    watchConfirmPassword &&
-    watchPassword === watchConfirmPassword;
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
@@ -208,95 +149,7 @@ export default function SignupPage() {
                   )}
                 </div>
 
-                {/* 비밀번호 */}
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="password"
-                    className="text-sm font-medium text-foreground"
-                  >
-                    비밀번호 <span className="text-red-600 dark:text-red-400">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="비밀번호를 입력하세요"
-                      {...register("password")}
-                      className={`pl-10 pr-10 ${errors.password ? "border-red-500 dark:border-red-400" : ""}`}
-                      autoComplete="new-password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
-                      {errors.password.message}
-                    </p>
-                  )}
-                  <p className="text-xs text-muted-foreground">
-                    8자 이상, 영문, 숫자, 특수문자를 포함해주세요.
-                  </p>
-                </div>
-
-                {/* 비밀번호 확인 */}
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="confirmPassword"
-                    className="text-sm font-medium text-foreground"
-                  >
-                    비밀번호 확인 <span className="text-red-600 dark:text-red-400">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="비밀번호를 다시 입력하세요"
-                      {...register("confirmPassword")}
-                      className={`pl-10 pr-10 ${errors.confirmPassword ? "border-red-500 dark:border-red-400" : ""}`}
-                      autoComplete="new-password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      aria-label={showConfirmPassword ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.confirmPassword && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
-                      {errors.confirmPassword.message}
-                    </p>
-                  )}
-                  {watchConfirmPassword && !errors.confirmPassword && (
-                    <p
-                      className={`text-xs ${passwordsMatch ? "text-green-700 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
-                    >
-                      {passwordsMatch
-                        ? "비밀번호가 일치합니다."
-                        : "비밀번호가 일치하지 않습니다."}
-                    </p>
-                  )}
-                </div>
+                <PasswordFields register={register} control={control} errors={errors} />
 
                 {/* 휴대폰 번호 */}
                 <div className="space-y-2">
@@ -333,227 +186,19 @@ export default function SignupPage() {
                   )}
                 </div>
 
-                {/* 생년월일 — 선택 상자 세 개를 묶음 이름으로 설명. 안쪽 span이 이전 라벨과 같은 줄 높이를 유지 */}
-                <fieldset className="space-y-2">
-                  <legend>
-                    <span className="text-sm font-medium leading-none text-foreground">
-                      생년월일 <span className="text-red-600 dark:text-red-400">*</span>
-                    </span>
-                  </legend>
-                  <div className="flex space-x-2">
-                    <div className="flex-1">
-                      <Select
-                        value={birthYear}
-                        onValueChange={(value) =>
-                          handleBirthDateChange("year", value)
-                        }
-                      >
-                        <SelectTrigger
-                          aria-label="출생 연도"
-                          aria-invalid={!!errors.birthDate}
-                          className={errors.birthDate ? "border-red-500 dark:border-red-400" : ""}
-                        >
-                          <SelectValue placeholder="년도" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {yearOptions.map((year) => (
-                            <SelectItem key={year} value={year.toString()}>
-                              {year}년
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex-1">
-                      <Select
-                        value={birthMonth}
-                        onValueChange={(value) =>
-                          handleBirthDateChange("month", value)
-                        }
-                      >
-                        <SelectTrigger
-                          aria-label="출생 월"
-                          aria-invalid={!!errors.birthDate}
-                          className={errors.birthDate ? "border-red-500 dark:border-red-400" : ""}
-                        >
-                          <SelectValue placeholder="월" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {monthOptions.map((month) => (
-                            <SelectItem key={month} value={month.toString()}>
-                              {month}월
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex-1">
-                      <Select
-                        value={birthDay}
-                        onValueChange={(value) =>
-                          handleBirthDateChange("day", value)
-                        }
-                        disabled={dayOptions.length === 0}
-                      >
-                        <SelectTrigger
-                          aria-label="출생 일"
-                          aria-invalid={!!errors.birthDate}
-                          className={errors.birthDate ? "border-red-500 dark:border-red-400" : ""}
-                        >
-                          <SelectValue placeholder="일" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {dayOptions.map((day) => (
-                            <SelectItem key={day} value={day.toString()}>
-                              {day}일
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  {errors.birthDate && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
-                      {errors.birthDate.message}
-                    </p>
-                  )}
-                </fieldset>
+                {/* 생년월일 */}
+                <BirthDateField
+                  error={errors.birthDate?.message}
+                  // 연·월을 바꿔 비울 때는 검증하지 않고, 일까지 골라 날짜가 만들어지면 검증한다
+                  onChange={(birthDate) =>
+                    setValue("birthDate", birthDate, { shouldValidate: birthDate !== "" })
+                  }
+                />
 
                 {/* 성별 */}
-                <fieldset className="space-y-2">
-                  <legend>
-                    <span className="text-sm font-medium leading-none text-foreground">
-                      성별 <span className="text-red-600 dark:text-red-400">*</span>
-                    </span>
-                  </legend>
-                  <Controller
-                    name="gender"
-                    control={control}
-                    render={({ field }) => (
-                      <div className="flex space-x-4">
-                        <Button
-                          type="button"
-                          variant={field.value === "M" ? "default" : "outline"}
-                          aria-pressed={field.value === "M"}
-                          onClick={() => field.onChange("M")}
-                          className="flex-1"
-                        >
-                          남성
-                        </Button>
-                        <Button
-                          type="button"
-                          variant={field.value === "F" ? "default" : "outline"}
-                          aria-pressed={field.value === "F"}
-                          onClick={() => field.onChange("F")}
-                          className="flex-1"
-                        >
-                          여성
-                        </Button>
-                      </div>
-                    )}
-                  />
-                  {errors.gender && (
-                    <p className="text-xs text-red-600 dark:text-red-400">
-                      {errors.gender.message}
-                    </p>
-                  )}
-                </fieldset>
+                <GenderField control={control} error={errors.gender?.message} />
 
-                {/* 약관 동의 */}
-                <div className="space-y-4 pt-6 border-t border-border">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    약관 동의
-                  </h3>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <Controller
-                        name="terms"
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            id="terms"
-                            checked={field.value === true}
-                            onCheckedChange={(checked) =>
-                              field.onChange(checked ? true : undefined)
-                            }
-                          />
-                        )}
-                      />
-                      <Label htmlFor="terms" className="text-sm text-foreground">
-                        <span className="text-red-600 dark:text-red-400">[필수]</span> 이용약관에
-                        동의합니다.
-                      </Label>
-                      <Link
-                        href="#"
-                        className="text-primary hover:text-primary-active text-sm"
-                      >
-                        보기
-                      </Link>
-                    </div>
-                    {errors.terms && (
-                      <p className="text-xs text-red-600 dark:text-red-400 ml-6">
-                        {errors.terms.message}
-                      </p>
-                    )}
-
-                    <div className="flex items-center space-x-2">
-                      <Controller
-                        name="privacy"
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            id="privacy"
-                            checked={field.value === true}
-                            onCheckedChange={(checked) =>
-                              field.onChange(checked ? true : undefined)
-                            }
-                          />
-                        )}
-                      />
-                      <Label
-                        htmlFor="privacy"
-                        className="text-sm text-foreground"
-                      >
-                        <span className="text-red-600 dark:text-red-400">[필수]</span> 개인정보
-                        수집 및 이용에 동의합니다.
-                      </Label>
-                      <Link
-                        href="#"
-                        className="text-primary hover:text-primary-active text-sm"
-                      >
-                        보기
-                      </Link>
-                    </div>
-                    {errors.privacy && (
-                      <p className="text-xs text-red-600 dark:text-red-400 ml-6">
-                        {errors.privacy.message}
-                      </p>
-                    )}
-
-                    <div className="flex items-center space-x-2">
-                      <Controller
-                        name="marketing"
-                        control={control}
-                        render={({ field }) => (
-                          <Checkbox
-                            id="marketing"
-                            checked={field.value}
-                            onCheckedChange={(checked) =>
-                              field.onChange(checked === true)
-                            }
-                          />
-                        )}
-                      />
-                      <Label
-                        htmlFor="marketing"
-                        className="text-sm text-foreground"
-                      >
-                        [선택] 마케팅 정보 수신에 동의합니다.
-                      </Label>
-                    </div>
-                  </div>
-                </div>
+                <TermsAgreement control={control} errors={errors} />
 
                 {/* 회원가입 버튼 */}
                 <Button
