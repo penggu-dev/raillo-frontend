@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { TokenReissueResponse } from "@/types/authType";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/__api";
+import { AUTH_API_BASE_URL, REISSUE_PATH, takeEarlyReissue } from "@/lib/earlyReissue";
 let refreshPromise: Promise<boolean> | null = null;
 let initializePromise: Promise<void> | null = null;
 
@@ -62,18 +61,21 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     }
 
     refreshPromise = (async () => {
-      const reissueEndpoints = ["/auth/reissue", "/api/v1/auth/reissue"];
+      const reissueEndpoints = [REISSUE_PATH, "/api/v1/auth/reissue"];
       let lastError: unknown = null;
 
       for (const endpoint of reissueEndpoints) {
         try {
-          const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          // 첫 페인트 전에 같은 경로로 보낸 재발급이 있으면 새로 보내지 않고 그 응답을 쓴다(lib/earlyReissue)
+          const early = endpoint === REISSUE_PATH ? takeEarlyReissue() : null;
+          const response = await (early ??
+            fetch(`${AUTH_API_BASE_URL}${endpoint}`, {
+              method: "POST",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }));
 
           if (response.status >= 200 && response.status < 300) {
             const data = (await response.json()) as TokenReissueResponse;

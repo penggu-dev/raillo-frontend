@@ -6,6 +6,7 @@ import { QueryProvider } from '@/components/providers/QueryProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { Toaster } from '@/components/ui/toaster'
 import { THEME_INIT_SCRIPT } from '@/lib/theme'
+import { EARLY_REISSUE_SCRIPT } from '@/lib/earlyReissue'
 import { pretendard } from './fonts/pretendard'
 
 export const metadata: Metadata = {
@@ -25,6 +26,10 @@ export default function RootLayout({
         <script
           // 첫 페인트 전 테마 적용 (규칙은 lib/theme.ts)
           dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
+        <script
+          // 회원이면 토큰 재발급을 하이드레이션 전에 시작 (lib/earlyReissue.ts)
+          dangerouslySetInnerHTML={{ __html: EARLY_REISSUE_SCRIPT }}
         />
         <ThemeProvider>
           <QueryProvider>
