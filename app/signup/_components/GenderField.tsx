@@ -12,7 +12,7 @@ interface GenderFieldProps {
 /** 성별 — 버튼 두 개, 고른 버튼의 선택 상태를 낭독기에 알린다 */
 export function GenderField({ control, error }: GenderFieldProps) {
   return (
-    <fieldset className="space-y-2">
+    <fieldset className="space-y-2" aria-describedby={error ? "gender-error" : undefined}>
       <legend>
         <span className="text-sm font-medium leading-none text-foreground">
           성별 <span className="text-red-600 dark:text-red-400">*</span>
@@ -45,7 +45,7 @@ export function GenderField({ control, error }: GenderFieldProps) {
         )}
       />
       {error && (
-        <p className="text-xs text-red-600 dark:text-red-400">
+        <p id="gender-error" className="text-xs text-red-600 dark:text-red-400">
           {error}
         </p>
       )}

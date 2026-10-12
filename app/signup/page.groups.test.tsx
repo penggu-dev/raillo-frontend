@@ -44,4 +44,39 @@ describe("회원가입 입력 묶음", () => {
     expect(female).toHaveAttribute("aria-pressed", "true")
     expect(male).toHaveAttribute("aria-pressed", "false")
   })
+
+  it("제출 후 오류가 난 칸은 오류 상태와 그 오류 문구를 설명으로 가진다", async () => {
+    const user = userEvent.setup()
+    render(<SignupPage />)
+
+    await user.click(screen.getByRole("button", { name: "회원가입 완료" }))
+    await screen.findByText("이름은 필수입니다.")
+
+    const fields: [HTMLElement, string][] = [
+      [screen.getByLabelText(/^성명/), "이름은 필수입니다."],
+      [screen.getByLabelText(/^이메일 주소/), "이메일은 필수입니다."],
+      [screen.getByLabelText(/^비밀번호 \*$/), "비밀번호는 필수입니다."],
+      [screen.getByLabelText(/^비밀번호 확인 \*$/), "비밀번호 확인은 필수입니다."],
+      [screen.getByLabelText(/^휴대폰 번호/), "전화번호는 11자리 숫자여야 합니다."],
+      [screen.getByRole("combobox", { name: "출생 연도" }), "생년월일을 모두 선택해주세요."],
+      [screen.getByRole("combobox", { name: "출생 월" }), "생년월일을 모두 선택해주세요."],
+      [screen.getByRole("combobox", { name: "출생 일" }), "생년월일을 모두 선택해주세요."],
+      [screen.getByRole("checkbox", { name: /이용약관/ }), "이용약관에 동의해주세요."],
+      [screen.getByRole("checkbox", { name: /개인정보/ }), "개인정보 수집 및 이용에 동의해주세요."],
+    ]
+    for (const [field, message] of fields) {
+      expect(field).toHaveAttribute("aria-invalid", "true")
+      expect(field).toHaveAccessibleDescription(message)
+    }
+    // 성별은 버튼 두 개라 묶음이 오류 문구를 설명으로 가진다
+    expect(screen.getByRole("group", { name: /성별/ })).toHaveAccessibleDescription("성별을 선택해주세요.")
+  })
+
+  it("오류가 없으면 오류 상태·설명을 두지 않는다", () => {
+    render(<SignupPage />)
+
+    expect(screen.getByLabelText(/^성명/)).not.toHaveAttribute("aria-describedby")
+    expect(screen.getByLabelText(/^성명/)).not.toHaveAttribute("aria-invalid", "true")
+    expect(screen.getByRole("group", { name: /성별/ })).not.toHaveAttribute("aria-describedby")
+  })
 })
