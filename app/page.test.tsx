@@ -10,6 +10,8 @@ vi.mock("next/navigation", () => ({
 }))
 
 vi.mock("@/lib/utils/searchHistory", () => ({ saveSearchHistory: vi.fn() }))
+const toast = vi.hoisted(() => vi.fn())
+vi.mock("@/hooks/useToast", () => ({ useToast: () => ({ toast }) }))
 
 // 역 선택은 버튼 하나로 대신한다 — 누르면 label에 맞는 역이 골라진다
 vi.mock("@/components/ticket/search/station-selector", () => ({
@@ -30,6 +32,36 @@ const renderHome = () =>
 describe("HomePage", () => {
   beforeEach(() => {
     navigation.router.push.mockClear()
+    toast.mockClear()
+  })
+
+  const pushedQuery = () => new URLSearchParams(navigation.router.push.mock.calls[0][0].split("?")[1])
+
+  it("역을 고르지 않고 조회하면 입력 오류를 알리고 이동하지 않는다", () => {
+    renderHome()
+
+    fireEvent.click(screen.getByRole("button", { name: "열차 조회하기" }))
+
+    expect(toast).toHaveBeenCalledWith(expect.objectContaining({ title: "입력 오류" }))
+    expect(navigation.router.push).not.toHaveBeenCalled()
+  })
+
+  it("고른 역·오늘 날짜·시각으로 열차 조회 화면에 가고, 바꾸기 버튼은 출발역과 도착역을 맞바꾼다", () => {
+    renderHome()
+
+    fireEvent.click(screen.getByRole("button", { name: "출발역 고르기" }))
+    fireEvent.click(screen.getByRole("button", { name: "도착역 고르기" }))
+    fireEvent.click(screen.getByRole("button", { name: "출발역과 도착역 바꾸기" }))
+    fireEvent.click(screen.getByRole("button", { name: "열차 조회하기" }))
+
+    expect(navigation.router.push.mock.calls[0][0]).toMatch(/^\/ticket\/search\?/)
+    const query = pushedQuery()
+    expect(query.get("departure")).toBe("부산")
+    expect(query.get("arrival")).toBe("서울")
+    const now = new Date()
+    const pad = (n: number) => String(n).padStart(2, "0")
+    expect(query.get("date")).toBe(`${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`)
+    expect(query.get("hour")).toMatch(/^\d{2}$/)
   })
 
   it("첫 화면에서 인원을 고르지 않아도 조회 버튼이 활성이고, 어른 1명으로 조회한다", () => {
