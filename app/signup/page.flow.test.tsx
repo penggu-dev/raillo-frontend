@@ -8,6 +8,8 @@ import SignupPage from "./page"
 const push = vi.hoisted(() => vi.fn())
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }))
 vi.mock("@/lib/api/authentication", () => ({ signup: vi.fn() }))
+const toast = vi.hoisted(() => vi.fn())
+vi.mock("@/hooks/useToast", () => ({ useToast: () => ({ toast }) }))
 
 const signupMock = vi.mocked(signup)
 
@@ -154,7 +156,7 @@ describe("회원가입 흐름", () => {
     expect(localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER)).toBe("202610040001")
   })
 
-  it("가입 요청이 실패하면 완료 화면으로 가지 않고 다시 제출할 수 있다", async () => {
+  it("가입 요청이 실패하면 서버 사유를 알리고, 완료 화면으로 가지 않으며 다시 제출할 수 있다", async () => {
     signupMock.mockRejectedValueOnce(new Error("이미 가입된 이메일입니다."))
     const user = userEvent.setup()
     render(<SignupPage />)
@@ -166,5 +168,23 @@ describe("회원가입 흐름", () => {
     expect(await screen.findByRole("button", { name: "회원가입 완료" })).toBeEnabled()
     expect(push).not.toHaveBeenCalled()
     expect(localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_MEMBER_NUMBER)).toBeNull()
+    expect(toast).toHaveBeenCalledWith({
+      title: "오류",
+      description: "이미 가입된 이메일입니다.",
+      variant: "destructive",
+    })
+  })
+
+  it("가입 실패에 사유가 없으면 기본 문구로 알린다", async () => {
+    signupMock.mockRejectedValueOnce({})
+    const user = userEvent.setup()
+    render(<SignupPage />)
+
+    await fillValidForm(user)
+    await user.click(screen.getByRole("button", { name: "회원가입 완료" }))
+
+    await waitFor(() =>
+      expect(toast).toHaveBeenCalledWith(expect.objectContaining({ description: "회원가입에 실패했습니다." })),
+    )
   })
 })
