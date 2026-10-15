@@ -99,11 +99,7 @@ function ReservationsPageContent() {
       } catch (err) {
         toast({
           title: "오류",
-          description: handleError(
-            err,
-            "예약 취소 중 오류가 발생했습니다.",
-            false,
-          ),
+          description: handleError(err, "예약 취소 중 오류가 발생했습니다."),
           variant: "destructive",
         });
       }

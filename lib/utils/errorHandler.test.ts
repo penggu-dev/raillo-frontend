@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { extractErrorMessage, handleError, withErrorHandling } from "./errorHandler"
+import { extractErrorMessage, handleError } from "./errorHandler"
 
 describe("extractErrorMessage", () => {
   it("Error 인스턴스에서 message를 추출한다", () => {
@@ -50,17 +50,5 @@ describe("handleError", () => {
 
   it("기본 메시지를 전달할 수 있다", () => {
     expect(handleError(null, "실패")).toBe("실패")
-  })
-})
-
-describe("withErrorHandling", () => {
-  it("성공 시 API 호출 결과를 반환한다", async () => {
-    const result = await withErrorHandling(() => Promise.resolve("성공"))
-    expect(result).toBe("성공")
-  })
-
-  it("실패 시 null을 반환한다", async () => {
-    const result = await withErrorHandling(() => Promise.reject(new Error("실패")))
-    expect(result).toBeNull()
   })
 })

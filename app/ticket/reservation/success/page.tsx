@@ -43,7 +43,7 @@ function PaymentSuccessPageContent() {
       // 결제 정보가 담긴 주소를 히스토리에 남기지 않음 — 뒤로 가기로 다시 승인하지 않도록
       router.replace("/ticket/purchased");
     } catch (err: unknown) {
-      setErrorMessage(handleError(err, "결제 승인에 실패했습니다.", false));
+      setErrorMessage(handleError(err, "결제 승인에 실패했습니다."));
       setStatus("failed");
     }
   }, [searchParams, queryClient, toast, router]);
