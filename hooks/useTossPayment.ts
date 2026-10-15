@@ -149,7 +149,7 @@ export const useTossPayment = () => {
       } catch (err: unknown) {
         toast({
           title: "결제 준비 실패",
-          description: handleError(err, "결제 준비 중 오류가 발생했습니다.", false),
+          description: handleError(err, "결제 준비 중 오류가 발생했습니다."),
           variant: "destructive",
         });
         return;

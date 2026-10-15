@@ -46,38 +46,13 @@ export const extractErrorMessage = (error: unknown, defaultMessage: string = '�
 }
 
 /**
- * 에러를 처리하고 사용자에게 알림을 표시합니다.
+ * 에러에서 사용자에게 보여 줄 문구를 꺼낸다(extractErrorMessage와 같음).
+ * 안내를 띄우지는 않는다 — 돌려받은 문구로 토스트 등은 호출하는 쪽이 띄운다.
  * @param error - 에러 객체
- * @param defaultMessage - 기본 에러 메시지
- * @param showAlert - alert 표시 여부 (기본값: true)
- * @returns 추출된 에러 메시지
+ * @param defaultMessage - 문구를 찾지 못했을 때 쓸 기본 문구
+ * @returns 사용자에게 보여 줄 문구
  */
 export const handleError = (
-  error: unknown, 
+  error: unknown,
   defaultMessage: string = '오류가 발생했습니다.',
-  showAlert: boolean = true
-): string => {
-  const message = extractErrorMessage(error, defaultMessage)
-  
-  return message
-}
-
-/**
- * API 호출을 래핑하여 에러 처리를 자동화하는 함수
- * @param apiCall - API 호출 함수
- * @param defaultMessage - 기본 에러 메시지
- * @param showAlert - alert 표시 여부
- * @returns API 호출 결과 또는 null (에러 시)
- */
-export const withErrorHandling = async <T>(
-  apiCall: () => Promise<T>,
-  defaultMessage: string = '오류가 발생했습니다.',
-  showAlert: boolean = true
-): Promise<T | null> => {
-  try {
-    return await apiCall()
-  } catch (error) {
-    handleError(error, defaultMessage, showAlert)
-    return null
-  }
-} 
+): string => extractErrorMessage(error, defaultMessage)
